@@ -26,6 +26,5 @@
 
 演示圖中的藝術家、歌曲、封面和歷史均為虛構測試資料。原始碼包不包含賬號、真實曲庫、快取、安裝器或 FFmpeg 執行檔。API 僅在你主動啟用相應功能時接收必要資訊；見 [PRIVACY](PRIVACY.md)。
 
-上傳 GitHub 時，解壓原始碼包並上傳其內容，保留四語文件及圖片目錄。不要上傳整個開發目錄、執行資料或舊安裝包。釋出前按[檢查清單](docs/QA_CHECKLIST.md)複核。
 
 Copyright © 2026 jinlaoshi. 專案原創程式碼採用 [GPL-3.0-only](LICENSE)；第三方元件遵循各自許可證。by jinlaoshi
