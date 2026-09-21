@@ -1,0 +1,100 @@
+{
+  "name": "aurora-webdav-player-next",
+  "version": "1.4.0",
+  "author": "jinlaoshi",
+  "license": "GPL-3.0-only",
+  "description": "A focused WebDAV music player for Windows",
+  "main": "./out/main/index.js",
+  "scripts": {
+    "dev": "electron-vite dev",
+    "build": "npm run i18n:build && npm run typecheck && electron-vite build",
+    "i18n:build": "node scripts/build-translations.cjs",
+    "privacy:check": "node scripts/privacy-check.cjs",
+    "source:zip": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/export-source.ps1",
+    "setup:ffmpeg": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/setup-ffmpeg.ps1",
+    "rebuild:native": "electron-builder install-app-deps",
+    "verify": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify.ps1",
+    "verify:release": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify.ps1 -SkipBuild -RequireInstaller",
+    "test:ui": "node scripts/ui-review.cjs",
+    "test:locales": "node scripts/locale-review.cjs",
+    "test:i18n": "node scripts/i18n-review.cjs",
+    "test:features": "node scripts/feature-review.cjs",
+    "test:recommendations": "node scripts/recommendation-review.cjs && node scripts/audio-history-review.cjs",
+    "typecheck": "tsc -p tsconfig.node.json --noEmit && tsc -p tsconfig.web.json --noEmit",
+    "icon": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/generate-icon.ps1",
+    "pack:win": "npm run icon && npm run verify && electron-builder --win nsis",
+    "preview": "electron-vite preview",
+    "lint": "npm run typecheck",
+    "clean": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/clean.ps1"
+  },
+  "dependencies": {
+    "better-sqlite3": "^12.10.0",
+    "howler": "^2.2.4",
+    "music-metadata": "^11.12.3",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "zustand": "^5.0.14"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/howler": "^2.2.13",
+    "@types/node": "^25.9.1",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "electron": "^31.3.1",
+    "electron-builder": "^24.13.3",
+    "electron-vite": "^2.3.0",
+    "opencc-js": "^1.4.1",
+    "typescript": "^5.5.4",
+    "vite": "^5.4.0"
+  },
+  "build": {
+    "appId": "com.aurora.webdavplayer.next",
+    "productName": "Aurora Music Next",
+    "extraResources": [
+      {
+        "from": "resources/ffmpeg",
+        "to": "ffmpeg"
+      },
+      {
+        "from": "LICENSE",
+        "to": "LICENSE.aurora.txt"
+      },
+      {
+        "from": "THIRD_PARTY_NOTICES.md",
+        "to": "THIRD_PARTY_NOTICES.md"
+      },
+      {
+        "from": "SECURITY.md",
+        "to": "SECURITY.md"
+      }
+    ],
+    "directories": {
+      "output": "release",
+      "buildResources": "resources"
+    },
+    "electronDist": "node_modules/electron/dist",
+    "npmRebuild": false,
+    "files": [
+      "out/**/*",
+      "package.json"
+    ],
+    "asarUnpack": [
+      "node_modules/better-sqlite3/**/*"
+    ],
+    "win": {
+      "icon": "resources/icon.png",
+      "target": [
+        "nsis"
+      ],
+      "signAndEditExecutable": false,
+      "artifactName": "Aurora-Music-Next-${version}-Setup.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true
+    }
+  }
+}

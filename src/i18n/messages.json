@@ -1,0 +1,2062 @@
+{
+  "专辑": {
+    "zh-TW": "專輯",
+    "en": "Albums",
+    "fr": "Albums"
+  },
+  "艺术家": {
+    "zh-TW": "藝術家",
+    "en": "Artists",
+    "fr": "Artistes"
+  },
+  "最近播放": {
+    "zh-TW": "最近播放",
+    "en": "Recently played",
+    "fr": "Écoutes récentes"
+  },
+  "现在就听": {
+    "zh-TW": "現在就聽",
+    "en": "Listen now",
+    "fr": "Écouter"
+  },
+  "歌曲": {
+    "zh-TW": "歌曲",
+    "en": "Songs",
+    "fr": "Titres"
+  },
+  "歌单": {
+    "zh-TW": "歌單",
+    "en": "Playlists",
+    "fr": "Playlists"
+  },
+  "喜欢的音乐": {
+    "zh-TW": "喜歡的音樂",
+    "en": "Favorites",
+    "fr": "Favoris"
+  },
+  "设置": {
+    "zh-TW": "設定",
+    "en": "Settings",
+    "fr": "Réglages"
+  },
+  "地址待验证": {
+    "zh-TW": "地址待驗證",
+    "en": "Address not verified",
+    "fr": "Adresse non vérifiée"
+  },
+  "WebDAV 目录读取失败": {
+    "zh-TW": "WebDAV 目錄讀取失敗",
+    "en": "Could not read the WebDAV folder",
+    "fr": "Impossible de lire le dossier WebDAV"
+  },
+  "音乐库加载失败，请重新启动应用。": {
+    "zh-TW": "音樂庫載入失敗，請重新啟動應用。",
+    "en": "Could not load the library. Please restart the app.",
+    "fr": "Impossible de charger la bibliothèque. Redémarrez l’application."
+  },
+  "收藏状态更新失败": {
+    "zh-TW": "收藏狀態更新失敗",
+    "en": "Could not update favorites",
+    "fr": "Impossible de modifier les favoris"
+  },
+  "已添加到喜欢的音乐": {
+    "zh-TW": "已新增到喜歡的音樂",
+    "en": "Added to favorites",
+    "fr": "Ajouté aux favoris"
+  },
+  "已取消喜欢": {
+    "zh-TW": "已取消喜歡",
+    "en": "Removed from favorites",
+    "fr": "Retiré des favoris"
+  },
+  "无法将歌曲加入音乐库": {
+    "zh-TW": "無法將歌曲加入音樂庫",
+    "en": "Could not add the track to the library",
+    "fr": "Impossible d’ajouter le titre à la bibliothèque"
+  },
+  "曲库同步完成：发现 {0} 首歌曲，扫描 {1} 个目录{2}": {
+    "zh-TW": "曲庫同步完成：發現 {0} 首歌曲，掃描 {1} 個目錄{2}",
+    "en": "Library synced: {0} tracks found across {1} folders{2}",
+    "fr": "Bibliothèque synchronisée : {0} titres trouvés dans {1} dossiers{2}"
+  },
+  "，{0} 个目录失败": {
+    "zh-TW": "，{0} 個目錄失敗",
+    "en": "; {0} folders could not be read",
+    "fr": " ; {0} dossiers illisibles"
+  },
+  "曲库同步失败": {
+    "zh-TW": "曲庫同步失敗",
+    "en": "Library sync failed",
+    "fr": "Échec de la synchronisation"
+  },
+  "歌单创建失败": {
+    "zh-TW": "歌單建立失敗",
+    "en": "Could not create the playlist",
+    "fr": "Impossible de créer la playlist"
+  },
+  "歌单已删除": {
+    "zh-TW": "歌單已刪除",
+    "en": "Playlist deleted",
+    "fr": "Playlist supprimée"
+  },
+  "歌单删除失败": {
+    "zh-TW": "歌單刪除失敗",
+    "en": "Could not delete the playlist",
+    "fr": "Impossible de supprimer la playlist"
+  },
+  "删除失败，请重试。": {
+    "zh-TW": "刪除失敗，請重試。",
+    "en": "Could not delete. Please try again.",
+    "fr": "Suppression impossible. Réessayez."
+  },
+  "已添加到歌单": {
+    "zh-TW": "已新增到歌單",
+    "en": "Added to playlist",
+    "fr": "Ajouté à la playlist"
+  },
+  "添加失败": {
+    "zh-TW": "新增失敗",
+    "en": "Could not add the track",
+    "fr": "Impossible d’ajouter le titre"
+  },
+  "移除失败": {
+    "zh-TW": "移除失敗",
+    "en": "Could not remove the track",
+    "fr": "Impossible de retirer le titre"
+  },
+  "智能歌单生成失败": {
+    "zh-TW": "智慧歌單生成失敗",
+    "en": "Could not generate the playlist",
+    "fr": "Impossible de générer la playlist"
+  },
+  "找到 {0} 首歌曲": {
+    "zh-TW": "找到 {0} 首歌曲",
+    "en": "Results: {0} tracks",
+    "fr": "Résultats : {0} titres"
+  },
+  "没有匹配的歌曲": {
+    "zh-TW": "沒有匹配的歌曲",
+    "en": "No matching tracks",
+    "fr": "Aucun titre correspondant"
+  },
+  "从第一首开始": {
+    "zh-TW": "從第一首開始",
+    "en": "Your listening story starts here",
+    "fr": "Votre première écoute commence ici"
+  },
+  "播放全部": {
+    "zh-TW": "播放全部",
+    "en": "Play all",
+    "fr": "Tout écouter"
+  },
+  "把心动的音乐收藏在这里": {
+    "zh-TW": "把心動的音樂收藏在這裡",
+    "en": "Keep the music you love here",
+    "fr": "Retrouvez ici la musique que vous aimez"
+  },
+  "Aurora 首页": {
+    "zh-TW": "Aurora 首頁",
+    "en": "Aurora home",
+    "fr": "Accueil Aurora"
+  },
+  "聆听": {
+    "zh-TW": "聆聽",
+    "en": "Listening",
+    "fr": "Écoute"
+  },
+  "资料库": {
+    "zh-TW": "資料庫",
+    "en": "Library",
+    "fr": "Bibliothèque"
+  },
+  "我的歌单": {
+    "zh-TW": "我的歌單",
+    "en": "My playlists",
+    "fr": "Mes playlists"
+  },
+  "新建歌单": {
+    "zh-TW": "新建歌單",
+    "en": "New playlist",
+    "fr": "Nouvelle playlist"
+  },
+  "创建第一张歌单": {
+    "zh-TW": "建立第一張歌單",
+    "en": "Create your first playlist",
+    "fr": "Créer une playlist"
+  },
+  "尚未连接": {
+    "zh-TW": "尚未連線",
+    "en": "Not connected",
+    "fr": "Non connecté"
+  },
+  "你的音乐，始终在这里。": {
+    "zh-TW": "你的音樂，始終在這裡。",
+    "en": "Your music, always here.",
+    "fr": "Votre musique, toujours là."
+  },
+  "切换明暗主题": {
+    "zh-TW": "切換明暗主題",
+    "en": "Switch light and dark theme",
+    "fr": "Changer le thème clair ou sombre"
+  },
+  "外观": {
+    "zh-TW": "外觀",
+    "en": "Appearance",
+    "fr": "Apparence"
+  },
+  "搜索音乐": {
+    "zh-TW": "搜尋音樂",
+    "en": "Search music",
+    "fr": "Rechercher de la musique"
+  },
+  "搜索当前目录": {
+    "zh-TW": "搜尋當前目錄",
+    "en": "Search this folder",
+    "fr": "Rechercher dans ce dossier"
+  },
+  "搜索你的音乐": {
+    "zh-TW": "搜尋你的音樂",
+    "en": "Search your music",
+    "fr": "Rechercher dans votre musique"
+  },
+  "清除搜索": {
+    "zh-TW": "清除搜尋",
+    "en": "Clear search",
+    "fr": "Effacer la recherche"
+  },
+  "搜索": {
+    "zh-TW": "搜尋",
+    "en": "Search",
+    "fr": "Recherche"
+  },
+  "正在读取音乐库…": {
+    "zh-TW": "正在讀取音樂庫…",
+    "en": "Loading your library…",
+    "fr": "Chargement de la bibliothèque…"
+  },
+  "关闭提示": {
+    "zh-TW": "關閉提示",
+    "en": "Dismiss notification",
+    "fr": "Fermer la notification"
+  },
+  "添加到歌单": {
+    "zh-TW": "新增到歌單",
+    "en": "Add to playlist",
+    "fr": "Ajouter à une playlist"
+  },
+  "歌单已保存": {
+    "zh-TW": "歌單已儲存",
+    "en": "Playlist saved",
+    "fr": "Playlist enregistrée"
+  },
+  "删除这张歌单？": {
+    "zh-TW": "刪除這張歌單？",
+    "en": "Delete this playlist?",
+    "fr": "Supprimer cette playlist ?"
+  },
+  "将删除歌单“{0}”，音乐库中的歌曲会保留。": {
+    "zh-TW": "將刪除歌單“{0}”，音樂庫中的歌曲會保留。",
+    "en": "The playlist “{0}” will be deleted. Tracks in your library will be kept.",
+    "fr": "La playlist « {0} » sera supprimée. Les titres de votre bibliothèque seront conservés."
+  },
+  "取消": {
+    "zh-TW": "取消",
+    "en": "Cancel",
+    "fr": "Annuler"
+  },
+  "正在删除…": {
+    "zh-TW": "正在刪除…",
+    "en": "Deleting…",
+    "fr": "Suppression…"
+  },
+  "删除歌单": {
+    "zh-TW": "刪除歌單",
+    "en": "Delete playlist",
+    "fr": "Supprimer la playlist"
+  },
+  "播放队列": {
+    "zh-TW": "播放佇列",
+    "en": "Play queue",
+    "fr": "File d’attente"
+  },
+  "接下来播放": {
+    "zh-TW": "接下來播放",
+    "en": "Up next",
+    "fr": "À suivre"
+  },
+  "关闭队列": {
+    "zh-TW": "關閉佇列",
+    "en": "Close queue",
+    "fr": "Fermer la file d’attente"
+  },
+  "播放一首音乐，从这里继续。": {
+    "zh-TW": "播放一首音樂，從這裡繼續。",
+    "en": "Play a track to start your queue.",
+    "fr": "Écoutez un titre pour commencer."
+  },
+  "未知艺术家": {
+    "zh-TW": "未知藝術家",
+    "en": "Unknown artist",
+    "fr": "Artiste inconnu"
+  },
+  "没有找到匹配结果，可调整歌名、艺术家或专辑后重试。": {
+    "zh-TW": "沒有找到匹配結果，可調整歌名、藝術家或專輯後重試。",
+    "en": "No matches. Try editing the title, artist or album.",
+    "fr": "Aucun résultat. Modifiez le titre, l’artiste ou l’album, puis réessayez."
+  },
+  "检索失败": {
+    "zh-TW": "檢索失敗",
+    "en": "Search failed",
+    "fr": "Échec de la recherche"
+  },
+  "检索失败，请稍后重试。": {
+    "zh-TW": "檢索失敗，請稍後重試。",
+    "en": "Search failed. Please try again later.",
+    "fr": "La recherche a échoué. Réessayez plus tard."
+  },
+  "保存失败": {
+    "zh-TW": "儲存失敗",
+    "en": "Could not save",
+    "fr": "Enregistrement impossible"
+  },
+  "查找音乐资源": {
+    "zh-TW": "查詢音樂資源",
+    "en": "Find lyrics and artwork",
+    "fr": "Rechercher des paroles et des images"
+  },
+  "歌词": {
+    "zh-TW": "歌詞",
+    "en": "Lyrics",
+    "fr": "Paroles"
+  },
+  "封面": {
+    "zh-TW": "封面",
+    "en": "Cover",
+    "fr": "Pochette"
+  },
+  "背景": {
+    "zh-TW": "背景",
+    "en": "Background",
+    "fr": "Arrière-plan"
+  },
+  "歌名": {
+    "zh-TW": "歌名",
+    "en": "Title",
+    "fr": "Titre"
+  },
+  "只发送上述信息。请确认匹配版本和资源使用权限。": {
+    "zh-TW": "只發送上述資訊。請確認匹配版本和資源使用許可權。",
+    "en": "Only the information above is sent. Check the version and your rights to use the resource.",
+    "fr": "Seules les informations ci-dessus sont envoyées. Vérifiez la version et les droits d’utilisation."
+  },
+  "正在处理…": {
+    "zh-TW": "正在處理…",
+    "en": "Working…",
+    "fr": "Traitement…"
+  },
+  "搜索资源": {
+    "zh-TW": "搜尋資源",
+    "en": "Search resources",
+    "fr": "Rechercher"
+  },
+  "{0} 预览": {
+    "zh-TW": "{0} 預覽",
+    "en": "Preview of {0}",
+    "fr": "Aperçu de {0}"
+  },
+  " · 同步歌词": {
+    "zh-TW": " · 同步歌詞",
+    "en": " · Timed lyrics",
+    "fr": " · Paroles synchronisées"
+  },
+  "应用后会替换该歌曲已有的{0}。": {
+    "zh-TW": "應用後會替換該歌曲已有的{0}。",
+    "en": "Applying this will replace the existing {0} for this track.",
+    "fr": "L’application remplacera les ressources existantes de ce titre : {0}."
+  },
+  "应用选中资源": {
+    "zh-TW": "應用選中資源",
+    "en": "Apply selected resource",
+    "fr": "Appliquer la sélection"
+  },
+  "API 与优先级已安全保存": {
+    "zh-TW": "API 與優先順序已安全儲存",
+    "en": "API settings and priority saved securely",
+    "fr": "API et priorités enregistrées en toute sécurité"
+  },
+  "歌词与图片接口已保存": {
+    "zh-TW": "歌詞與圖片介面已儲存",
+    "en": "Lyrics and image services saved",
+    "fr": "Services de paroles et d’images enregistrés"
+  },
+  "明亮、深色，或随 Windows 自动切换": {
+    "zh-TW": "明亮、深色，或隨 Windows 自動切換",
+    "en": "Light, dark, or follow Windows",
+    "fr": "Clair, sombre ou selon Windows"
+  },
+  "明亮": {
+    "zh-TW": "明亮",
+    "en": "Light",
+    "fr": "Clair"
+  },
+  "深色": {
+    "zh-TW": "深色",
+    "en": "Dark",
+    "fr": "Sombre"
+  },
+  "跟随系统": {
+    "zh-TW": "跟隨系統",
+    "en": "System",
+    "fr": "Système"
+  },
+  "AI 服务与优先级": {
+    "zh-TW": "AI 服務與優先順序",
+    "en": "AI services and priority",
+    "fr": "Services d’IA et priorités"
+  },
+  "从上到下尝试已启用且填写密钥的服务；失败或结果无效时自动切换。": {
+    "zh-TW": "從上到下嘗試已啟用且填寫金鑰的服務；失敗或結果無效時自動切換。",
+    "en": "Enabled services with a key are tried from top to bottom. Failures or invalid results move to the next service.",
+    "fr": "Les services activés avec une clé sont essayés dans l’ordre. En cas d’échec ou de résultat invalide, le suivant prend le relais."
+  },
+  "已配置": {
+    "zh-TW": "已配置",
+    "en": "Configured",
+    "fr": "Configuré"
+  },
+  "待填写密钥": {
+    "zh-TW": "待填寫金鑰",
+    "en": "Key required",
+    "fr": "Clé requise"
+  },
+  "已停用": {
+    "zh-TW": "已停用",
+    "en": "Disabled",
+    "fr": "Désactivé"
+  },
+  "启用": {
+    "zh-TW": "啟用",
+    "en": "Enable",
+    "fr": "Activer"
+  },
+  "提高 {0} 优先级": {
+    "zh-TW": "提高 {0} 優先順序",
+    "en": "Raise priority of {0}",
+    "fr": "Augmenter la priorité de {0}"
+  },
+  "↑ 上移": {
+    "zh-TW": "↑ 上移",
+    "en": "↑ Move up",
+    "fr": "↑ Monter"
+  },
+  "降低 {0} 优先级": {
+    "zh-TW": "降低 {0} 優先順序",
+    "en": "Lower priority of {0}",
+    "fr": "Diminuer la priorité de {0}"
+  },
+  "↓ 下移": {
+    "zh-TW": "↓ 下移",
+    "en": "↓ Move down",
+    "fr": "↓ Descendre"
+  },
+  "移除配置": {
+    "zh-TW": "移除配置",
+    "en": "Remove service",
+    "fr": "Retirer le service"
+  },
+  "服务名称": {
+    "zh-TW": "服務名稱",
+    "en": "Service name",
+    "fr": "Nom du service"
+  },
+  "请求协议": {
+    "zh-TW": "請求協議",
+    "en": "Protocol",
+    "fr": "Protocole"
+  },
+  "OpenAI 兼容 / DeepSeek": {
+    "zh-TW": "OpenAI 相容 / DeepSeek",
+    "en": "OpenAI-compatible / DeepSeek",
+    "fr": "Compatible OpenAI / DeepSeek"
+  },
+  "API 地址": {
+    "zh-TW": "API 地址",
+    "en": "API endpoint",
+    "fr": "Adresse de l’API"
+  },
+  "模型 ID": {
+    "zh-TW": "模型 ID",
+    "en": "Model ID",
+    "fr": "Identifiant du modèle"
+  },
+  "填写服务提供的模型 ID": {
+    "zh-TW": "填寫服務提供的模型 ID",
+    "en": "Enter a model ID offered by your service",
+    "fr": "Saisissez un identifiant proposé par votre service"
+  },
+  "已保存 · 留空不变": {
+    "zh-TW": "已儲存 · 留空不變",
+    "en": "Saved · leave blank to keep",
+    "fr": "Enregistré · laisser vide pour conserver"
+  },
+  "只保存在本机加密存储": {
+    "zh-TW": "只儲存在本機加密儲存",
+    "en": "Encrypted on this computer only",
+    "fr": "Chiffré uniquement sur cet ordinateur"
+  },
+  "＋ OpenAI 兼容": {
+    "zh-TW": "＋ OpenAI 相容",
+    "en": "＋ OpenAI-compatible",
+    "fr": "＋ Compatible OpenAI"
+  },
+  "自动切换可能产生多次计费。只发送候选歌曲信息与需求，不发送音频或 WebDAV 凭据；中转服务也能看到这些内容。移除、启停和排序需保存后生效。": {
+    "zh-TW": "自動切換可能產生多次計費。只發送候選歌曲資訊與需求，不傳送音訊或 WebDAV 憑據；中轉服務也能看到這些內容。移除、啟停和排序需儲存後生效。",
+    "en": "Fallback requests may incur extra charges. Requests, taste summaries and candidate metadata are sent, never audio or WebDAV credentials. Relays can read these requests. Save to apply changes.",
+    "fr": "Les relais peuvent entraîner des frais supplémentaires. Les demandes, résumés de préférences et métadonnées sont envoyés, jamais les fichiers audio ni les identifiants WebDAV. Les intermédiaires peuvent les lire. Enregistrez les modifications."
+  },
+  "最多 10 个服务，单次生成总等待不超过约 90 秒。": {
+    "zh-TW": "最多 10 個服務，單次生成總等待不超過約 90 秒。",
+    "en": "Up to 10 services. Total request budget: about 90 seconds.",
+    "fr": "Jusqu’à 10 services. Durée maximale des requêtes : environ 90 secondes."
+  },
+  "保存 API 与优先级": {
+    "zh-TW": "儲存 API 與優先順序",
+    "en": "Save APIs and priority",
+    "fr": "Enregistrer les API et priorités"
+  },
+  "歌词、封面与背景": {
+    "zh-TW": "歌詞、封面與背景",
+    "en": "Lyrics, covers and backgrounds",
+    "fr": "Paroles, pochettes et arrière-plans"
+  },
+  "在正在播放页面点击“查找资源”，预览并确认后才替换。": {
+    "zh-TW": "在正在播放頁面點選“查詢資源”，預覽並確認後才替換。",
+    "en": "Find resources in Now playing. Preview and confirm before replacing anything.",
+    "fr": "Recherchez des ressources dans la vue de lecture. Prévisualisez et confirmez avant tout remplacement."
+  },
+  "默认使用 LRCLIB 歌词和 TheAudioDB 图片。不会后台扫描曲库；搜索时会向所选服务发送你填写的歌名、艺术家与专辑。免费接口可能限流或找不到匹配结果。": {
+    "zh-TW": "預設使用 LRCLIB 歌詞和 TheAudioDB 圖片。不會後臺掃描曲庫；搜尋時會向所選服務傳送你填寫的歌名、藝術家與專輯。免費介面可能限流或找不到匹配結果。",
+    "en": "Defaults: LRCLIB for lyrics and TheAudioDB for images. No background library scan. Searching sends the entered title, artist and album to the selected service. Free APIs may have rate limits or no match.",
+    "fr": "Par défaut : LRCLIB pour les paroles et TheAudioDB pour les images. Aucune analyse en arrière-plan. La recherche envoie le titre, l’artiste et l’album saisis au service choisi. Les API gratuites peuvent limiter les requêtes ou ne rien trouver."
+  },
+  "TheAudioDB Key（选填）": {
+    "zh-TW": "TheAudioDB Key（選填）",
+    "en": "TheAudioDB key (optional)",
+    "fr": "Clé TheAudioDB (facultative)"
+  },
+  "留空使用公共测试接口": {
+    "zh-TW": "留空使用公共測試介面",
+    "en": "Leave blank for the public test API",
+    "fr": "Laisser vide pour l’API de test publique"
+  },
+  "自定义接口 Bearer Key（选填）": {
+    "zh-TW": "自定義介面 Bearer Key（選填）",
+    "en": "Custom API bearer key (optional)",
+    "fr": "Clé Bearer d’API personnalisée (facultative)"
+  },
+  "仅用于下面填写的自定义地址": {
+    "zh-TW": "僅用於下面填寫的自定義地址",
+    "en": "Only for the custom endpoints below",
+    "fr": "Uniquement pour les adresses personnalisées ci-dessous"
+  },
+  "自定义歌词 API": {
+    "zh-TW": "自定義歌詞 API",
+    "en": "Custom lyrics API",
+    "fr": "API de paroles personnalisée"
+  },
+  "自定义封面 API": {
+    "zh-TW": "自定義封面 API",
+    "en": "Custom cover API",
+    "fr": "API de pochettes personnalisée"
+  },
+  "自定义背景 API": {
+    "zh-TW": "自定義背景 API",
+    "en": "Custom background API",
+    "fr": "API d’arrière-plans personnalisée"
+  },
+  "留空使用内置服务；自定义格式见开发说明": {
+    "zh-TW": "留空使用內建服務；自定義格式見開發說明",
+    "en": "Leave blank for the built-in service; see API documentation for the format",
+    "fr": "Laisser vide pour le service intégré ; format dans la documentation API"
+  },
+  "自定义 API 需返回约定的 JSON 格式，不是任意网页地址。": {
+    "zh-TW": "自定義 API 需返回約定的 JSON 格式，不是任意網頁地址。",
+    "en": "Custom APIs must return the documented JSON format, not an ordinary webpage.",
+    "fr": "Les API personnalisées doivent renvoyer le JSON documenté, pas une page web ordinaire."
+  },
+  "保存资源接口": {
+    "zh-TW": "儲存資源介面",
+    "en": "Save resource services",
+    "fr": "Enregistrer les services de ressources"
+  },
+  "关闭": {
+    "zh-TW": "關閉",
+    "en": "Close",
+    "fr": "Fermer"
+  },
+  "正在播放": {
+    "zh-TW": "正在播放",
+    "en": "Now playing",
+    "fr": "Lecture en cours"
+  },
+  "取消喜欢": {
+    "zh-TW": "取消喜歡",
+    "en": "Remove favorite",
+    "fr": "Retirer des favoris"
+  },
+  "喜欢": {
+    "zh-TW": "喜歡",
+    "en": "Favorite",
+    "fr": "Ajouter aux favoris"
+  },
+  "查找歌词、封面与背景": {
+    "zh-TW": "查詢歌詞、封面與背景",
+    "en": "Find lyrics, cover and background",
+    "fr": "Rechercher paroles, pochette et arrière-plan"
+  },
+  "播放进度": {
+    "zh-TW": "播放進度",
+    "en": "Playback progress",
+    "fr": "Progression de lecture"
+  },
+  "顺序播放": {
+    "zh-TW": "順序播放",
+    "en": "In order",
+    "fr": "Dans l’ordre"
+  },
+  "随机播放": {
+    "zh-TW": "隨機播放",
+    "en": "Shuffle",
+    "fr": "Aléatoire"
+  },
+  "单曲循环": {
+    "zh-TW": "單曲迴圈",
+    "en": "Repeat one",
+    "fr": "Répéter le titre"
+  },
+  "上一首": {
+    "zh-TW": "上一首",
+    "en": "Previous track",
+    "fr": "Titre précédent"
+  },
+  "暂停": {
+    "zh-TW": "暫停",
+    "en": "Pause",
+    "fr": "Pause"
+  },
+  "播放": {
+    "zh-TW": "播放",
+    "en": "Play",
+    "fr": "Lire"
+  },
+  "下一首": {
+    "zh-TW": "下一首",
+    "en": "Next track",
+    "fr": "Titre suivant"
+  },
+  "播放模式：{0}": {
+    "zh-TW": "播放模式：{0}",
+    "en": "Playback mode: {0}",
+    "fr": "Mode de lecture : {0}"
+  },
+  "展开 {0}": {
+    "zh-TW": "展開 {0}",
+    "en": "Expand {0}",
+    "fr": "Agrandir {0}"
+  },
+  "尚未播放": {
+    "zh-TW": "尚未播放",
+    "en": "Nothing playing",
+    "fr": "Aucune lecture"
+  },
+  "选择一首音乐": {
+    "zh-TW": "選擇一首音樂",
+    "en": "Choose a track",
+    "fr": "Choisissez un titre"
+  },
+  "取消喜欢当前歌曲": {
+    "zh-TW": "取消喜歡當前歌曲",
+    "en": "Remove current track from favorites",
+    "fr": "Retirer le titre actuel des favoris"
+  },
+  "喜欢当前歌曲": {
+    "zh-TW": "喜歡當前歌曲",
+    "en": "Favorite current track",
+    "fr": "Ajouter le titre actuel aux favoris"
+  },
+  "正在播放与歌词": {
+    "zh-TW": "正在播放與歌詞",
+    "en": "Now playing and lyrics",
+    "fr": "Lecture et paroles"
+  },
+  "静音": {
+    "zh-TW": "靜音",
+    "en": "Mute",
+    "fr": "Couper le son"
+  },
+  "恢复音量": {
+    "zh-TW": "恢復音量",
+    "en": "Unmute",
+    "fr": "Rétablir le son"
+  },
+  "音量": {
+    "zh-TW": "音量",
+    "en": "Volume",
+    "fr": "Volume"
+  },
+  "未能生成歌单，请检查设置后重试。": {
+    "zh-TW": "未能生成歌單，請檢查設定後重試。",
+    "en": "Could not generate a playlist. Check settings and try again.",
+    "fr": "Impossible de générer une playlist. Vérifiez les réglages et réessayez."
+  },
+  "请求失败，请稍后重试。": {
+    "zh-TW": "請求失敗，請稍後重試。",
+    "en": "Request failed. Please try again later.",
+    "fr": "La requête a échoué. Réessayez plus tard."
+  },
+  "保存失败，请重试。": {
+    "zh-TW": "儲存失敗，請重試。",
+    "en": "Could not save. Please try again.",
+    "fr": "Enregistrement impossible. Réessayez."
+  },
+  "自己挑选": {
+    "zh-TW": "自己挑選",
+    "en": "Pick manually",
+    "fr": "Choix manuel"
+  },
+  "智能歌单": {
+    "zh-TW": "智慧歌單",
+    "en": "Smart playlist",
+    "fr": "Playlist intelligente"
+  },
+  "此刻想听什么？": {
+    "zh-TW": "此刻想聽什麼？",
+    "en": "What would you like to hear?",
+    "fr": "Qu’aimeriez-vous écouter ?"
+  },
+  "雨夜，想听一些安静的华语歌曲，大约 45 分钟。": {
+    "zh-TW": "雨夜，想聽一些安靜的華語歌曲，大約 45 分鐘。",
+    "en": "Create a 40-minute playlist for a night run.",
+    "fr": "Crée une playlist de 40 minutes pour courir le soir."
+  },
+  "使用 AI 理解场景并编排歌单": {
+    "zh-TW": "使用 AI 理解場景並編排歌單",
+    "en": "Use AI to understand the scene and curate the playlist",
+    "fr": "Utiliser l’IA pour comprendre le contexte et composer la playlist"
+  },
+  "当前可用本地推荐；接入 DeepSeek 等 API 可增强场景理解。": {
+    "zh-TW": "當前可用本地推薦；接入 DeepSeek 等 API 可增強場景理解。",
+    "en": "Local recommendations are available. Add DeepSeek or another API for richer scene understanding.",
+    "fr": "Les recommandations locales sont disponibles. Ajoutez DeepSeek ou une autre API pour mieux comprendre le contexte."
+  },
+  "前往设置": {
+    "zh-TW": "前往設定",
+    "en": "Open settings",
+    "fr": "Ouvrir les réglages"
+  },
+  "通常 2 次 API 请求，失败按优先级切换可能增加费用。仅发送需求、音乐偏好摘要及最多 240 首候选信息；不上传音频、路径和原始历史。": {
+    "zh-TW": "通常 2 次 API 請求，失敗按優先順序切換可能增加費用。僅傳送需求、音樂偏好摘要及最多 240 首候選資訊；不上傳音訊、路徑和原始歷史。",
+    "en": "Usually 2 API requests; fallback may cost extra. Sends your request, musical preferences and up to 240 candidate tracks, never audio, paths or raw history.",
+    "fr": "Habituellement 2 requêtes API ; les relais peuvent coûter davantage. Envoi de votre demande, de vos préférences musicales et de 240 titres candidats au maximum, jamais des fichiers audio, chemins ou historiques bruts."
+  },
+  "全曲库本地筛选，不调用 API；支持基础场景、歌手、类型和时长。": {
+    "zh-TW": "全曲庫本地篩選，不呼叫 API；支援基礎場景、歌手、型別和時長。",
+    "en": "Searches the entire library locally, without API calls. Supports basic scenes, artists, genres and duration.",
+    "fr": "Recherche locale dans toute la bibliothèque, sans appel API. Contextes simples, artistes, genres et durée pris en charge."
+  },
+  "生成预览": {
+    "zh-TW": "生成預覽",
+    "en": "Generate preview",
+    "fr": "Générer un aperçu"
+  },
+  "请先同步音乐库，再生成智能歌单。": {
+    "zh-TW": "請先同步音樂庫，再生成智慧歌單。",
+    "en": "Sync your library before generating a playlist.",
+    "fr": "Synchronisez la bibliothèque avant de générer une playlist."
+  },
+  "歌单名称": {
+    "zh-TW": "歌單名稱",
+    "en": "Playlist name",
+    "fr": "Nom de la playlist"
+  },
+  "给这一刻取个名字": {
+    "zh-TW": "給這一刻取個名字",
+    "en": "Give this moment a name",
+    "fr": "Donnez un nom à cet instant"
+  },
+  "描述": {
+    "zh-TW": "描述",
+    "en": "Description",
+    "fr": "Description"
+  },
+  "选填": {
+    "zh-TW": "選填",
+    "en": "Optional",
+    "fr": "Facultatif"
+  },
+  "关于这张歌单的一点想法": {
+    "zh-TW": "關於這張歌單的一點想法",
+    "en": "A few words about this playlist",
+    "fr": "Quelques mots sur cette playlist"
+  },
+  "{0} 首歌曲 · 可移除不合适的歌曲": {
+    "zh-TW": "{0} 首歌曲 · 可移除不合適的歌曲",
+    "en": "{0} tracks · remove any you do not want",
+    "fr": "{0} titres · retirez ceux qui ne conviennent pas"
+  },
+  "移除 {0}": {
+    "zh-TW": "移除 {0}",
+    "en": "Remove {0}",
+    "fr": "Retirer {0}"
+  },
+  "由 {0} 生成 · 保存前可编辑": {
+    "zh-TW": "由 {0} 生成 · 儲存前可編輯",
+    "en": "Generated with {0} · editable before saving",
+    "fr": "Générée avec {0} · modifiable avant enregistrement"
+  },
+  "已检索全部 {0} 首 · 筛选后 {1} 首 · 编排候选 {2} 首": {
+    "zh-TW": "已檢索全部 {0} 首 · 篩選後 {1} 首 · 編排候選 {2} 首",
+    "en": "Searched all {0} tracks · {1} eligible · {2} candidates",
+    "fr": "Recherche parmi {0} titres · {1} admissibles · {2} candidats"
+  },
+  "生成时估计时长 {0} 分钟": {
+    "zh-TW": "生成時估計時長 {0} 分鐘",
+    "en": "Estimated duration at generation: {0} min",
+    "fr": "Durée estimée à la génération : {0} min"
+  },
+  "生成时总时长 {0} 分钟": {
+    "zh-TW": "生成時總時長 {0} 分鐘",
+    "en": "Duration at generation: {0} min",
+    "fr": "Durée à la génération : {0} min"
+  },
+  " / 目标 {0} 分钟": {
+    "zh-TW": " / 目標 {0} 分鐘",
+    "en": " / target {0} min",
+    "fr": " / objectif {0} min"
+  },
+  "；手动移除歌曲后时长会变化。": {
+    "zh-TW": "；手動移除歌曲後時長會變化。",
+    "en": ". Removing tracks changes the duration.",
+    "fr": ". Retirer des titres modifie la durée."
+  },
+  "查看接口切换记录": {
+    "zh-TW": "檢視介面切換記錄",
+    "en": "View fallback details",
+    "fr": "Voir les détails des relais"
+  },
+  "处理中…": {
+    "zh-TW": "處理中…",
+    "en": "Working…",
+    "fr": "Traitement…"
+  },
+  "保存歌单": {
+    "zh-TW": "儲存歌單",
+    "en": "Save playlist",
+    "fr": "Enregistrer la playlist"
+  },
+  "这里还没有歌曲": {
+    "zh-TW": "這裡還沒有歌曲",
+    "en": "No tracks here yet",
+    "fr": "Aucun titre pour le moment"
+  },
+  "在 WebDAV 中同步音乐，或尝试其他搜索词。": {
+    "zh-TW": "在 WebDAV 中同步音樂，或嘗試其他搜尋詞。",
+    "en": "Sync music from WebDAV, or try another search.",
+    "fr": "Synchronisez la musique depuis WebDAV ou essayez une autre recherche."
+  },
+  "歌曲列表": {
+    "zh-TW": "歌曲列表",
+    "en": "Track list",
+    "fr": "Liste des titres"
+  },
+  "时长": {
+    "zh-TW": "時長",
+    "en": "Duration",
+    "fr": "Durée"
+  },
+  "操作": {
+    "zh-TW": "操作",
+    "en": "Actions",
+    "fr": "Actions"
+  },
+  "添加 {0} 到歌单": {
+    "zh-TW": "新增 {0} 到歌單",
+    "en": "Add {0} to a playlist",
+    "fr": "Ajouter {0} à une playlist"
+  },
+  "从歌单移除 {0}": {
+    "zh-TW": "從歌單移除 {0}",
+    "en": "Remove {0} from the playlist",
+    "fr": "Retirer {0} de la playlist"
+  },
+  "从歌单移除": {
+    "zh-TW": "從歌單移除",
+    "en": "Remove from playlist",
+    "fr": "Retirer de la playlist"
+  },
+  "{0}–{1} / {2} 首": {
+    "zh-TW": "{0}–{1} / {2} 首",
+    "en": "{0}–{1} / {2} tracks",
+    "fr": "{0}–{1} / {2} titres"
+  },
+  "上一页": {
+    "zh-TW": "上一頁",
+    "en": "Previous page",
+    "fr": "Page précédente"
+  },
+  "下一页": {
+    "zh-TW": "下一頁",
+    "en": "Next page",
+    "fr": "Page suivante"
+  },
+  "API 地址不能含密码、查询参数或片段": {
+    "zh-TW": "API 地址不能含密碼、查詢引數或片段",
+    "en": "API URLs cannot include credentials, query parameters or fragments",
+    "fr": "Les URL d’API ne doivent contenir ni identifiants, ni paramètres, ni fragment"
+  },
+  "API 必须使用 HTTPS（本机测试允许 HTTP）": {
+    "zh-TW": "API 必須使用 HTTPS（本機測試允許 HTTP）",
+    "en": "APIs must use HTTPS (HTTP is allowed for localhost tests)",
+    "fr": "Les API doivent utiliser HTTPS (HTTP autorisé pour les tests locaux)"
+  },
+  "最多配置 10 个 API": {
+    "zh-TW": "最多配置 10 個 API",
+    "en": "You can configure up to 10 APIs",
+    "fr": "Vous pouvez configurer jusqu’à 10 API"
+  },
+  "API 标识无效或重复": {
+    "zh-TW": "API 標識無效或重複",
+    "en": "Invalid or duplicate API identifier",
+    "fr": "Identifiant d’API invalide ou dupliqué"
+  },
+  "不支持的 API 协议": {
+    "zh-TW": "不支援的 API 協議",
+    "en": "Unsupported API protocol",
+    "fr": "Protocole d’API non pris en charge"
+  },
+  "修改 API 地址时请重新填写密钥，避免旧密钥被发送到其他服务": {
+    "zh-TW": "修改 API 地址時請重新填寫金鑰，避免舊金鑰被髮送到其他服務",
+    "en": "Re-enter the key when changing the API address so the old key cannot be sent to another service",
+    "fr": "Saisissez de nouveau la clé après un changement d’adresse pour éviter son envoi à un autre service"
+  },
+  "请填写该服务实际提供的模型 ID": {
+    "zh-TW": "請填寫該服務實際提供的模型 ID",
+    "en": "Enter a model ID actually offered by this service",
+    "fr": "Saisissez un identifiant de modèle réellement proposé par ce service"
+  },
+  "请先配置并启用至少一个 AI API": {
+    "zh-TW": "請先配置並啟用至少一個 AI API",
+    "en": "Configure and enable at least one AI API first",
+    "fr": "Configurez et activez d’abord au moins une API d’IA"
+  },
+  "空响应": {
+    "zh-TW": "空響應",
+    "en": "Empty response",
+    "fr": "Réponse vide"
+  },
+  "响应过大": {
+    "zh-TW": "響應過大",
+    "en": "Response too large",
+    "fr": "Réponse trop volumineuse"
+  },
+  "响应格式不兼容": {
+    "zh-TW": "響應格式不相容",
+    "en": "Incompatible response format",
+    "fr": "Format de réponse incompatible"
+  },
+  "超时、网络失败或返回格式无效": {
+    "zh-TW": "超時、網路失敗或返回格式無效",
+    "en": "Timeout, network failure or invalid response format",
+    "fr": "Délai dépassé, échec réseau ou format de réponse invalide"
+  },
+  "按优先级尝试后仍未得到有效响应。{0}": {
+    "zh-TW": "按優先順序嘗試後仍未得到有效響應。{0}",
+    "en": "No valid response after trying the services in order. {0}",
+    "fr": "Aucune réponse valide après les essais dans l’ordre. {0}"
+  },
+  "服务响应 HTTP {0}": {
+    "zh-TW": "服務響應 HTTP {0}",
+    "en": "Service returned HTTP {0}",
+    "fr": "Le service a renvoyé HTTP {0}"
+  },
+  "返回内容过大": {
+    "zh-TW": "返回內容過大",
+    "en": "Response content too large",
+    "fr": "Contenu de réponse trop volumineux"
+  },
+  "返回内容为空": {
+    "zh-TW": "返回內容為空",
+    "en": "Response content is empty",
+    "fr": "Le contenu de la réponse est vide"
+  },
+  "图片必须使用公开 HTTPS 地址": {
+    "zh-TW": "圖片必須使用公開 HTTPS 地址",
+    "en": "Images must use a public HTTPS address",
+    "fr": "Les images doivent utiliser une adresse HTTPS publique"
+  },
+  "拒绝访问本地或内网图片地址": {
+    "zh-TW": "拒絕訪問本地或內網圖片地址",
+    "en": "Local and private-network image URLs are blocked",
+    "fr": "Les URL d’images locales ou de réseau privé sont bloquées"
+  },
+  "不是有效图片": {
+    "zh-TW": "不是有效圖片",
+    "en": "Not a valid image",
+    "fr": "Image non valide"
+  },
+  "图片尺寸过大": {
+    "zh-TW": "圖片尺寸過大",
+    "en": "Image dimensions are too large",
+    "fr": "Les dimensions de l’image sont trop grandes"
+  },
+  "修改自定义地址时请重新填写密钥": {
+    "zh-TW": "修改自定義地址時請重新填寫金鑰",
+    "en": "Re-enter the key when changing a custom endpoint",
+    "fr": "Saisissez de nouveau la clé après un changement d’adresse personnalisée"
+  },
+  "不支持的资源类型": {
+    "zh-TW": "不支援的資源型別",
+    "en": "Unsupported resource type",
+    "fr": "Type de ressource non pris en charge"
+  },
+  "歌曲不存在": {
+    "zh-TW": "歌曲不存在",
+    "en": "Track not found",
+    "fr": "Titre introuvable"
+  },
+  "请填写检索信息": {
+    "zh-TW": "請填寫檢索資訊",
+    "en": "Enter search information",
+    "fr": "Saisissez les informations de recherche"
+  },
+  "自定义 API": {
+    "zh-TW": "自定義 API",
+    "en": "Custom API",
+    "fr": "API personnalisée"
+  },
+  "检索失败：请检查接口地址、网络和密钥；已有资源未改动。": {
+    "zh-TW": "檢索失敗：請檢查介面地址、網路和金鑰；已有資源未改動。",
+    "en": "Search failed. Check the endpoint, connection and key. Existing resources were not changed.",
+    "fr": "Échec de la recherche. Vérifiez l’adresse, la connexion et la clé. Les ressources existantes sont inchangées."
+  },
+  "预览已过期，请重新搜索": {
+    "zh-TW": "預覽已過期，請重新搜尋",
+    "en": "Preview expired. Search again.",
+    "fr": "L’aperçu a expiré. Relancez la recherche."
+  },
+  "预览资源不可用": {
+    "zh-TW": "預覽資源不可用",
+    "en": "Preview resource unavailable",
+    "fr": "Ressource d’aperçu indisponible"
+  },
+  "应用失败": {
+    "zh-TW": "應用失敗",
+    "en": "Could not apply the resource",
+    "fr": "Impossible d’appliquer la ressource"
+  },
+  "拒绝清理非解码缓存文件": {
+    "zh-TW": "拒絕清理非解碼快取檔案",
+    "en": "Refusing to remove files outside the decoder cache",
+    "fr": "Suppression refusée pour les fichiers hors du cache de décodage"
+  },
+  "正在兼容解码，请稍后清空缓存": {
+    "zh-TW": "正在相容解碼，請稍後清空快取",
+    "en": "Decoding is in progress. Clear the cache later.",
+    "fr": "Décodage en cours. Videz le cache plus tard."
+  },
+  "请先连接 WebDAV，以下载兼容解码所需的原始音频": {
+    "zh-TW": "請先連線 WebDAV，以下載相容解碼所需的原始音訊",
+    "en": "Connect to WebDAV to download the original audio for compatible decoding",
+    "fr": "Connectez WebDAV pour télécharger le fichier audio nécessaire au décodage"
+  },
+  "原始音频下载失败": {
+    "zh-TW": "原始音訊下載失敗",
+    "en": "Could not download the original audio",
+    "fr": "Téléchargement du fichier audio original impossible"
+  },
+  "只能解码应用管理的音频缓存": {
+    "zh-TW": "只能解碼應用管理的音訊快取",
+    "en": "Only audio in the app-managed cache can be decoded",
+    "fr": "Seuls les fichiers du cache géré par l’application peuvent être décodés"
+  },
+  "缺少兼容解码器，请重新安装完整版本": {
+    "zh-TW": "缺少相容解碼器，請重新安裝完整版本",
+    "en": "Decoder missing. Reinstall the full version.",
+    "fr": "Décodeur manquant. Réinstallez la version complète."
+  },
+  "兼容解码失败：文件可能损坏、受 DRM 保护或不是有效音频。原文件未改动。": {
+    "zh-TW": "相容解碼失敗：檔案可能損壞、受 DRM 保護或不是有效音訊。原檔案未改動。",
+    "en": "Decoding failed: the file may be damaged, DRM-protected or not valid audio. The original is unchanged.",
+    "fr": "Échec du décodage : le fichier peut être endommagé, protégé par DRM ou invalide. L’original est inchangé."
+  },
+  "解码器没有生成有效音频": {
+    "zh-TW": "解碼器沒有生成有效音訊",
+    "en": "The decoder did not produce valid audio",
+    "fr": "Le décodeur n’a pas produit de fichier audio valide"
+  },
+  "兼容音频超过 512 MB 解码缓存限制": {
+    "zh-TW": "相容音訊超過 512 MB 解碼快取限制",
+    "en": "Decoded audio exceeds the 512 MB cache limit",
+    "fr": "Le fichier décodé dépasse la limite de cache de 512 Mo"
+  },
+  "场景理解 · {0}": {
+    "zh-TW": "場景理解 · {0}",
+    "en": "Scene understanding · {0}",
+    "fr": "Compréhension du contexte · {0}"
+  },
+  "场景理解失败": {
+    "zh-TW": "場景理解失敗",
+    "en": "Scene understanding failed",
+    "fr": "Échec de la compréhension du contexte"
+  },
+  "AI 场景理解失败，已采用本地规则检索。": {
+    "zh-TW": "AI 場景理解失敗，已採用本地規則檢索。",
+    "en": "AI scene understanding failed. Using local search rules.",
+    "fr": "Échec de la compréhension par l’IA. Recherche selon les règles locales."
+  },
+  "未配置 AI，使用本地行为模型与基础场景规则。": {
+    "zh-TW": "未配置 AI，使用本地行為模型與基礎場景規則。",
+    "en": "No AI configured. Using the local behavior model and basic scene rules.",
+    "fr": "Aucune IA configurée. Utilisation du modèle local et des règles de contexte simples."
+  },
+  "仅本地生成，未调用任何 AI API。": {
+    "zh-TW": "僅本地生成，未呼叫任何 AI API。",
+    "en": "Generated locally. No AI API was called.",
+    "fr": "Générée localement. Aucune API d’IA appelée."
+  },
+  "此刻想听": {
+    "zh-TW": "此刻想聽",
+    "en": "For this moment",
+    "fr": "Pour cet instant"
+  },
+  "根据本地聆听偏好与曲库信息整理，可试听后调整。": {
+    "zh-TW": "根據本地聆聽偏好與曲庫資訊整理，可試聽後調整。",
+    "en": "Curated from local listening preferences and library metadata. Listen and adjust as needed.",
+    "fr": "Composition selon vos préférences locales et les métadonnées. Écoutez puis ajustez."
+  },
+  "无效歌单": {
+    "zh-TW": "無效歌單",
+    "en": "Invalid playlist",
+    "fr": "Playlist invalide"
+  },
+  "没有有效曲库歌曲": {
+    "zh-TW": "沒有有效曲庫歌曲",
+    "en": "No valid library tracks",
+    "fr": "Aucun titre valide dans la bibliothèque"
+  },
+  "歌单编排 · {0}": {
+    "zh-TW": "歌單編排 · {0}",
+    "en": "Playlist curation · {0}",
+    "fr": "Composition de playlist · {0}"
+  },
+  "歌单编排失败": {
+    "zh-TW": "歌單編排失敗",
+    "en": "Playlist curation failed",
+    "fr": "Échec de la composition"
+  },
+  "AI 歌单编排失败，已由本地模型完成。": {
+    "zh-TW": "AI 歌單編排失敗，已由本地模型完成。",
+    "en": "AI curation failed. The local model completed the playlist.",
+    "fr": "Échec de la composition par l’IA. Le modèle local a terminé la playlist."
+  },
+  "{0} 首缺少时长，按每首 4 分钟估算；播放缓存后可获得实际时长。": {
+    "zh-TW": "{0} 首缺少時長，按每首 4 分鐘估算；播放快取後可獲得實際時長。",
+    "en": "Duration is missing for {0} tracks; estimated at 4 minutes each. Playback caching can provide actual durations.",
+    "fr": "Durée inconnue pour {0} titres, estimée à 4 minutes chacun. La mise en cache peut fournir les durées réelles."
+  },
+  "现有候选无法接近目标时长，请放宽条件或同步更多歌曲。": {
+    "zh-TW": "現有候選無法接近目標時長，請放寬條件或同步更多歌曲。",
+    "en": "The candidates cannot closely match the target duration. Broaden your criteria or sync more tracks.",
+    "fr": "Les candidats ne permettent pas d’approcher la durée visée. Élargissez les critères ou synchronisez davantage de titres."
+  },
+  "实际选出 {0} 首，少于请求数量；时长约束或候选数量限制了结果。": {
+    "zh-TW": "實際選出 {0} 首，少於請求數量；時長約束或候選數量限制了結果。",
+    "en": "Selected {0} tracks, fewer than requested because of duration or candidate limits.",
+    "fr": "{0} titres sélectionnés, moins que demandé en raison des limites de durée ou du nombre de candidats."
+  },
+  "本地行为模型": {
+    "zh-TW": "本地行為模型",
+    "en": "Local behavior model",
+    "fr": "Modèle local d’écoute"
+  },
+  "{0}无效": {
+    "zh-TW": "{0}無效",
+    "en": "Invalid {0}",
+    "fr": "{0} invalide"
+  },
+  "歌单歌曲列表格式无效": {
+    "zh-TW": "歌單歌曲列表格式無效",
+    "en": "Invalid playlist track-list format",
+    "fr": "Format de liste de titres invalide"
+  },
+  "歌曲 ID": {
+    "zh-TW": "歌曲 ID",
+    "en": "Track ID",
+    "fr": "Identifiant du titre"
+  },
+  "单个歌单最多包含 5000 首歌曲": {
+    "zh-TW": "單個歌單最多包含 5000 首歌曲",
+    "en": "A playlist can contain up to 5,000 tracks",
+    "fr": "Une playlist peut contenir jusqu’à 5 000 titres"
+  },
+  "DeepSeek 地址必须使用 HTTP 或 HTTPS": {
+    "zh-TW": "DeepSeek 地址必須使用 HTTP 或 HTTPS",
+    "en": "The DeepSeek address must use HTTP or HTTPS",
+    "fr": "L’adresse DeepSeek doit utiliser HTTP ou HTTPS"
+  },
+  "配置保存失败": {
+    "zh-TW": "配置儲存失敗",
+    "en": "Could not save configuration",
+    "fr": "Impossible d’enregistrer la configuration"
+  },
+  "兼容解码失败": {
+    "zh-TW": "相容解碼失敗",
+    "en": "Compatible decoding failed",
+    "fr": "Échec du décodage compatible"
+  },
+  "本地偏好暂时无法读取": {
+    "zh-TW": "本地偏好暫時無法讀取",
+    "en": "Local preferences are temporarily unavailable",
+    "fr": "Les préférences locales sont temporairement indisponibles"
+  },
+  "歌单 ID": {
+    "zh-TW": "歌單 ID",
+    "en": "Playlist ID",
+    "fr": "Identifiant de playlist"
+  },
+  "歌单名称不能为空": {
+    "zh-TW": "歌單名稱不能為空",
+    "en": "Playlist name cannot be empty",
+    "fr": "Le nom de la playlist ne peut pas être vide"
+  },
+  "播放事件无效": {
+    "zh-TW": "播放事件無效",
+    "en": "Invalid playback event",
+    "fr": "Événement de lecture invalide"
+  },
+  "敏感设置必须通过专用接口保存": {
+    "zh-TW": "敏感設定必須通過專用介面儲存",
+    "en": "Sensitive settings must use their dedicated settings interface",
+    "fr": "Les réglages sensibles doivent utiliser leur interface dédiée"
+  },
+  "模型名称不能为空": {
+    "zh-TW": "模型名稱不能為空",
+    "en": "Model name cannot be empty",
+    "fr": "Le nom du modèle ne peut pas être vide"
+  },
+  "请更具体地描述想听的音乐": {
+    "zh-TW": "請更具體地描述想聽的音樂",
+    "en": "Describe the music you want in more detail",
+    "fr": "Décrivez plus précisément la musique souhaitée"
+  },
+  "描述请控制在 500 字以内": {
+    "zh-TW": "描述請控制在 500 字以內",
+    "en": "Keep your request within 500 characters",
+    "fr": "Limitez la demande à 500 caractères"
+  },
+  "音乐库为空，请先从 WebDAV 播放或同步歌曲": {
+    "zh-TW": "音樂庫為空，請先從 WebDAV 播放或同步歌曲",
+    "en": "The library is empty. Play or sync tracks from WebDAV first.",
+    "fr": "La bibliothèque est vide. Lisez ou synchronisez des titres depuis WebDAV."
+  },
+  "DeepSeek 请求超时，请稍后重试": {
+    "zh-TW": "DeepSeek 請求超時，請稍後重試",
+    "en": "The AI request timed out. Try again later.",
+    "fr": "La requête d’IA a expiré. Réessayez plus tard."
+  },
+  "本地缓存文件不存在": {
+    "zh-TW": "本地快取檔案不存在",
+    "en": "Local cache file not found",
+    "fr": "Fichier de cache local introuvable"
+  },
+  "拒绝读取未登记的本地文件": {
+    "zh-TW": "拒絕讀取未登記的本地檔案",
+    "en": "Reading an unregistered local file is not allowed",
+    "fr": "Lecture d’un fichier local non enregistré refusée"
+  },
+  "歌曲不存在或缺少 WebDAV 路径": {
+    "zh-TW": "歌曲不存在或缺少 WebDAV 路徑",
+    "en": "Track not found or missing WebDAV path",
+    "fr": "Titre introuvable ou chemin WebDAV manquant"
+  },
+  "流行": {
+    "zh-TW": "流行",
+    "en": "Pop",
+    "fr": "Pop"
+  },
+  "摇滚": {
+    "zh-TW": "搖滾",
+    "en": "Rock",
+    "fr": "Rock"
+  },
+  "民谣": {
+    "zh-TW": "民謠",
+    "en": "Folk",
+    "fr": "Folk"
+  },
+  "爵士": {
+    "zh-TW": "爵士",
+    "en": "Jazz",
+    "fr": "Jazz"
+  },
+  "电子": {
+    "zh-TW": "電子",
+    "en": "Electronic",
+    "fr": "Électronique"
+  },
+  "舞曲": {
+    "zh-TW": "舞曲",
+    "en": "Dance",
+    "fr": "Dance"
+  },
+  "嘻哈": {
+    "zh-TW": "嘻哈",
+    "en": "Hip-hop",
+    "fr": "Hip-hop"
+  },
+  "说唱": {
+    "zh-TW": "說唱",
+    "en": "Rap",
+    "fr": "Rap"
+  },
+  "古典": {
+    "zh-TW": "古典",
+    "en": "Classical",
+    "fr": "Classique"
+  },
+  "轻音乐": {
+    "zh-TW": "輕音樂",
+    "en": "Easy listening",
+    "fr": "Musique douce"
+  },
+  "氛围": {
+    "zh-TW": "氛圍",
+    "en": "Ambient",
+    "fr": "Ambient"
+  },
+  "金属": {
+    "zh-TW": "金屬",
+    "en": "Metal",
+    "fr": "Metal"
+  },
+  "原声": {
+    "zh-TW": "原聲",
+    "en": "Soundtrack",
+    "fr": "Bande originale"
+  },
+  "乡村": {
+    "zh-TW": "鄉村",
+    "en": "Country",
+    "fr": "Country"
+  },
+  "还在认识你的耳朵。多听几首、点一点喜欢，推荐会逐渐贴近你。": {
+    "zh-TW": "還在認識你的耳朵。多聽幾首、點一點喜歡，推薦會逐漸貼近你。",
+    "en": "Still getting to know your taste. Listen and add favorites to shape your recommendations.",
+    "fr": "Nous découvrons vos goûts. Écoutez et ajoutez des favoris pour affiner les recommandations."
+  },
+  "这是初步的音乐偏好，还会随着聆听变化。": {
+    "zh-TW": "這是初步的音樂偏好，還會隨著聆聽變化。",
+    "en": "These are early preferences and will evolve as you listen.",
+    "fr": "Ces premières préférences évolueront au fil des écoutes."
+  },
+  "根据近 180 天的聆听与当前收藏生成，近期行为权重更高。": {
+    "zh-TW": "根據近 180 天的聆聽與當前收藏生成，近期行為權重更高。",
+    "en": "Based on the last 180 days and your current favorites, with more weight on recent listening.",
+    "fr": "Selon les 180 derniers jours et vos favoris actuels, avec davantage de poids pour les écoutes récentes."
+  },
+  "收藏与近期聆听中出现的类型": {
+    "zh-TW": "收藏與近期聆聽中出現的型別",
+    "en": "A genre from your favorites and recent listening",
+    "fr": "Un genre présent dans vos favoris et écoutes récentes"
+  },
+  "换个口味 · 曲库中已有的类型，并非已确认的偏好": {
+    "zh-TW": "換個口味 · 曲庫中已有的型別，並非已確認的偏好",
+    "en": "Explore a genre in your library, not a confirmed preference",
+    "fr": "Explorez un genre de votre bibliothèque, sans préférence confirmée"
+  },
+  "来自你喜欢的音乐": {
+    "zh-TW": "來自你喜歡的音樂",
+    "en": "From your favorites",
+    "fr": "Parmi vos favoris"
+  },
+  "最近有认真听过这首歌": {
+    "zh-TW": "最近有認真聽過這首歌",
+    "en": "A track you recently listened to closely",
+    "fr": "Un titre récemment écouté avec attention"
+  },
+  "延续你对 {0} 的聆听": {
+    "zh-TW": "延續你對 {0} 的聆聽",
+    "en": "More from your listening to {0}",
+    "fr": "Dans la continuité de vos écoutes de {0}"
+  },
+  "与你近期的 {0} 偏好相近": {
+    "zh-TW": "與你近期的 {0} 偏好相近",
+    "en": "Close to your recent taste for {0}",
+    "fr": "Proche de votre goût récent pour {0}"
+  },
+  "换个口味，探索曲库中的音乐": {
+    "zh-TW": "換個口味，探索曲庫中的音樂",
+    "en": "Try something different from your library",
+    "fr": "Explorez d’autres titres de votre bibliothèque"
+  },
+  "探索推荐 · {0}": {
+    "zh-TW": "探索推薦 · {0}",
+    "en": "Discovery · {0}",
+    "fr": "Découverte · {0}"
+  },
+  "无效场景": {
+    "zh-TW": "無效場景",
+    "en": "Invalid scene",
+    "fr": "Contexte invalide"
+  },
+  "无效场景字段": {
+    "zh-TW": "無效場景欄位",
+    "en": "Invalid scene fields",
+    "fr": "Champs de contexte invalides"
+  },
+  "曲库中没有满足明确筛选条件的歌曲，请放宽类型、歌手或排除条件。": {
+    "zh-TW": "曲庫中沒有滿足明確篩選條件的歌曲，請放寬型別、歌手或排除條件。",
+    "en": "No tracks match the explicit filters. Broaden the genre, artist or exclusions.",
+    "fr": "Aucun titre ne correspond aux filtres explicites. Élargissez le genre, l’artiste ou les exclusions."
+  },
+  "部分歌曲缺少明确的语种标签，语言匹配需要试听确认；不会仅凭中文歌名判定华语。": {
+    "zh-TW": "部分歌曲缺少明確的語種標籤，語言匹配需要試聽確認；不會僅憑中文歌名判定華語。",
+    "en": "Some tracks lack language tags. Confirm by listening; a Chinese title alone does not prove the audio language.",
+    "fr": "Certains titres n’ont pas d’étiquette de langue. Vérifiez à l’écoute ; un titre chinois ne prouve pas la langue chantée."
+  },
+  "场景匹配根据歌曲信息和类型推测，未分析音频节奏或 BPM。": {
+    "zh-TW": "場景匹配根據歌曲資訊和型別推測，未分析音訊節奏或 BPM。",
+    "en": "Scene matching is inferred from metadata and genre; rhythm and BPM have not been analyzed.",
+    "fr": "Le contexte est déduit des métadonnées et du genre ; rythme et BPM ne sont pas analysés."
+  },
+  "Windows 凭据加密不可用，未保存密钥": {
+    "zh-TW": "Windows 憑據加密不可用，未儲存金鑰",
+    "en": "Windows credential encryption is unavailable. The key was not saved.",
+    "fr": "Le chiffrement Windows est indisponible. La clé n’a pas été enregistrée."
+  },
+  "WebDAV 请求超时，请检查服务器或网络连接": {
+    "zh-TW": "WebDAV 請求超時，請檢查伺服器或網路連線",
+    "en": "WebDAV timed out. Check the server and connection.",
+    "fr": "Délai WebDAV dépassé. Vérifiez le serveur et la connexion."
+  },
+  "请输入 WebDAV 地址": {
+    "zh-TW": "請輸入 WebDAV 地址",
+    "en": "Enter a WebDAV address",
+    "fr": "Saisissez une adresse WebDAV"
+  },
+  "WebDAV 地址必须使用 HTTP 或 HTTPS": {
+    "zh-TW": "WebDAV 地址必須使用 HTTP 或 HTTPS",
+    "en": "The WebDAV address must use HTTP or HTTPS",
+    "fr": "L’adresse WebDAV doit utiliser HTTP ou HTTPS"
+  },
+  "请不要在 WebDAV 地址中包含用户名或密码": {
+    "zh-TW": "請不要在 WebDAV 地址中包含使用者名稱或密碼",
+    "en": "Do not include a username or password in the WebDAV URL",
+    "fr": "N’incluez pas de nom d’utilisateur ou de mot de passe dans l’URL WebDAV"
+  },
+  "拒绝访问 WebDAV 服务器之外的地址": {
+    "zh-TW": "拒絕訪問 WebDAV 伺服器之外的地址",
+    "en": "Addresses outside the configured WebDAV server are blocked",
+    "fr": "Les adresses hors du serveur WebDAV configuré sont bloquées"
+  },
+  "连接失败（HTTP {0}）": {
+    "zh-TW": "連線失敗（HTTP {0}）",
+    "en": "Connection failed (HTTP {0})",
+    "fr": "Échec de connexion (HTTP {0})"
+  },
+  "读取目录失败（HTTP {0}）": {
+    "zh-TW": "讀取目錄失敗（HTTP {0}）",
+    "en": "Could not read folder (HTTP {0})",
+    "fr": "Lecture du dossier impossible (HTTP {0})"
+  },
+  "下载失败（HTTP {0}）": {
+    "zh-TW": "下載失敗（HTTP {0}）",
+    "en": "Download failed (HTTP {0})",
+    "fr": "Échec du téléchargement (HTTP {0})"
+  },
+  "缓存上限不能低于 128 MB": {
+    "zh-TW": "快取上限不能低於 128 MB",
+    "en": "The cache limit must be at least 128 MB",
+    "fr": "La limite du cache doit être d’au moins 128 Mo"
+  },
+  "该歌曲大于当前缓存上限，请先在设置中调大缓存": {
+    "zh-TW": "該歌曲大於當前快取上限，請先在設定中調大快取",
+    "en": "This track exceeds the cache limit. Increase it in settings.",
+    "fr": "Ce titre dépasse la limite du cache. Augmentez-la dans les réglages."
+  },
+  "只能注册音乐文件": {
+    "zh-TW": "只能註冊音樂檔案",
+    "en": "Only audio files can be added",
+    "fr": "Seuls les fichiers audio peuvent être ajoutés"
+  },
+  "歌曲缺少远程路径": {
+    "zh-TW": "歌曲缺少遠端路徑",
+    "en": "The track has no remote path",
+    "fr": "Le titre n’a pas de chemin distant"
+  },
+  "下载不完整（应为 {0} 字节，实际 {1} 字节）": {
+    "zh-TW": "下載不完整（應為 {0} 位元組，實際 {1} 位元組）",
+    "en": "Incomplete download (expected {0} bytes, received {1})",
+    "fr": "Téléchargement incomplet ({0} octets attendus, {1} reçus)"
+  },
+  "正在扫描 WebDAV…": {
+    "zh-TW": "正在掃描 WebDAV…",
+    "en": "Scanning WebDAV…",
+    "fr": "Analyse de WebDAV…"
+  },
+  "目录数量超过 10000，已停止扫描": {
+    "zh-TW": "目錄數量超過 10000，已停止掃描",
+    "en": "Scan stopped after more than 10,000 folders",
+    "fr": "Analyse arrêtée au-delà de 10 000 dossiers"
+  },
+  "WebDAV 根目录": {
+    "zh-TW": "WebDAV 根目錄",
+    "en": "WebDAV root",
+    "fr": "Racine WebDAV"
+  },
+  "读取失败": {
+    "zh-TW": "讀取失敗",
+    "en": "Read failed",
+    "fr": "Échec de lecture"
+  },
+  "未分类专辑": {
+    "zh-TW": "未分類專輯",
+    "en": "Unsorted album",
+    "fr": "Album non classé"
+  },
+  "所有艺术家": {
+    "zh-TW": "所有藝術家",
+    "en": "All artists",
+    "fr": "Tous les artistes"
+  },
+  "所有专辑": {
+    "zh-TW": "所有專輯",
+    "en": "All albums",
+    "fr": "Tous les albums"
+  },
+  "{0} 首歌曲": {
+    "zh-TW": "{0} 首歌曲",
+    "en": "Tracks · {0}",
+    "fr": "Titres · {0}"
+  },
+  "{0} 张专辑": {
+    "zh-TW": "{0} 張專輯",
+    "en": "Albums · {0}",
+    "fr": "Albums · {0}"
+  },
+  "{0} 位艺术家": {
+    "zh-TW": "{0} 位藝術家",
+    "en": "Artists · {0}",
+    "fr": "Artistes · {0}"
+  },
+  "排序": {
+    "zh-TW": "排序",
+    "en": "Sort",
+    "fr": "Trier"
+  },
+  "按名称": {
+    "zh-TW": "按名稱",
+    "en": "By name",
+    "fr": "Par nom"
+  },
+  "按艺术家": {
+    "zh-TW": "按藝術家",
+    "en": "By artist",
+    "fr": "Par artiste"
+  },
+  "查看 {0}": {
+    "zh-TW": "檢視 {0}",
+    "en": "View {0}",
+    "fr": "Voir {0}"
+  },
+  "曲库还是空的": {
+    "zh-TW": "曲庫還是空的",
+    "en": "Your library is empty",
+    "fr": "Votre bibliothèque est vide"
+  },
+  "同步音乐后，它们会整理在这里。": {
+    "zh-TW": "同步音樂後，它們會整理在這裡。",
+    "en": "Sync your music to see it organized here.",
+    "fr": "Synchronisez votre musique pour la retrouver ici."
+  },
+  "把你的音乐，带到这里。": {
+    "zh-TW": "把你的音樂，帶到這裡。",
+    "en": "Bring your music here.",
+    "fr": "Votre musique a sa place ici."
+  },
+  "音乐源已就绪。同步曲库，开始第一首。": {
+    "zh-TW": "音樂源已就緒。同步曲庫，開始第一首。",
+    "en": "Your source is ready. Sync the library and start listening.",
+    "fr": "Votre source est prête. Synchronisez et commencez l’écoute."
+  },
+  "连接你的 WebDAV 音乐库，收藏与聆听从这里开始。": {
+    "zh-TW": "連線你的 WebDAV 音樂庫，收藏與聆聽從這裡開始。",
+    "en": "Connect your WebDAV library and make yourself at home.",
+    "fr": "Connectez votre bibliothèque WebDAV pour commencer."
+  },
+  "浏览并同步": {
+    "zh-TW": "瀏覽並同步",
+    "en": "Browse and sync",
+    "fr": "Parcourir et synchroniser"
+  },
+  "连接音乐库": {
+    "zh-TW": "連線音樂庫",
+    "en": "Connect library",
+    "fr": "Connecter la bibliothèque"
+  },
+  "你的收藏，你的音乐空间。": {
+    "zh-TW": "你的收藏，你的音樂空間。",
+    "en": "Your collection. Your music space.",
+    "fr": "Votre collection. Votre espace musical."
+  },
+  "为你精选": {
+    "zh-TW": "為你精選",
+    "en": "Picked for you",
+    "fr": "Pour vous"
+  },
+  "熟悉的旋律，也有久违的惊喜。": {
+    "zh-TW": "熟悉的旋律，也有久違的驚喜。",
+    "en": "Familiar favorites and welcome discoveries.",
+    "fr": "Des favoris familiers et de belles découvertes."
+  },
+  "播放 {0}": {
+    "zh-TW": "播放 {0}",
+    "en": "Play {0}",
+    "fr": "Lire {0}"
+  },
+  "聆听偏好": {
+    "zh-TW": "聆聽偏好",
+    "en": "Listening preferences",
+    "fr": "Préférences d’écoute"
+  },
+  "你的聆听偏好": {
+    "zh-TW": "你的聆聽偏好",
+    "en": "Your listening taste",
+    "fr": "Vos goûts musicaux"
+  },
+  "只在本机学习": {
+    "zh-TW": "只在本機學習",
+    "en": "Learned on this device",
+    "fr": "Apprentissage local"
+  },
+  "最近更靠近 {0}": {
+    "zh-TW": "最近更靠近 {0}",
+    "en": "Recently drawn to {0}",
+    "fr": "En ce moment, plutôt {0}"
+  },
+  "探索": {
+    "zh-TW": "探索",
+    "en": "Explore",
+    "fr": "Découvrir"
+  },
+  "偏好": {
+    "zh-TW": "偏好",
+    "en": "Preference",
+    "fr": "Préférence"
+  },
+  "依据与数据完整度": {
+    "zh-TW": "依據與資料完整度",
+    "en": "Evidence and metadata coverage",
+    "fr": "Indices et couverture des métadonnées"
+  },
+  "近 180 天：{0} 次有效聆听，其中完整播放 {1} 次、切歌 {2} 次。收藏加分，早早跳过减分，旧行为逐渐降低权重。失败的播放不计入喜好。": {
+    "zh-TW": "近 180 天：{0} 次有效聆聽，其中完整播放 {1} 次、切歌 {2} 次。收藏加分，早早跳過減分，舊行為逐漸降低權重。失敗的播放不計入喜好。",
+    "en": "Last 180 days: {0} meaningful sessions, {1} completions and {2} skips. Favorites add weight, early skips reduce it, and old signals fade. Failed playback is not a preference.",
+    "fr": "Sur 180 jours : {0} écoutes significatives, {1} terminées et {2} interrompues. Les favoris comptent positivement, les sauts précoces négativement, et les anciens signaux s’atténuent. Les échecs de lecture ne comptent pas."
+  },
+  "曲库 {0} 首中，{1} 首有类型标签。没有标签时不臆测风格；“探索”仅表示可尝试的曲库类型。": {
+    "zh-TW": "曲庫 {0} 首中，{1} 首有型別標籤。沒有標籤時不臆測風格；“探索”僅表示可嘗試的曲庫型別。",
+    "en": "{1} of {0} tracks have genre tags. Missing styles are not guessed; Explore suggests genres already in your library.",
+    "fr": "{1} titres sur {0} ont une étiquette de genre. Aucun style n’est inventé ; Découvrir propose des genres déjà présents."
+  },
+  "{0}：{1} 首歌曲提供正向依据 · 曲库有 {2} 首": {
+    "zh-TW": "{0}：{1} 首歌曲提供正向依據 · 曲庫有 {2} 首",
+    "en": "{0}: positive signals from {1} tracks · {2} in your library",
+    "fr": "{0} : indices positifs pour {1} titres · {2} dans la bibliothèque"
+  },
+  "再听一次": {
+    "zh-TW": "再聽一次",
+    "en": "Listen again",
+    "fr": "Réécouter"
+  },
+  "留一点时间，听张专辑": {
+    "zh-TW": "留一點時間，聽張專輯",
+    "en": "Make time for an album",
+    "fr": "Prenez le temps d’un album"
+  },
+  "音乐库": {
+    "zh-TW": "音樂庫",
+    "en": "Music library",
+    "fr": "Bibliothèque musicale"
+  },
+  "播放专辑 {0}": {
+    "zh-TW": "播放專輯 {0}",
+    "en": "Play album {0}",
+    "fr": "Lire l’album {0}"
+  },
+  "所有歌单": {
+    "zh-TW": "所有歌單",
+    "en": "All playlists",
+    "fr": "Toutes les playlists"
+  },
+  "为这个歌单添加一些音乐": {
+    "zh-TW": "為這個歌單新增一些音樂",
+    "en": "Add some music to this playlist",
+    "fr": "Ajoutez de la musique à cette playlist"
+  },
+  "{0} 个歌单": {
+    "zh-TW": "{0} 個歌單",
+    "en": "Playlists · {0}",
+    "fr": "Playlists · {0}"
+  },
+  "打开歌单 {0}": {
+    "zh-TW": "開啟歌單 {0}",
+    "en": "Open playlist {0}",
+    "fr": "Ouvrir la playlist {0}"
+  },
+  "每一种心情，都可以是一张歌单。": {
+    "zh-TW": "每一種心情，都可以是一張歌單。",
+    "en": "A playlist for every mood.",
+    "fr": "Une playlist pour chaque humeur."
+  },
+  "亲手挑选，或让 DeepSeek 帮你寻找适合此刻的音乐。": {
+    "zh-TW": "親手挑選，或讓 DeepSeek 幫你尋找適合此刻的音樂。",
+    "en": "Pick your own tracks, or let AI help you find the right music.",
+    "fr": "Choisissez vos titres ou laissez l’IA vous aider."
+  },
+  "创建歌单": {
+    "zh-TW": "建立歌單",
+    "en": "Create playlist",
+    "fr": "Créer une playlist"
+  },
+  "请填写 WebDAV 地址": {
+    "zh-TW": "請填寫 WebDAV 地址",
+    "en": "Enter the WebDAV address",
+    "fr": "Saisissez l’adresse WebDAV"
+  },
+  "WebDAV 连接失败": {
+    "zh-TW": "WebDAV 連線失敗",
+    "en": "WebDAV connection failed",
+    "fr": "Échec de connexion WebDAV"
+  },
+  "WebDAV 已连接并安全保存": {
+    "zh-TW": "WebDAV 已連線並安全儲存",
+    "en": "WebDAV connected and saved securely",
+    "fr": "WebDAV connecté et enregistré en toute sécurité"
+  },
+  "缓存上限已设为 {0} GB": {
+    "zh-TW": "快取上限已設為 {0} GB",
+    "en": "Cache limit set to {0} GB",
+    "fr": "Limite du cache fixée à {0} Go"
+  },
+  "设置失败": {
+    "zh-TW": "設定失敗",
+    "en": "Could not apply settings",
+    "fr": "Impossible d’appliquer les réglages"
+  },
+  "已清理 {0} 个文件，释放 {1}": {
+    "zh-TW": "已清理 {0} 個檔案，釋放 {1}",
+    "en": "Removed {0} cached files, freed {1}",
+    "fr": "{0} fichiers de cache supprimés, {1} libérés"
+  },
+  "缓存清理失败": {
+    "zh-TW": "快取清理失敗",
+    "en": "Could not clear the cache",
+    "fr": "Impossible de vider le cache"
+  },
+  "缓存清理失败，请重试。": {
+    "zh-TW": "快取清理失敗，請重試。",
+    "en": "Could not clear the cache. Try again.",
+    "fr": "Impossible de vider le cache. Réessayez."
+  },
+  "WebDAV 音乐源": {
+    "zh-TW": "WebDAV 音樂源",
+    "en": "WebDAV music source",
+    "fr": "Source musicale WebDAV"
+  },
+  "支持标准 WebDAV 服务，凭据由 Windows 加密": {
+    "zh-TW": "支援標準 WebDAV 服務，憑據由 Windows 加密",
+    "en": "Standard WebDAV services; credentials encrypted by Windows",
+    "fr": "Services WebDAV standard ; identifiants chiffrés par Windows"
+  },
+  "服务器地址": {
+    "zh-TW": "伺服器地址",
+    "en": "Server address",
+    "fr": "Adresse du serveur"
+  },
+  "用户名": {
+    "zh-TW": "使用者名稱",
+    "en": "Username",
+    "fr": "Nom d’utilisateur"
+  },
+  "密码": {
+    "zh-TW": "密碼",
+    "en": "Password",
+    "fr": "Mot de passe"
+  },
+  "隐藏 WebDAV 密码": {
+    "zh-TW": "隱藏 WebDAV 密碼",
+    "en": "Hide WebDAV password",
+    "fr": "Masquer le mot de passe WebDAV"
+  },
+  "显示 WebDAV 密码": {
+    "zh-TW": "顯示 WebDAV 密碼",
+    "en": "Show WebDAV password",
+    "fr": "Afficher le mot de passe WebDAV"
+  },
+  "密码仅保存在当前 Windows 用户的加密存储中。": {
+    "zh-TW": "密碼僅儲存在當前 Windows 使用者的加密儲存中。",
+    "en": "The password is stored encrypted for the current Windows user only.",
+    "fr": "Le mot de passe est chiffré pour l’utilisateur Windows actuel uniquement."
+  },
+  "测试并保存": {
+    "zh-TW": "測試並儲存",
+    "en": "Test and save",
+    "fr": "Tester et enregistrer"
+  },
+  "音频兼容解码": {
+    "zh-TW": "音訊相容解碼",
+    "en": "Audio compatibility",
+    "fr": "Compatibilité audio"
+  },
+  "M4A / MP4 / ALAC 使用内置 FFmpeg；其他格式在浏览器解码失败时自动回退": {
+    "zh-TW": "M4A / MP4 / ALAC 使用內建 FFmpeg；其他格式在瀏覽器解碼失敗時自動回退",
+    "en": "M4A / MP4 / ALAC use bundled FFmpeg; other formats fall back if browser decoding fails",
+    "fr": "M4A / MP4 / ALAC utilisent FFmpeg intégré ; les autres formats y recourent si le décodage du navigateur échoue"
+  },
+  "音频只在本机处理，原文件不会修改。首次播放需下载并转换，之后复用无损 FLAC 缓存。独立解码缓存上限 512 MB，清空缓存时一并清理；损坏或受 DRM 保护的文件无法保证播放。": {
+    "zh-TW": "音訊只在本機處理，原檔案不會修改。首次播放需下載並轉換，之後複用無損 FLAC 快取。獨立解碼快取上限 512 MB，清空快取時一併清理；損壞或受 DRM 保護的檔案無法保證播放。",
+    "en": "Audio is processed locally; originals are unchanged. First playback downloads and converts the file, then reuses a lossless FLAC cache. Decoder cache: 512 MB, cleared with the main cache. Damaged or DRM-protected files may not play.",
+    "fr": "Traitement local, sans modifier les originaux. La première lecture télécharge et convertit le fichier, puis réutilise un cache FLAC sans perte. Cache de décodage : 512 Mo, vidé avec le cache principal. Lecture non garantie pour les fichiers endommagés ou protégés par DRM."
+  },
+  "智能缓存": {
+    "zh-TW": "智慧快取",
+    "en": "Smart cache",
+    "fr": "Cache intelligent"
+  },
+  "按最近使用自动清理": {
+    "zh-TW": "按最近使用自動清理",
+    "en": "Automatically clears least recently used files",
+    "fr": "Nettoyage des fichiers les moins récemment utilisés"
+  },
+  "已使用 · {0} 首已缓存": {
+    "zh-TW": "已使用 · {0} 首已快取",
+    "en": "Used · {0} tracks cached",
+    "fr": "Utilisé · {0} titres en cache"
+  },
+  "缓存上限": {
+    "zh-TW": "快取上限",
+    "en": "Cache limit",
+    "fr": "Limite du cache"
+  },
+  "应用上限": {
+    "zh-TW": "應用上限",
+    "en": "Apply limit",
+    "fr": "Appliquer la limite"
+  },
+  "清空缓存": {
+    "zh-TW": "清空快取",
+    "en": "Clear cache",
+    "fr": "Vider le cache"
+  },
+  "键盘快捷键": {
+    "zh-TW": "鍵盤快捷鍵",
+    "en": "Keyboard shortcuts",
+    "fr": "Raccourcis clavier"
+  },
+  "双手留在键盘上，也能轻松聆听": {
+    "zh-TW": "雙手留在鍵盤上，也能輕鬆聆聽",
+    "en": "Keep listening without leaving the keyboard",
+    "fr": "Écoutez sans quitter le clavier"
+  },
+  "播放 / 暂停": {
+    "zh-TW": "播放 / 暫停",
+    "en": "Play / pause",
+    "fr": "Lecture / pause"
+  },
+  "快退 / 快进 5 秒": {
+    "zh-TW": "快退 / 快進 5 秒",
+    "en": "Seek back / forward 5 seconds",
+    "fr": "Reculer / avancer de 5 secondes"
+  },
+  "关闭浮层": {
+    "zh-TW": "關閉浮層",
+    "en": "Close overlay",
+    "fr": "Fermer le panneau"
+  },
+  "清空本地缓存？": {
+    "zh-TW": "清空本地快取？",
+    "en": "Clear the local cache?",
+    "fr": "Vider le cache local ?"
+  },
+  "已下载的音频将被移除，下次播放时需要重新联网。曲库、歌单与收藏会保留。": {
+    "zh-TW": "已下載的音訊將被移除，下次播放時需要重新聯網。曲庫、歌單與收藏會保留。",
+    "en": "Downloaded audio will be removed. Playback will require a connection again. Your library, playlists and favorites will be kept.",
+    "fr": "Les fichiers téléchargés seront supprimés. Une connexion sera nécessaire à la prochaine lecture. Bibliothèque, playlists et favoris seront conservés."
+  },
+  "清理中…": {
+    "zh-TW": "清理中…",
+    "en": "Clearing…",
+    "fr": "Nettoyage…"
+  },
+  "连接你的 WebDAV": {
+    "zh-TW": "連線你的 WebDAV",
+    "en": "Connect your WebDAV",
+    "fr": "Connecter votre WebDAV"
+  },
+  "支持 Nextcloud、坚果云、群晖以及其他标准 WebDAV 服务。": {
+    "zh-TW": "支援 Nextcloud、堅果雲、群暉以及其他標準 WebDAV 服務。",
+    "en": "Supports Nextcloud, Synology and other standard WebDAV services.",
+    "fr": "Compatible avec Nextcloud, Synology et les autres services WebDAV standard."
+  },
+  "配置服务器": {
+    "zh-TW": "配置伺服器",
+    "en": "Configure server",
+    "fr": "Configurer le serveur"
+  },
+  "返回上级目录": {
+    "zh-TW": "返回上級目錄",
+    "en": "Parent folder",
+    "fr": "Dossier parent"
+  },
+  "音乐根目录": {
+    "zh-TW": "音樂根目錄",
+    "en": "Music root folder",
+    "fr": "Dossier racine de musique"
+  },
+  "正在扫描…": {
+    "zh-TW": "正在掃描…",
+    "en": "Scanning…",
+    "fr": "Analyse…"
+  },
+  "同步曲库": {
+    "zh-TW": "同步曲庫",
+    "en": "Sync library",
+    "fr": "Synchroniser"
+  },
+  "刷新目录": {
+    "zh-TW": "重新整理目錄",
+    "en": "Refresh folder",
+    "fr": "Actualiser le dossier"
+  },
+  "名称": {
+    "zh-TW": "名稱",
+    "en": "Name",
+    "fr": "Nom"
+  },
+  "类型": {
+    "zh-TW": "型別",
+    "en": "Type",
+    "fr": "Type"
+  },
+  "大小": {
+    "zh-TW": "大小",
+    "en": "Size",
+    "fr": "Taille"
+  },
+  "文件夹": {
+    "zh-TW": "資料夾",
+    "en": "Folder",
+    "fr": "Dossier"
+  },
+  "目录": {
+    "zh-TW": "目錄",
+    "en": "Directory",
+    "fr": "Répertoire"
+  },
+  "音频": {
+    "zh-TW": "音訊",
+    "en": "Audio",
+    "fr": "Audio"
+  },
+  "当前目录没有音乐": {
+    "zh-TW": "當前目錄沒有音樂",
+    "en": "No music in this folder",
+    "fr": "Aucune musique dans ce dossier"
+  },
+  "Aurora 只展示文件夹和支持的音频文件。": {
+    "zh-TW": "Aurora 只展示資料夾和支援的音訊檔案。",
+    "en": "Aurora displays folders and supported audio files only.",
+    "fr": "Aurora affiche uniquement les dossiers et les fichiers audio pris en charge."
+  },
+  "正在加载音频…": {
+    "zh-TW": "正在載入音訊…",
+    "en": "Loading audio…",
+    "fr": "Chargement audio…"
+  },
+  "正在本地兼容解码，首次播放需要下载原文件…": {
+    "zh-TW": "正在本地相容解碼，首次播放需要下載原檔案…",
+    "en": "Decoding locally. First playback requires downloading the original…",
+    "fr": "Décodage local. La première lecture nécessite le téléchargement de l’original…"
+  },
+  "无法创建 WebDAV 播放流": {
+    "zh-TW": "無法建立 WebDAV 播放流",
+    "en": "Could not open the WebDAV audio stream",
+    "fr": "Impossible d’ouvrir le flux audio WebDAV"
+  },
+  "无有效文件路径": {
+    "zh-TW": "無有效檔案路徑",
+    "en": "No valid file path",
+    "fr": "Aucun chemin de fichier valide"
+  },
+  "无法获取音频 URL": {
+    "zh-TW": "無法獲取音訊 URL",
+    "en": "Could not obtain the audio URL",
+    "fr": "Impossible d’obtenir l’URL audio"
+  },
+  "无法解码 {0} 音频（{1}）": {
+    "zh-TW": "無法解碼 {0} 音訊（{1}）",
+    "en": "Could not decode {0} audio ({1})",
+    "fr": "Impossible de décoder l’audio {0} ({1})"
+  },
+  "播放失败: ": {
+    "zh-TW": "播放失敗: ",
+    "en": "Playback failed: ",
+    "fr": "Échec de lecture : "
+  },
+  "兼容音频加载超时，请重新播放或检查缓存空间": {
+    "zh-TW": "相容音訊載入超時，請重新播放或檢查快取空間",
+    "en": "Decoded audio timed out. Retry playback or check cache space.",
+    "fr": "Délai de chargement dépassé. Relancez la lecture ou vérifiez l’espace du cache."
+  },
+  "播放异常: {0}": {
+    "zh-TW": "播放異常: {0}",
+    "en": "Playback error: {0}",
+    "fr": "Erreur de lecture : {0}"
+  },
+  "浏览器解码失败，正在本地兼容解码…": {
+    "zh-TW": "瀏覽器解碼失敗，正在本地相容解碼…",
+    "en": "Browser decoding failed. Decoding locally…",
+    "fr": "Le décodage du navigateur a échoué. Décodage local…"
+  },
+  "兼容解码失败，请重试": {
+    "zh-TW": "相容解碼失敗，請重試",
+    "en": "Compatible decoding failed. Try again.",
+    "fr": "Échec du décodage compatible. Réessayez."
+  },
+  "语言": {
+    "zh-TW": "語言",
+    "en": "Language",
+    "fr": "Langue"
+  },
+  "界面语言": {
+    "zh-TW": "介面語言",
+    "en": "Interface language",
+    "fr": "Langue de l’interface"
+  },
+  "立即生效，不更改歌曲标题、歌词和歌单名称。": {
+    "zh-TW": "立即生效，不更改歌曲標題、歌詞和歌單名稱。",
+    "en": "Applies immediately. Track titles, lyrics and playlist names stay unchanged.",
+    "fr": "Application immédiate. Les titres, paroles et noms de playlists restent inchangés."
+  },
+  "使用指南": {
+    "zh-TW": "使用指南",
+    "en": "User guide",
+    "fr": "Guide d’utilisation"
+  },
+  "开源许可": {
+    "zh-TW": "開源許可",
+    "en": "Open-source license",
+    "fr": "Licence libre"
+  }
+}

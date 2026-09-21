@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "composite": true,
+    "target": "ES2020",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "jsx": "react-jsx",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": [
+    "src/App.tsx",
+    "src/main.tsx",
+    "src/env.d.ts",
+    "src/components/**/*.tsx",
+    "src/pages/**/*.tsx",
+    "src/services/**/*.ts",
+    "src/stores/**/*.ts",
+    "src/types/**/*.ts",
+    "src/i18n/**/*.ts",
+    "src/i18n/**/*.json"
+  ]
+}

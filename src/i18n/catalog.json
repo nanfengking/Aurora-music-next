@@ -1,0 +1,1650 @@
+{
+  "专辑": [
+    "Albums",
+    "Albums"
+  ],
+  "艺术家": [
+    "Artists",
+    "Artistes"
+  ],
+  "最近播放": [
+    "Recently played",
+    "Écoutes récentes"
+  ],
+  "现在就听": [
+    "Listen now",
+    "Écouter"
+  ],
+  "歌曲": [
+    "Songs",
+    "Titres"
+  ],
+  "歌单": [
+    "Playlists",
+    "Playlists"
+  ],
+  "喜欢的音乐": [
+    "Favorites",
+    "Favoris"
+  ],
+  "设置": [
+    "Settings",
+    "Réglages"
+  ],
+  "地址待验证": [
+    "Address not verified",
+    "Adresse non vérifiée"
+  ],
+  "WebDAV 目录读取失败": [
+    "Could not read the WebDAV folder",
+    "Impossible de lire le dossier WebDAV"
+  ],
+  "音乐库加载失败，请重新启动应用。": [
+    "Could not load the library. Please restart the app.",
+    "Impossible de charger la bibliothèque. Redémarrez l’application."
+  ],
+  "收藏状态更新失败": [
+    "Could not update favorites",
+    "Impossible de modifier les favoris"
+  ],
+  "已添加到喜欢的音乐": [
+    "Added to favorites",
+    "Ajouté aux favoris"
+  ],
+  "已取消喜欢": [
+    "Removed from favorites",
+    "Retiré des favoris"
+  ],
+  "无法将歌曲加入音乐库": [
+    "Could not add the track to the library",
+    "Impossible d’ajouter le titre à la bibliothèque"
+  ],
+  "曲库同步完成：发现 {0} 首歌曲，扫描 {1} 个目录{2}": [
+    "Library synced: {0} tracks found across {1} folders{2}",
+    "Bibliothèque synchronisée : {0} titres trouvés dans {1} dossiers{2}"
+  ],
+  "，{0} 个目录失败": [
+    "; {0} folders could not be read",
+    " ; {0} dossiers illisibles"
+  ],
+  "曲库同步失败": [
+    "Library sync failed",
+    "Échec de la synchronisation"
+  ],
+  "歌单创建失败": [
+    "Could not create the playlist",
+    "Impossible de créer la playlist"
+  ],
+  "歌单已删除": [
+    "Playlist deleted",
+    "Playlist supprimée"
+  ],
+  "歌单删除失败": [
+    "Could not delete the playlist",
+    "Impossible de supprimer la playlist"
+  ],
+  "删除失败，请重试。": [
+    "Could not delete. Please try again.",
+    "Suppression impossible. Réessayez."
+  ],
+  "已添加到歌单": [
+    "Added to playlist",
+    "Ajouté à la playlist"
+  ],
+  "添加失败": [
+    "Could not add the track",
+    "Impossible d’ajouter le titre"
+  ],
+  "移除失败": [
+    "Could not remove the track",
+    "Impossible de retirer le titre"
+  ],
+  "智能歌单生成失败": [
+    "Could not generate the playlist",
+    "Impossible de générer la playlist"
+  ],
+  "找到 {0} 首歌曲": [
+    "Results: {0} tracks",
+    "Résultats : {0} titres"
+  ],
+  "没有匹配的歌曲": [
+    "No matching tracks",
+    "Aucun titre correspondant"
+  ],
+  "从第一首开始": [
+    "Your listening story starts here",
+    "Votre première écoute commence ici"
+  ],
+  "播放全部": [
+    "Play all",
+    "Tout écouter"
+  ],
+  "把心动的音乐收藏在这里": [
+    "Keep the music you love here",
+    "Retrouvez ici la musique que vous aimez"
+  ],
+  "Aurora 首页": [
+    "Aurora home",
+    "Accueil Aurora"
+  ],
+  "聆听": [
+    "Listening",
+    "Écoute"
+  ],
+  "资料库": [
+    "Library",
+    "Bibliothèque"
+  ],
+  "我的歌单": [
+    "My playlists",
+    "Mes playlists"
+  ],
+  "新建歌单": [
+    "New playlist",
+    "Nouvelle playlist"
+  ],
+  "创建第一张歌单": [
+    "Create your first playlist",
+    "Créer une playlist"
+  ],
+  "尚未连接": [
+    "Not connected",
+    "Non connecté"
+  ],
+  "你的音乐，始终在这里。": [
+    "Your music, always here.",
+    "Votre musique, toujours là."
+  ],
+  "切换明暗主题": [
+    "Switch light and dark theme",
+    "Changer le thème clair ou sombre"
+  ],
+  "外观": [
+    "Appearance",
+    "Apparence"
+  ],
+  "搜索音乐": [
+    "Search music",
+    "Rechercher de la musique"
+  ],
+  "搜索当前目录": [
+    "Search this folder",
+    "Rechercher dans ce dossier"
+  ],
+  "搜索你的音乐": [
+    "Search your music",
+    "Rechercher dans votre musique"
+  ],
+  "清除搜索": [
+    "Clear search",
+    "Effacer la recherche"
+  ],
+  "搜索": [
+    "Search",
+    "Recherche"
+  ],
+  "正在读取音乐库…": [
+    "Loading your library…",
+    "Chargement de la bibliothèque…"
+  ],
+  "关闭提示": [
+    "Dismiss notification",
+    "Fermer la notification"
+  ],
+  "添加到歌单": [
+    "Add to playlist",
+    "Ajouter à une playlist"
+  ],
+  "歌单已保存": [
+    "Playlist saved",
+    "Playlist enregistrée"
+  ],
+  "删除这张歌单？": [
+    "Delete this playlist?",
+    "Supprimer cette playlist ?"
+  ],
+  "将删除歌单“{0}”，音乐库中的歌曲会保留。": [
+    "The playlist “{0}” will be deleted. Tracks in your library will be kept.",
+    "La playlist « {0} » sera supprimée. Les titres de votre bibliothèque seront conservés."
+  ],
+  "取消": [
+    "Cancel",
+    "Annuler"
+  ],
+  "正在删除…": [
+    "Deleting…",
+    "Suppression…"
+  ],
+  "删除歌单": [
+    "Delete playlist",
+    "Supprimer la playlist"
+  ],
+  "播放队列": [
+    "Play queue",
+    "File d’attente"
+  ],
+  "接下来播放": [
+    "Up next",
+    "À suivre"
+  ],
+  "关闭队列": [
+    "Close queue",
+    "Fermer la file d’attente"
+  ],
+  "播放一首音乐，从这里继续。": [
+    "Play a track to start your queue.",
+    "Écoutez un titre pour commencer."
+  ],
+  "未知艺术家": [
+    "Unknown artist",
+    "Artiste inconnu"
+  ],
+  "没有找到匹配结果，可调整歌名、艺术家或专辑后重试。": [
+    "No matches. Try editing the title, artist or album.",
+    "Aucun résultat. Modifiez le titre, l’artiste ou l’album, puis réessayez."
+  ],
+  "检索失败": [
+    "Search failed",
+    "Échec de la recherche"
+  ],
+  "检索失败，请稍后重试。": [
+    "Search failed. Please try again later.",
+    "La recherche a échoué. Réessayez plus tard."
+  ],
+  "保存失败": [
+    "Could not save",
+    "Enregistrement impossible"
+  ],
+  "查找音乐资源": [
+    "Find lyrics and artwork",
+    "Rechercher des paroles et des images"
+  ],
+  "歌词": [
+    "Lyrics",
+    "Paroles"
+  ],
+  "封面": [
+    "Cover",
+    "Pochette"
+  ],
+  "背景": [
+    "Background",
+    "Arrière-plan"
+  ],
+  "歌名": [
+    "Title",
+    "Titre"
+  ],
+  "只发送上述信息。请确认匹配版本和资源使用权限。": [
+    "Only the information above is sent. Check the version and your rights to use the resource.",
+    "Seules les informations ci-dessus sont envoyées. Vérifiez la version et les droits d’utilisation."
+  ],
+  "正在处理…": [
+    "Working…",
+    "Traitement…"
+  ],
+  "搜索资源": [
+    "Search resources",
+    "Rechercher"
+  ],
+  "{0} 预览": [
+    "Preview of {0}",
+    "Aperçu de {0}"
+  ],
+  " · 同步歌词": [
+    " · Timed lyrics",
+    " · Paroles synchronisées"
+  ],
+  "应用后会替换该歌曲已有的{0}。": [
+    "Applying this will replace the existing {0} for this track.",
+    "L’application remplacera les ressources existantes de ce titre : {0}."
+  ],
+  "应用选中资源": [
+    "Apply selected resource",
+    "Appliquer la sélection"
+  ],
+  "API 与优先级已安全保存": [
+    "API settings and priority saved securely",
+    "API et priorités enregistrées en toute sécurité"
+  ],
+  "歌词与图片接口已保存": [
+    "Lyrics and image services saved",
+    "Services de paroles et d’images enregistrés"
+  ],
+  "明亮、深色，或随 Windows 自动切换": [
+    "Light, dark, or follow Windows",
+    "Clair, sombre ou selon Windows"
+  ],
+  "明亮": [
+    "Light",
+    "Clair"
+  ],
+  "深色": [
+    "Dark",
+    "Sombre"
+  ],
+  "跟随系统": [
+    "System",
+    "Système"
+  ],
+  "AI 服务与优先级": [
+    "AI services and priority",
+    "Services d’IA et priorités"
+  ],
+  "从上到下尝试已启用且填写密钥的服务；失败或结果无效时自动切换。": [
+    "Enabled services with a key are tried from top to bottom. Failures or invalid results move to the next service.",
+    "Les services activés avec une clé sont essayés dans l’ordre. En cas d’échec ou de résultat invalide, le suivant prend le relais."
+  ],
+  "已配置": [
+    "Configured",
+    "Configuré"
+  ],
+  "待填写密钥": [
+    "Key required",
+    "Clé requise"
+  ],
+  "已停用": [
+    "Disabled",
+    "Désactivé"
+  ],
+  "启用": [
+    "Enable",
+    "Activer"
+  ],
+  "提高 {0} 优先级": [
+    "Raise priority of {0}",
+    "Augmenter la priorité de {0}"
+  ],
+  "↑ 上移": [
+    "↑ Move up",
+    "↑ Monter"
+  ],
+  "降低 {0} 优先级": [
+    "Lower priority of {0}",
+    "Diminuer la priorité de {0}"
+  ],
+  "↓ 下移": [
+    "↓ Move down",
+    "↓ Descendre"
+  ],
+  "移除配置": [
+    "Remove service",
+    "Retirer le service"
+  ],
+  "服务名称": [
+    "Service name",
+    "Nom du service"
+  ],
+  "请求协议": [
+    "Protocol",
+    "Protocole"
+  ],
+  "OpenAI 兼容 / DeepSeek": [
+    "OpenAI-compatible / DeepSeek",
+    "Compatible OpenAI / DeepSeek"
+  ],
+  "API 地址": [
+    "API endpoint",
+    "Adresse de l’API"
+  ],
+  "模型 ID": [
+    "Model ID",
+    "Identifiant du modèle"
+  ],
+  "填写服务提供的模型 ID": [
+    "Enter a model ID offered by your service",
+    "Saisissez un identifiant proposé par votre service"
+  ],
+  "已保存 · 留空不变": [
+    "Saved · leave blank to keep",
+    "Enregistré · laisser vide pour conserver"
+  ],
+  "只保存在本机加密存储": [
+    "Encrypted on this computer only",
+    "Chiffré uniquement sur cet ordinateur"
+  ],
+  "＋ OpenAI 兼容": [
+    "＋ OpenAI-compatible",
+    "＋ Compatible OpenAI"
+  ],
+  "自动切换可能产生多次计费。只发送候选歌曲信息与需求，不发送音频或 WebDAV 凭据；中转服务也能看到这些内容。移除、启停和排序需保存后生效。": [
+    "Fallback requests may incur extra charges. Requests, taste summaries and candidate metadata are sent, never audio or WebDAV credentials. Relays can read these requests. Save to apply changes.",
+    "Les relais peuvent entraîner des frais supplémentaires. Les demandes, résumés de préférences et métadonnées sont envoyés, jamais les fichiers audio ni les identifiants WebDAV. Les intermédiaires peuvent les lire. Enregistrez les modifications."
+  ],
+  "最多 10 个服务，单次生成总等待不超过约 90 秒。": [
+    "Up to 10 services. Total request budget: about 90 seconds.",
+    "Jusqu’à 10 services. Durée maximale des requêtes : environ 90 secondes."
+  ],
+  "保存 API 与优先级": [
+    "Save APIs and priority",
+    "Enregistrer les API et priorités"
+  ],
+  "歌词、封面与背景": [
+    "Lyrics, covers and backgrounds",
+    "Paroles, pochettes et arrière-plans"
+  ],
+  "在正在播放页面点击“查找资源”，预览并确认后才替换。": [
+    "Find resources in Now playing. Preview and confirm before replacing anything.",
+    "Recherchez des ressources dans la vue de lecture. Prévisualisez et confirmez avant tout remplacement."
+  ],
+  "默认使用 LRCLIB 歌词和 TheAudioDB 图片。不会后台扫描曲库；搜索时会向所选服务发送你填写的歌名、艺术家与专辑。免费接口可能限流或找不到匹配结果。": [
+    "Defaults: LRCLIB for lyrics and TheAudioDB for images. No background library scan. Searching sends the entered title, artist and album to the selected service. Free APIs may have rate limits or no match.",
+    "Par défaut : LRCLIB pour les paroles et TheAudioDB pour les images. Aucune analyse en arrière-plan. La recherche envoie le titre, l’artiste et l’album saisis au service choisi. Les API gratuites peuvent limiter les requêtes ou ne rien trouver."
+  ],
+  "TheAudioDB Key（选填）": [
+    "TheAudioDB key (optional)",
+    "Clé TheAudioDB (facultative)"
+  ],
+  "留空使用公共测试接口": [
+    "Leave blank for the public test API",
+    "Laisser vide pour l’API de test publique"
+  ],
+  "自定义接口 Bearer Key（选填）": [
+    "Custom API bearer key (optional)",
+    "Clé Bearer d’API personnalisée (facultative)"
+  ],
+  "仅用于下面填写的自定义地址": [
+    "Only for the custom endpoints below",
+    "Uniquement pour les adresses personnalisées ci-dessous"
+  ],
+  "自定义歌词 API": [
+    "Custom lyrics API",
+    "API de paroles personnalisée"
+  ],
+  "自定义封面 API": [
+    "Custom cover API",
+    "API de pochettes personnalisée"
+  ],
+  "自定义背景 API": [
+    "Custom background API",
+    "API d’arrière-plans personnalisée"
+  ],
+  "留空使用内置服务；自定义格式见开发说明": [
+    "Leave blank for the built-in service; see API documentation for the format",
+    "Laisser vide pour le service intégré ; format dans la documentation API"
+  ],
+  "自定义 API 需返回约定的 JSON 格式，不是任意网页地址。": [
+    "Custom APIs must return the documented JSON format, not an ordinary webpage.",
+    "Les API personnalisées doivent renvoyer le JSON documenté, pas une page web ordinaire."
+  ],
+  "保存资源接口": [
+    "Save resource services",
+    "Enregistrer les services de ressources"
+  ],
+  "关闭": [
+    "Close",
+    "Fermer"
+  ],
+  "正在播放": [
+    "Now playing",
+    "Lecture en cours"
+  ],
+  "取消喜欢": [
+    "Remove favorite",
+    "Retirer des favoris"
+  ],
+  "喜欢": [
+    "Favorite",
+    "Ajouter aux favoris"
+  ],
+  "查找歌词、封面与背景": [
+    "Find lyrics, cover and background",
+    "Rechercher paroles, pochette et arrière-plan"
+  ],
+  "播放进度": [
+    "Playback progress",
+    "Progression de lecture"
+  ],
+  "顺序播放": [
+    "In order",
+    "Dans l’ordre"
+  ],
+  "随机播放": [
+    "Shuffle",
+    "Aléatoire"
+  ],
+  "单曲循环": [
+    "Repeat one",
+    "Répéter le titre"
+  ],
+  "上一首": [
+    "Previous track",
+    "Titre précédent"
+  ],
+  "暂停": [
+    "Pause",
+    "Pause"
+  ],
+  "播放": [
+    "Play",
+    "Lire"
+  ],
+  "下一首": [
+    "Next track",
+    "Titre suivant"
+  ],
+  "播放模式：{0}": [
+    "Playback mode: {0}",
+    "Mode de lecture : {0}"
+  ],
+  "展开 {0}": [
+    "Expand {0}",
+    "Agrandir {0}"
+  ],
+  "尚未播放": [
+    "Nothing playing",
+    "Aucune lecture"
+  ],
+  "选择一首音乐": [
+    "Choose a track",
+    "Choisissez un titre"
+  ],
+  "取消喜欢当前歌曲": [
+    "Remove current track from favorites",
+    "Retirer le titre actuel des favoris"
+  ],
+  "喜欢当前歌曲": [
+    "Favorite current track",
+    "Ajouter le titre actuel aux favoris"
+  ],
+  "正在播放与歌词": [
+    "Now playing and lyrics",
+    "Lecture et paroles"
+  ],
+  "静音": [
+    "Mute",
+    "Couper le son"
+  ],
+  "恢复音量": [
+    "Unmute",
+    "Rétablir le son"
+  ],
+  "音量": [
+    "Volume",
+    "Volume"
+  ],
+  "未能生成歌单，请检查设置后重试。": [
+    "Could not generate a playlist. Check settings and try again.",
+    "Impossible de générer une playlist. Vérifiez les réglages et réessayez."
+  ],
+  "请求失败，请稍后重试。": [
+    "Request failed. Please try again later.",
+    "La requête a échoué. Réessayez plus tard."
+  ],
+  "保存失败，请重试。": [
+    "Could not save. Please try again.",
+    "Enregistrement impossible. Réessayez."
+  ],
+  "自己挑选": [
+    "Pick manually",
+    "Choix manuel"
+  ],
+  "智能歌单": [
+    "Smart playlist",
+    "Playlist intelligente"
+  ],
+  "此刻想听什么？": [
+    "What would you like to hear?",
+    "Qu’aimeriez-vous écouter ?"
+  ],
+  "雨夜，想听一些安静的华语歌曲，大约 45 分钟。": [
+    "Create a 40-minute playlist for a night run.",
+    "Crée une playlist de 40 minutes pour courir le soir."
+  ],
+  "使用 AI 理解场景并编排歌单": [
+    "Use AI to understand the scene and curate the playlist",
+    "Utiliser l’IA pour comprendre le contexte et composer la playlist"
+  ],
+  "当前可用本地推荐；接入 DeepSeek 等 API 可增强场景理解。": [
+    "Local recommendations are available. Add DeepSeek or another API for richer scene understanding.",
+    "Les recommandations locales sont disponibles. Ajoutez DeepSeek ou une autre API pour mieux comprendre le contexte."
+  ],
+  "前往设置": [
+    "Open settings",
+    "Ouvrir les réglages"
+  ],
+  "通常 2 次 API 请求，失败按优先级切换可能增加费用。仅发送需求、音乐偏好摘要及最多 240 首候选信息；不上传音频、路径和原始历史。": [
+    "Usually 2 API requests; fallback may cost extra. Sends your request, musical preferences and up to 240 candidate tracks, never audio, paths or raw history.",
+    "Habituellement 2 requêtes API ; les relais peuvent coûter davantage. Envoi de votre demande, de vos préférences musicales et de 240 titres candidats au maximum, jamais des fichiers audio, chemins ou historiques bruts."
+  ],
+  "全曲库本地筛选，不调用 API；支持基础场景、歌手、类型和时长。": [
+    "Searches the entire library locally, without API calls. Supports basic scenes, artists, genres and duration.",
+    "Recherche locale dans toute la bibliothèque, sans appel API. Contextes simples, artistes, genres et durée pris en charge."
+  ],
+  "生成预览": [
+    "Generate preview",
+    "Générer un aperçu"
+  ],
+  "请先同步音乐库，再生成智能歌单。": [
+    "Sync your library before generating a playlist.",
+    "Synchronisez la bibliothèque avant de générer une playlist."
+  ],
+  "歌单名称": [
+    "Playlist name",
+    "Nom de la playlist"
+  ],
+  "给这一刻取个名字": [
+    "Give this moment a name",
+    "Donnez un nom à cet instant"
+  ],
+  "描述": [
+    "Description",
+    "Description"
+  ],
+  "选填": [
+    "Optional",
+    "Facultatif"
+  ],
+  "关于这张歌单的一点想法": [
+    "A few words about this playlist",
+    "Quelques mots sur cette playlist"
+  ],
+  "{0} 首歌曲 · 可移除不合适的歌曲": [
+    "{0} tracks · remove any you do not want",
+    "{0} titres · retirez ceux qui ne conviennent pas"
+  ],
+  "移除 {0}": [
+    "Remove {0}",
+    "Retirer {0}"
+  ],
+  "由 {0} 生成 · 保存前可编辑": [
+    "Generated with {0} · editable before saving",
+    "Générée avec {0} · modifiable avant enregistrement"
+  ],
+  "已检索全部 {0} 首 · 筛选后 {1} 首 · 编排候选 {2} 首": [
+    "Searched all {0} tracks · {1} eligible · {2} candidates",
+    "Recherche parmi {0} titres · {1} admissibles · {2} candidats"
+  ],
+  "生成时估计时长 {0} 分钟": [
+    "Estimated duration at generation: {0} min",
+    "Durée estimée à la génération : {0} min"
+  ],
+  "生成时总时长 {0} 分钟": [
+    "Duration at generation: {0} min",
+    "Durée à la génération : {0} min"
+  ],
+  " / 目标 {0} 分钟": [
+    " / target {0} min",
+    " / objectif {0} min"
+  ],
+  "；手动移除歌曲后时长会变化。": [
+    ". Removing tracks changes the duration.",
+    ". Retirer des titres modifie la durée."
+  ],
+  "查看接口切换记录": [
+    "View fallback details",
+    "Voir les détails des relais"
+  ],
+  "处理中…": [
+    "Working…",
+    "Traitement…"
+  ],
+  "保存歌单": [
+    "Save playlist",
+    "Enregistrer la playlist"
+  ],
+  "这里还没有歌曲": [
+    "No tracks here yet",
+    "Aucun titre pour le moment"
+  ],
+  "在 WebDAV 中同步音乐，或尝试其他搜索词。": [
+    "Sync music from WebDAV, or try another search.",
+    "Synchronisez la musique depuis WebDAV ou essayez une autre recherche."
+  ],
+  "歌曲列表": [
+    "Track list",
+    "Liste des titres"
+  ],
+  "时长": [
+    "Duration",
+    "Durée"
+  ],
+  "操作": [
+    "Actions",
+    "Actions"
+  ],
+  "添加 {0} 到歌单": [
+    "Add {0} to a playlist",
+    "Ajouter {0} à une playlist"
+  ],
+  "从歌单移除 {0}": [
+    "Remove {0} from the playlist",
+    "Retirer {0} de la playlist"
+  ],
+  "从歌单移除": [
+    "Remove from playlist",
+    "Retirer de la playlist"
+  ],
+  "{0}–{1} / {2} 首": [
+    "{0}–{1} / {2} tracks",
+    "{0}–{1} / {2} titres"
+  ],
+  "上一页": [
+    "Previous page",
+    "Page précédente"
+  ],
+  "下一页": [
+    "Next page",
+    "Page suivante"
+  ],
+  "API 地址不能含密码、查询参数或片段": [
+    "API URLs cannot include credentials, query parameters or fragments",
+    "Les URL d’API ne doivent contenir ni identifiants, ni paramètres, ni fragment"
+  ],
+  "API 必须使用 HTTPS（本机测试允许 HTTP）": [
+    "APIs must use HTTPS (HTTP is allowed for localhost tests)",
+    "Les API doivent utiliser HTTPS (HTTP autorisé pour les tests locaux)"
+  ],
+  "最多配置 10 个 API": [
+    "You can configure up to 10 APIs",
+    "Vous pouvez configurer jusqu’à 10 API"
+  ],
+  "API 标识无效或重复": [
+    "Invalid or duplicate API identifier",
+    "Identifiant d’API invalide ou dupliqué"
+  ],
+  "不支持的 API 协议": [
+    "Unsupported API protocol",
+    "Protocole d’API non pris en charge"
+  ],
+  "修改 API 地址时请重新填写密钥，避免旧密钥被发送到其他服务": [
+    "Re-enter the key when changing the API address so the old key cannot be sent to another service",
+    "Saisissez de nouveau la clé après un changement d’adresse pour éviter son envoi à un autre service"
+  ],
+  "请填写该服务实际提供的模型 ID": [
+    "Enter a model ID actually offered by this service",
+    "Saisissez un identifiant de modèle réellement proposé par ce service"
+  ],
+  "请先配置并启用至少一个 AI API": [
+    "Configure and enable at least one AI API first",
+    "Configurez et activez d’abord au moins une API d’IA"
+  ],
+  "空响应": [
+    "Empty response",
+    "Réponse vide"
+  ],
+  "响应过大": [
+    "Response too large",
+    "Réponse trop volumineuse"
+  ],
+  "响应格式不兼容": [
+    "Incompatible response format",
+    "Format de réponse incompatible"
+  ],
+  "超时、网络失败或返回格式无效": [
+    "Timeout, network failure or invalid response format",
+    "Délai dépassé, échec réseau ou format de réponse invalide"
+  ],
+  "按优先级尝试后仍未得到有效响应。{0}": [
+    "No valid response after trying the services in order. {0}",
+    "Aucune réponse valide après les essais dans l’ordre. {0}"
+  ],
+  "服务响应 HTTP {0}": [
+    "Service returned HTTP {0}",
+    "Le service a renvoyé HTTP {0}"
+  ],
+  "返回内容过大": [
+    "Response content too large",
+    "Contenu de réponse trop volumineux"
+  ],
+  "返回内容为空": [
+    "Response content is empty",
+    "Le contenu de la réponse est vide"
+  ],
+  "图片必须使用公开 HTTPS 地址": [
+    "Images must use a public HTTPS address",
+    "Les images doivent utiliser une adresse HTTPS publique"
+  ],
+  "拒绝访问本地或内网图片地址": [
+    "Local and private-network image URLs are blocked",
+    "Les URL d’images locales ou de réseau privé sont bloquées"
+  ],
+  "不是有效图片": [
+    "Not a valid image",
+    "Image non valide"
+  ],
+  "图片尺寸过大": [
+    "Image dimensions are too large",
+    "Les dimensions de l’image sont trop grandes"
+  ],
+  "修改自定义地址时请重新填写密钥": [
+    "Re-enter the key when changing a custom endpoint",
+    "Saisissez de nouveau la clé après un changement d’adresse personnalisée"
+  ],
+  "不支持的资源类型": [
+    "Unsupported resource type",
+    "Type de ressource non pris en charge"
+  ],
+  "歌曲不存在": [
+    "Track not found",
+    "Titre introuvable"
+  ],
+  "请填写检索信息": [
+    "Enter search information",
+    "Saisissez les informations de recherche"
+  ],
+  "自定义 API": [
+    "Custom API",
+    "API personnalisée"
+  ],
+  "检索失败：请检查接口地址、网络和密钥；已有资源未改动。": [
+    "Search failed. Check the endpoint, connection and key. Existing resources were not changed.",
+    "Échec de la recherche. Vérifiez l’adresse, la connexion et la clé. Les ressources existantes sont inchangées."
+  ],
+  "预览已过期，请重新搜索": [
+    "Preview expired. Search again.",
+    "L’aperçu a expiré. Relancez la recherche."
+  ],
+  "预览资源不可用": [
+    "Preview resource unavailable",
+    "Ressource d’aperçu indisponible"
+  ],
+  "应用失败": [
+    "Could not apply the resource",
+    "Impossible d’appliquer la ressource"
+  ],
+  "拒绝清理非解码缓存文件": [
+    "Refusing to remove files outside the decoder cache",
+    "Suppression refusée pour les fichiers hors du cache de décodage"
+  ],
+  "正在兼容解码，请稍后清空缓存": [
+    "Decoding is in progress. Clear the cache later.",
+    "Décodage en cours. Videz le cache plus tard."
+  ],
+  "请先连接 WebDAV，以下载兼容解码所需的原始音频": [
+    "Connect to WebDAV to download the original audio for compatible decoding",
+    "Connectez WebDAV pour télécharger le fichier audio nécessaire au décodage"
+  ],
+  "原始音频下载失败": [
+    "Could not download the original audio",
+    "Téléchargement du fichier audio original impossible"
+  ],
+  "只能解码应用管理的音频缓存": [
+    "Only audio in the app-managed cache can be decoded",
+    "Seuls les fichiers du cache géré par l’application peuvent être décodés"
+  ],
+  "缺少兼容解码器，请重新安装完整版本": [
+    "Decoder missing. Reinstall the full version.",
+    "Décodeur manquant. Réinstallez la version complète."
+  ],
+  "兼容解码失败：文件可能损坏、受 DRM 保护或不是有效音频。原文件未改动。": [
+    "Decoding failed: the file may be damaged, DRM-protected or not valid audio. The original is unchanged.",
+    "Échec du décodage : le fichier peut être endommagé, protégé par DRM ou invalide. L’original est inchangé."
+  ],
+  "解码器没有生成有效音频": [
+    "The decoder did not produce valid audio",
+    "Le décodeur n’a pas produit de fichier audio valide"
+  ],
+  "兼容音频超过 512 MB 解码缓存限制": [
+    "Decoded audio exceeds the 512 MB cache limit",
+    "Le fichier décodé dépasse la limite de cache de 512 Mo"
+  ],
+  "场景理解 · {0}": [
+    "Scene understanding · {0}",
+    "Compréhension du contexte · {0}"
+  ],
+  "场景理解失败": [
+    "Scene understanding failed",
+    "Échec de la compréhension du contexte"
+  ],
+  "AI 场景理解失败，已采用本地规则检索。": [
+    "AI scene understanding failed. Using local search rules.",
+    "Échec de la compréhension par l’IA. Recherche selon les règles locales."
+  ],
+  "未配置 AI，使用本地行为模型与基础场景规则。": [
+    "No AI configured. Using the local behavior model and basic scene rules.",
+    "Aucune IA configurée. Utilisation du modèle local et des règles de contexte simples."
+  ],
+  "仅本地生成，未调用任何 AI API。": [
+    "Generated locally. No AI API was called.",
+    "Générée localement. Aucune API d’IA appelée."
+  ],
+  "此刻想听": [
+    "For this moment",
+    "Pour cet instant"
+  ],
+  "根据本地聆听偏好与曲库信息整理，可试听后调整。": [
+    "Curated from local listening preferences and library metadata. Listen and adjust as needed.",
+    "Composition selon vos préférences locales et les métadonnées. Écoutez puis ajustez."
+  ],
+  "无效歌单": [
+    "Invalid playlist",
+    "Playlist invalide"
+  ],
+  "没有有效曲库歌曲": [
+    "No valid library tracks",
+    "Aucun titre valide dans la bibliothèque"
+  ],
+  "歌单编排 · {0}": [
+    "Playlist curation · {0}",
+    "Composition de playlist · {0}"
+  ],
+  "歌单编排失败": [
+    "Playlist curation failed",
+    "Échec de la composition"
+  ],
+  "AI 歌单编排失败，已由本地模型完成。": [
+    "AI curation failed. The local model completed the playlist.",
+    "Échec de la composition par l’IA. Le modèle local a terminé la playlist."
+  ],
+  "{0} 首缺少时长，按每首 4 分钟估算；播放缓存后可获得实际时长。": [
+    "Duration is missing for {0} tracks; estimated at 4 minutes each. Playback caching can provide actual durations.",
+    "Durée inconnue pour {0} titres, estimée à 4 minutes chacun. La mise en cache peut fournir les durées réelles."
+  ],
+  "现有候选无法接近目标时长，请放宽条件或同步更多歌曲。": [
+    "The candidates cannot closely match the target duration. Broaden your criteria or sync more tracks.",
+    "Les candidats ne permettent pas d’approcher la durée visée. Élargissez les critères ou synchronisez davantage de titres."
+  ],
+  "实际选出 {0} 首，少于请求数量；时长约束或候选数量限制了结果。": [
+    "Selected {0} tracks, fewer than requested because of duration or candidate limits.",
+    "{0} titres sélectionnés, moins que demandé en raison des limites de durée ou du nombre de candidats."
+  ],
+  "本地行为模型": [
+    "Local behavior model",
+    "Modèle local d’écoute"
+  ],
+  "{0}无效": [
+    "Invalid {0}",
+    "{0} invalide"
+  ],
+  "歌单歌曲列表格式无效": [
+    "Invalid playlist track-list format",
+    "Format de liste de titres invalide"
+  ],
+  "歌曲 ID": [
+    "Track ID",
+    "Identifiant du titre"
+  ],
+  "单个歌单最多包含 5000 首歌曲": [
+    "A playlist can contain up to 5,000 tracks",
+    "Une playlist peut contenir jusqu’à 5 000 titres"
+  ],
+  "DeepSeek 地址必须使用 HTTP 或 HTTPS": [
+    "The DeepSeek address must use HTTP or HTTPS",
+    "L’adresse DeepSeek doit utiliser HTTP ou HTTPS"
+  ],
+  "配置保存失败": [
+    "Could not save configuration",
+    "Impossible d’enregistrer la configuration"
+  ],
+  "兼容解码失败": [
+    "Compatible decoding failed",
+    "Échec du décodage compatible"
+  ],
+  "本地偏好暂时无法读取": [
+    "Local preferences are temporarily unavailable",
+    "Les préférences locales sont temporairement indisponibles"
+  ],
+  "歌单 ID": [
+    "Playlist ID",
+    "Identifiant de playlist"
+  ],
+  "歌单名称不能为空": [
+    "Playlist name cannot be empty",
+    "Le nom de la playlist ne peut pas être vide"
+  ],
+  "播放事件无效": [
+    "Invalid playback event",
+    "Événement de lecture invalide"
+  ],
+  "敏感设置必须通过专用接口保存": [
+    "Sensitive settings must use their dedicated settings interface",
+    "Les réglages sensibles doivent utiliser leur interface dédiée"
+  ],
+  "模型名称不能为空": [
+    "Model name cannot be empty",
+    "Le nom du modèle ne peut pas être vide"
+  ],
+  "请更具体地描述想听的音乐": [
+    "Describe the music you want in more detail",
+    "Décrivez plus précisément la musique souhaitée"
+  ],
+  "描述请控制在 500 字以内": [
+    "Keep your request within 500 characters",
+    "Limitez la demande à 500 caractères"
+  ],
+  "音乐库为空，请先从 WebDAV 播放或同步歌曲": [
+    "The library is empty. Play or sync tracks from WebDAV first.",
+    "La bibliothèque est vide. Lisez ou synchronisez des titres depuis WebDAV."
+  ],
+  "DeepSeek 请求超时，请稍后重试": [
+    "The AI request timed out. Try again later.",
+    "La requête d’IA a expiré. Réessayez plus tard."
+  ],
+  "本地缓存文件不存在": [
+    "Local cache file not found",
+    "Fichier de cache local introuvable"
+  ],
+  "拒绝读取未登记的本地文件": [
+    "Reading an unregistered local file is not allowed",
+    "Lecture d’un fichier local non enregistré refusée"
+  ],
+  "歌曲不存在或缺少 WebDAV 路径": [
+    "Track not found or missing WebDAV path",
+    "Titre introuvable ou chemin WebDAV manquant"
+  ],
+  "流行": [
+    "Pop",
+    "Pop"
+  ],
+  "摇滚": [
+    "Rock",
+    "Rock"
+  ],
+  "民谣": [
+    "Folk",
+    "Folk"
+  ],
+  "爵士": [
+    "Jazz",
+    "Jazz"
+  ],
+  "电子": [
+    "Electronic",
+    "Électronique"
+  ],
+  "舞曲": [
+    "Dance",
+    "Dance"
+  ],
+  "嘻哈": [
+    "Hip-hop",
+    "Hip-hop"
+  ],
+  "说唱": [
+    "Rap",
+    "Rap"
+  ],
+  "古典": [
+    "Classical",
+    "Classique"
+  ],
+  "轻音乐": [
+    "Easy listening",
+    "Musique douce"
+  ],
+  "氛围": [
+    "Ambient",
+    "Ambient"
+  ],
+  "金属": [
+    "Metal",
+    "Metal"
+  ],
+  "原声": [
+    "Soundtrack",
+    "Bande originale"
+  ],
+  "乡村": [
+    "Country",
+    "Country"
+  ],
+  "还在认识你的耳朵。多听几首、点一点喜欢，推荐会逐渐贴近你。": [
+    "Still getting to know your taste. Listen and add favorites to shape your recommendations.",
+    "Nous découvrons vos goûts. Écoutez et ajoutez des favoris pour affiner les recommandations."
+  ],
+  "这是初步的音乐偏好，还会随着聆听变化。": [
+    "These are early preferences and will evolve as you listen.",
+    "Ces premières préférences évolueront au fil des écoutes."
+  ],
+  "根据近 180 天的聆听与当前收藏生成，近期行为权重更高。": [
+    "Based on the last 180 days and your current favorites, with more weight on recent listening.",
+    "Selon les 180 derniers jours et vos favoris actuels, avec davantage de poids pour les écoutes récentes."
+  ],
+  "收藏与近期聆听中出现的类型": [
+    "A genre from your favorites and recent listening",
+    "Un genre présent dans vos favoris et écoutes récentes"
+  ],
+  "换个口味 · 曲库中已有的类型，并非已确认的偏好": [
+    "Explore a genre in your library, not a confirmed preference",
+    "Explorez un genre de votre bibliothèque, sans préférence confirmée"
+  ],
+  "来自你喜欢的音乐": [
+    "From your favorites",
+    "Parmi vos favoris"
+  ],
+  "最近有认真听过这首歌": [
+    "A track you recently listened to closely",
+    "Un titre récemment écouté avec attention"
+  ],
+  "延续你对 {0} 的聆听": [
+    "More from your listening to {0}",
+    "Dans la continuité de vos écoutes de {0}"
+  ],
+  "与你近期的 {0} 偏好相近": [
+    "Close to your recent taste for {0}",
+    "Proche de votre goût récent pour {0}"
+  ],
+  "换个口味，探索曲库中的音乐": [
+    "Try something different from your library",
+    "Explorez d’autres titres de votre bibliothèque"
+  ],
+  "探索推荐 · {0}": [
+    "Discovery · {0}",
+    "Découverte · {0}"
+  ],
+  "无效场景": [
+    "Invalid scene",
+    "Contexte invalide"
+  ],
+  "无效场景字段": [
+    "Invalid scene fields",
+    "Champs de contexte invalides"
+  ],
+  "曲库中没有满足明确筛选条件的歌曲，请放宽类型、歌手或排除条件。": [
+    "No tracks match the explicit filters. Broaden the genre, artist or exclusions.",
+    "Aucun titre ne correspond aux filtres explicites. Élargissez le genre, l’artiste ou les exclusions."
+  ],
+  "部分歌曲缺少明确的语种标签，语言匹配需要试听确认；不会仅凭中文歌名判定华语。": [
+    "Some tracks lack language tags. Confirm by listening; a Chinese title alone does not prove the audio language.",
+    "Certains titres n’ont pas d’étiquette de langue. Vérifiez à l’écoute ; un titre chinois ne prouve pas la langue chantée."
+  ],
+  "场景匹配根据歌曲信息和类型推测，未分析音频节奏或 BPM。": [
+    "Scene matching is inferred from metadata and genre; rhythm and BPM have not been analyzed.",
+    "Le contexte est déduit des métadonnées et du genre ; rythme et BPM ne sont pas analysés."
+  ],
+  "Windows 凭据加密不可用，未保存密钥": [
+    "Windows credential encryption is unavailable. The key was not saved.",
+    "Le chiffrement Windows est indisponible. La clé n’a pas été enregistrée."
+  ],
+  "WebDAV 请求超时，请检查服务器或网络连接": [
+    "WebDAV timed out. Check the server and connection.",
+    "Délai WebDAV dépassé. Vérifiez le serveur et la connexion."
+  ],
+  "请输入 WebDAV 地址": [
+    "Enter a WebDAV address",
+    "Saisissez une adresse WebDAV"
+  ],
+  "WebDAV 地址必须使用 HTTP 或 HTTPS": [
+    "The WebDAV address must use HTTP or HTTPS",
+    "L’adresse WebDAV doit utiliser HTTP ou HTTPS"
+  ],
+  "请不要在 WebDAV 地址中包含用户名或密码": [
+    "Do not include a username or password in the WebDAV URL",
+    "N’incluez pas de nom d’utilisateur ou de mot de passe dans l’URL WebDAV"
+  ],
+  "拒绝访问 WebDAV 服务器之外的地址": [
+    "Addresses outside the configured WebDAV server are blocked",
+    "Les adresses hors du serveur WebDAV configuré sont bloquées"
+  ],
+  "连接失败（HTTP {0}）": [
+    "Connection failed (HTTP {0})",
+    "Échec de connexion (HTTP {0})"
+  ],
+  "读取目录失败（HTTP {0}）": [
+    "Could not read folder (HTTP {0})",
+    "Lecture du dossier impossible (HTTP {0})"
+  ],
+  "下载失败（HTTP {0}）": [
+    "Download failed (HTTP {0})",
+    "Échec du téléchargement (HTTP {0})"
+  ],
+  "缓存上限不能低于 128 MB": [
+    "The cache limit must be at least 128 MB",
+    "La limite du cache doit être d’au moins 128 Mo"
+  ],
+  "该歌曲大于当前缓存上限，请先在设置中调大缓存": [
+    "This track exceeds the cache limit. Increase it in settings.",
+    "Ce titre dépasse la limite du cache. Augmentez-la dans les réglages."
+  ],
+  "只能注册音乐文件": [
+    "Only audio files can be added",
+    "Seuls les fichiers audio peuvent être ajoutés"
+  ],
+  "歌曲缺少远程路径": [
+    "The track has no remote path",
+    "Le titre n’a pas de chemin distant"
+  ],
+  "下载不完整（应为 {0} 字节，实际 {1} 字节）": [
+    "Incomplete download (expected {0} bytes, received {1})",
+    "Téléchargement incomplet ({0} octets attendus, {1} reçus)"
+  ],
+  "正在扫描 WebDAV…": [
+    "Scanning WebDAV…",
+    "Analyse de WebDAV…"
+  ],
+  "目录数量超过 10000，已停止扫描": [
+    "Scan stopped after more than 10,000 folders",
+    "Analyse arrêtée au-delà de 10 000 dossiers"
+  ],
+  "WebDAV 根目录": [
+    "WebDAV root",
+    "Racine WebDAV"
+  ],
+  "读取失败": [
+    "Read failed",
+    "Échec de lecture"
+  ],
+  "未分类专辑": [
+    "Unsorted album",
+    "Album non classé"
+  ],
+  "所有艺术家": [
+    "All artists",
+    "Tous les artistes"
+  ],
+  "所有专辑": [
+    "All albums",
+    "Tous les albums"
+  ],
+  "{0} 首歌曲": [
+    "Tracks · {0}",
+    "Titres · {0}"
+  ],
+  "{0} 张专辑": [
+    "Albums · {0}",
+    "Albums · {0}"
+  ],
+  "{0} 位艺术家": [
+    "Artists · {0}",
+    "Artistes · {0}"
+  ],
+  "排序": [
+    "Sort",
+    "Trier"
+  ],
+  "按名称": [
+    "By name",
+    "Par nom"
+  ],
+  "按艺术家": [
+    "By artist",
+    "Par artiste"
+  ],
+  "查看 {0}": [
+    "View {0}",
+    "Voir {0}"
+  ],
+  "曲库还是空的": [
+    "Your library is empty",
+    "Votre bibliothèque est vide"
+  ],
+  "同步音乐后，它们会整理在这里。": [
+    "Sync your music to see it organized here.",
+    "Synchronisez votre musique pour la retrouver ici."
+  ],
+  "把你的音乐，带到这里。": [
+    "Bring your music here.",
+    "Votre musique a sa place ici."
+  ],
+  "音乐源已就绪。同步曲库，开始第一首。": [
+    "Your source is ready. Sync the library and start listening.",
+    "Votre source est prête. Synchronisez et commencez l’écoute."
+  ],
+  "连接你的 WebDAV 音乐库，收藏与聆听从这里开始。": [
+    "Connect your WebDAV library and make yourself at home.",
+    "Connectez votre bibliothèque WebDAV pour commencer."
+  ],
+  "浏览并同步": [
+    "Browse and sync",
+    "Parcourir et synchroniser"
+  ],
+  "连接音乐库": [
+    "Connect library",
+    "Connecter la bibliothèque"
+  ],
+  "你的收藏，你的音乐空间。": [
+    "Your collection. Your music space.",
+    "Votre collection. Votre espace musical."
+  ],
+  "为你精选": [
+    "Picked for you",
+    "Pour vous"
+  ],
+  "熟悉的旋律，也有久违的惊喜。": [
+    "Familiar favorites and welcome discoveries.",
+    "Des favoris familiers et de belles découvertes."
+  ],
+  "播放 {0}": [
+    "Play {0}",
+    "Lire {0}"
+  ],
+  "聆听偏好": [
+    "Listening preferences",
+    "Préférences d’écoute"
+  ],
+  "你的聆听偏好": [
+    "Your listening taste",
+    "Vos goûts musicaux"
+  ],
+  "只在本机学习": [
+    "Learned on this device",
+    "Apprentissage local"
+  ],
+  "最近更靠近 {0}": [
+    "Recently drawn to {0}",
+    "En ce moment, plutôt {0}"
+  ],
+  "探索": [
+    "Explore",
+    "Découvrir"
+  ],
+  "偏好": [
+    "Preference",
+    "Préférence"
+  ],
+  "依据与数据完整度": [
+    "Evidence and metadata coverage",
+    "Indices et couverture des métadonnées"
+  ],
+  "近 180 天：{0} 次有效聆听，其中完整播放 {1} 次、切歌 {2} 次。收藏加分，早早跳过减分，旧行为逐渐降低权重。失败的播放不计入喜好。": [
+    "Last 180 days: {0} meaningful sessions, {1} completions and {2} skips. Favorites add weight, early skips reduce it, and old signals fade. Failed playback is not a preference.",
+    "Sur 180 jours : {0} écoutes significatives, {1} terminées et {2} interrompues. Les favoris comptent positivement, les sauts précoces négativement, et les anciens signaux s’atténuent. Les échecs de lecture ne comptent pas."
+  ],
+  "曲库 {0} 首中，{1} 首有类型标签。没有标签时不臆测风格；“探索”仅表示可尝试的曲库类型。": [
+    "{1} of {0} tracks have genre tags. Missing styles are not guessed; Explore suggests genres already in your library.",
+    "{1} titres sur {0} ont une étiquette de genre. Aucun style n’est inventé ; Découvrir propose des genres déjà présents."
+  ],
+  "{0}：{1} 首歌曲提供正向依据 · 曲库有 {2} 首": [
+    "{0}: positive signals from {1} tracks · {2} in your library",
+    "{0} : indices positifs pour {1} titres · {2} dans la bibliothèque"
+  ],
+  "再听一次": [
+    "Listen again",
+    "Réécouter"
+  ],
+  "留一点时间，听张专辑": [
+    "Make time for an album",
+    "Prenez le temps d’un album"
+  ],
+  "音乐库": [
+    "Music library",
+    "Bibliothèque musicale"
+  ],
+  "播放专辑 {0}": [
+    "Play album {0}",
+    "Lire l’album {0}"
+  ],
+  "所有歌单": [
+    "All playlists",
+    "Toutes les playlists"
+  ],
+  "为这个歌单添加一些音乐": [
+    "Add some music to this playlist",
+    "Ajoutez de la musique à cette playlist"
+  ],
+  "{0} 个歌单": [
+    "Playlists · {0}",
+    "Playlists · {0}"
+  ],
+  "打开歌单 {0}": [
+    "Open playlist {0}",
+    "Ouvrir la playlist {0}"
+  ],
+  "每一种心情，都可以是一张歌单。": [
+    "A playlist for every mood.",
+    "Une playlist pour chaque humeur."
+  ],
+  "亲手挑选，或让 DeepSeek 帮你寻找适合此刻的音乐。": [
+    "Pick your own tracks, or let AI help you find the right music.",
+    "Choisissez vos titres ou laissez l’IA vous aider."
+  ],
+  "创建歌单": [
+    "Create playlist",
+    "Créer une playlist"
+  ],
+  "请填写 WebDAV 地址": [
+    "Enter the WebDAV address",
+    "Saisissez l’adresse WebDAV"
+  ],
+  "WebDAV 连接失败": [
+    "WebDAV connection failed",
+    "Échec de connexion WebDAV"
+  ],
+  "WebDAV 已连接并安全保存": [
+    "WebDAV connected and saved securely",
+    "WebDAV connecté et enregistré en toute sécurité"
+  ],
+  "缓存上限已设为 {0} GB": [
+    "Cache limit set to {0} GB",
+    "Limite du cache fixée à {0} Go"
+  ],
+  "设置失败": [
+    "Could not apply settings",
+    "Impossible d’appliquer les réglages"
+  ],
+  "已清理 {0} 个文件，释放 {1}": [
+    "Removed {0} cached files, freed {1}",
+    "{0} fichiers de cache supprimés, {1} libérés"
+  ],
+  "缓存清理失败": [
+    "Could not clear the cache",
+    "Impossible de vider le cache"
+  ],
+  "缓存清理失败，请重试。": [
+    "Could not clear the cache. Try again.",
+    "Impossible de vider le cache. Réessayez."
+  ],
+  "WebDAV 音乐源": [
+    "WebDAV music source",
+    "Source musicale WebDAV"
+  ],
+  "支持标准 WebDAV 服务，凭据由 Windows 加密": [
+    "Standard WebDAV services; credentials encrypted by Windows",
+    "Services WebDAV standard ; identifiants chiffrés par Windows"
+  ],
+  "服务器地址": [
+    "Server address",
+    "Adresse du serveur"
+  ],
+  "用户名": [
+    "Username",
+    "Nom d’utilisateur"
+  ],
+  "密码": [
+    "Password",
+    "Mot de passe"
+  ],
+  "隐藏 WebDAV 密码": [
+    "Hide WebDAV password",
+    "Masquer le mot de passe WebDAV"
+  ],
+  "显示 WebDAV 密码": [
+    "Show WebDAV password",
+    "Afficher le mot de passe WebDAV"
+  ],
+  "密码仅保存在当前 Windows 用户的加密存储中。": [
+    "The password is stored encrypted for the current Windows user only.",
+    "Le mot de passe est chiffré pour l’utilisateur Windows actuel uniquement."
+  ],
+  "测试并保存": [
+    "Test and save",
+    "Tester et enregistrer"
+  ],
+  "音频兼容解码": [
+    "Audio compatibility",
+    "Compatibilité audio"
+  ],
+  "M4A / MP4 / ALAC 使用内置 FFmpeg；其他格式在浏览器解码失败时自动回退": [
+    "M4A / MP4 / ALAC use bundled FFmpeg; other formats fall back if browser decoding fails",
+    "M4A / MP4 / ALAC utilisent FFmpeg intégré ; les autres formats y recourent si le décodage du navigateur échoue"
+  ],
+  "音频只在本机处理，原文件不会修改。首次播放需下载并转换，之后复用无损 FLAC 缓存。独立解码缓存上限 512 MB，清空缓存时一并清理；损坏或受 DRM 保护的文件无法保证播放。": [
+    "Audio is processed locally; originals are unchanged. First playback downloads and converts the file, then reuses a lossless FLAC cache. Decoder cache: 512 MB, cleared with the main cache. Damaged or DRM-protected files may not play.",
+    "Traitement local, sans modifier les originaux. La première lecture télécharge et convertit le fichier, puis réutilise un cache FLAC sans perte. Cache de décodage : 512 Mo, vidé avec le cache principal. Lecture non garantie pour les fichiers endommagés ou protégés par DRM."
+  ],
+  "智能缓存": [
+    "Smart cache",
+    "Cache intelligent"
+  ],
+  "按最近使用自动清理": [
+    "Automatically clears least recently used files",
+    "Nettoyage des fichiers les moins récemment utilisés"
+  ],
+  "已使用 · {0} 首已缓存": [
+    "Used · {0} tracks cached",
+    "Utilisé · {0} titres en cache"
+  ],
+  "缓存上限": [
+    "Cache limit",
+    "Limite du cache"
+  ],
+  "应用上限": [
+    "Apply limit",
+    "Appliquer la limite"
+  ],
+  "清空缓存": [
+    "Clear cache",
+    "Vider le cache"
+  ],
+  "键盘快捷键": [
+    "Keyboard shortcuts",
+    "Raccourcis clavier"
+  ],
+  "双手留在键盘上，也能轻松聆听": [
+    "Keep listening without leaving the keyboard",
+    "Écoutez sans quitter le clavier"
+  ],
+  "播放 / 暂停": [
+    "Play / pause",
+    "Lecture / pause"
+  ],
+  "快退 / 快进 5 秒": [
+    "Seek back / forward 5 seconds",
+    "Reculer / avancer de 5 secondes"
+  ],
+  "关闭浮层": [
+    "Close overlay",
+    "Fermer le panneau"
+  ],
+  "清空本地缓存？": [
+    "Clear the local cache?",
+    "Vider le cache local ?"
+  ],
+  "已下载的音频将被移除，下次播放时需要重新联网。曲库、歌单与收藏会保留。": [
+    "Downloaded audio will be removed. Playback will require a connection again. Your library, playlists and favorites will be kept.",
+    "Les fichiers téléchargés seront supprimés. Une connexion sera nécessaire à la prochaine lecture. Bibliothèque, playlists et favoris seront conservés."
+  ],
+  "清理中…": [
+    "Clearing…",
+    "Nettoyage…"
+  ],
+  "连接你的 WebDAV": [
+    "Connect your WebDAV",
+    "Connecter votre WebDAV"
+  ],
+  "支持 Nextcloud、坚果云、群晖以及其他标准 WebDAV 服务。": [
+    "Supports Nextcloud, Synology and other standard WebDAV services.",
+    "Compatible avec Nextcloud, Synology et les autres services WebDAV standard."
+  ],
+  "配置服务器": [
+    "Configure server",
+    "Configurer le serveur"
+  ],
+  "返回上级目录": [
+    "Parent folder",
+    "Dossier parent"
+  ],
+  "音乐根目录": [
+    "Music root folder",
+    "Dossier racine de musique"
+  ],
+  "正在扫描…": [
+    "Scanning…",
+    "Analyse…"
+  ],
+  "同步曲库": [
+    "Sync library",
+    "Synchroniser"
+  ],
+  "刷新目录": [
+    "Refresh folder",
+    "Actualiser le dossier"
+  ],
+  "名称": [
+    "Name",
+    "Nom"
+  ],
+  "类型": [
+    "Type",
+    "Type"
+  ],
+  "大小": [
+    "Size",
+    "Taille"
+  ],
+  "文件夹": [
+    "Folder",
+    "Dossier"
+  ],
+  "目录": [
+    "Directory",
+    "Répertoire"
+  ],
+  "音频": [
+    "Audio",
+    "Audio"
+  ],
+  "当前目录没有音乐": [
+    "No music in this folder",
+    "Aucune musique dans ce dossier"
+  ],
+  "Aurora 只展示文件夹和支持的音频文件。": [
+    "Aurora displays folders and supported audio files only.",
+    "Aurora affiche uniquement les dossiers et les fichiers audio pris en charge."
+  ],
+  "正在加载音频…": [
+    "Loading audio…",
+    "Chargement audio…"
+  ],
+  "正在本地兼容解码，首次播放需要下载原文件…": [
+    "Decoding locally. First playback requires downloading the original…",
+    "Décodage local. La première lecture nécessite le téléchargement de l’original…"
+  ],
+  "无法创建 WebDAV 播放流": [
+    "Could not open the WebDAV audio stream",
+    "Impossible d’ouvrir le flux audio WebDAV"
+  ],
+  "无有效文件路径": [
+    "No valid file path",
+    "Aucun chemin de fichier valide"
+  ],
+  "无法获取音频 URL": [
+    "Could not obtain the audio URL",
+    "Impossible d’obtenir l’URL audio"
+  ],
+  "无法解码 {0} 音频（{1}）": [
+    "Could not decode {0} audio ({1})",
+    "Impossible de décoder l’audio {0} ({1})"
+  ],
+  "播放失败: ": [
+    "Playback failed: ",
+    "Échec de lecture : "
+  ],
+  "兼容音频加载超时，请重新播放或检查缓存空间": [
+    "Decoded audio timed out. Retry playback or check cache space.",
+    "Délai de chargement dépassé. Relancez la lecture ou vérifiez l’espace du cache."
+  ],
+  "播放异常: {0}": [
+    "Playback error: {0}",
+    "Erreur de lecture : {0}"
+  ],
+  "浏览器解码失败，正在本地兼容解码…": [
+    "Browser decoding failed. Decoding locally…",
+    "Le décodage du navigateur a échoué. Décodage local…"
+  ],
+  "兼容解码失败，请重试": [
+    "Compatible decoding failed. Try again.",
+    "Échec du décodage compatible. Réessayez."
+  ],
+  "语言": [
+    "Language",
+    "Langue"
+  ],
+  "界面语言": [
+    "Interface language",
+    "Langue de l’interface"
+  ],
+  "立即生效，不更改歌曲标题、歌词和歌单名称。": [
+    "Applies immediately. Track titles, lyrics and playlist names stay unchanged.",
+    "Application immédiate. Les titres, paroles et noms de playlists restent inchangés."
+  ],
+  "使用指南": [
+    "User guide",
+    "Guide d’utilisation"
+  ],
+  "开源许可": [
+    "Open-source license",
+    "Licence libre"
+  ]
+}
