@@ -4,7 +4,7 @@
 
 一个面向 Windows 的 WebDAV 音乐播放器。明亮与深色主题、本地聆听偏好、可选 AI 歌单；音乐与收藏仍由你掌握。
 
-Android 手机／平板预览版与 Android Studio 编译指南见 [README.android.md](README.android.md)。已支持原生后台播放、离线、主题、小组件及混合 AI 歌单；与桌面版的完整功能对齐和小米真机验收仍未完成，请勿作为稳定版发布。
+Android 手机／平板预览版与 Android Studio 编译指南见 [README.android.md](README.android.md)。已支持原生后台播放、离线、主题、小组件及混合 AI 歌单。
 
 ![明亮主题与本地推荐](docs/images/zh-CN/home.png)
 
@@ -29,6 +29,6 @@ Android 手机／平板预览版与 Android Studio 编译指南见 [README.andro
 
 演示图中的艺术家、歌曲、封面和历史均为虚构测试数据。源码包不包含账号、真实曲库、缓存、安装器或 FFmpeg 可执行文件。API 仅在你主动启用相应功能时接收必要信息；见 [PRIVACY](PRIVACY.md)。
 
-上传 GitHub 时，解压源码包并上传其内容，保留四语文档及图片目录。不要上传整个开发目录、运行数据或旧安装包。发布前按[检查清单](docs/QA_CHECKLIST.md)复核。
+
 
 Copyright © 2026 jinlaoshi. 项目原创代码采用 [GPL-3.0-only](LICENSE)；第三方组件遵循各自许可证。by jinlaoshi
