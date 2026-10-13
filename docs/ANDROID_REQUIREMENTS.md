@@ -399,6 +399,11 @@ in this round. No signing key is included in public source.
   the obsolete `tools` package. Both workflows now explicitly request only
   `platform-tools`; Platform 36 and Build Tools 36 remain in their separate
   installation step. Cloud results must be checked independently of local tests.
+- The next cloud run exposed duplicate Kotlin classes in the generated Cordova
+  library's own instrumentation APK. The debug workflow now qualifies each task
+  with `:app:`, as the signed workflow already does. Aurora's JVM tests, lint and
+  instrumentation APK are still built; dependency libraries remain compiled as
+  app dependencies, without building their unrelated test applications.
 
 ## Preview.10: full-screen player and safe filename fallback (2026-10-13)
 
