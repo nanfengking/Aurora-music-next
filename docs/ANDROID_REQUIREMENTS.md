@@ -395,6 +395,10 @@ in this round. No signing key is included in public source.
   was moved to plugin initialization and the subsequent build passed. It is
   private build tooling, not a distributed source or release-signing change.
 - The previously reported specific M4A issue remains deferred, not fixed here.
+- The initial GitHub build failed before compilation because SDK setup requested
+  the obsolete `tools` package. Both workflows now explicitly request only
+  `platform-tools`; Platform 36 and Build Tools 36 remain in their separate
+  installation step. Cloud results must be checked independently of local tests.
 
 ## Preview.10: full-screen player and safe filename fallback (2026-10-13)
 
