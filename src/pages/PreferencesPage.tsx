@@ -6,6 +6,10 @@ import type { WebDavConfig, WebDavFile } from '../types/webdav';
 import { Icon } from '../components/Icon';
 import { Modal } from '../components/Modal';
 import { IntegrationSettings } from '../components/IntegrationSettings';
+import { PlayerPreferences } from '../components/PlayerPreferences';
+import { AudioDiagnostics } from '../components/AudioDiagnostics';
+import { UpdateSettings } from '../components/UpdateSettings';
+import type { Song } from '../types/music';
 const bytes = (value: number) => {
     if (!value)
         return '0 B';
@@ -19,13 +23,14 @@ function SettingTitle({ icon, title, subtitle }: {
 }) {
     return <div className="setting-title"><span><Icon name={icon}/></span><div><h2>{title}</h2><p>{subtitle}</p></div></div>;
 }
-export function PreferencesPage({ config, setConfig, aiStatus, onConnected, onAiChanged, notify }: {
+export function PreferencesPage({ config, setConfig, aiStatus, onConnected, onAiChanged, notify, currentSong }: {
     config: WebDavConfig;
     setConfig: (config: WebDavConfig) => void;
     aiStatus: DeepSeekConfigStatus;
     onConnected: (files: WebDavFile[]) => void;
     onAiChanged: (status: DeepSeekConfigStatus) => void;
     notify: (message: string) => void;
+    currentSong: Song | null;
 }) {
     const { locale, changeLocale } = useLanguageStore();
     const [showWebDavPassword, setShowWebDavPassword] = useState(false);
@@ -103,6 +108,9 @@ export function PreferencesPage({ config, setConfig, aiStatus, onConnected, onAi
       </section>
 
       <IntegrationSettings notify={notify} onAiChanged={onAiChanged}/>
+      <PlayerPreferences/>
+      <AudioDiagnostics song={currentSong}/>
+      <UpdateSettings/>
       <section className="settings-card wide"><SettingTitle icon="settings" title={t("音频兼容解码")} subtitle={t("M4A / MP4 / ALAC 使用内置 FFmpeg；其他格式在浏览器解码失败时自动回退")}/><p className="inline-note">{t("音频只在本机处理，原文件不会修改。首次播放需下载并转换，之后复用无损 FLAC 缓存。独立解码缓存上限 512 MB，清空缓存时一并清理；损坏或受 DRM 保护的文件无法保证播放。")}</p></section>
 
       <section className="settings-card">

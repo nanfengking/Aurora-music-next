@@ -20,7 +20,7 @@
 
 ## 自定义歌词/图片服务
 
-地址填不带查询参数的 HTTPS 端点。应用发起 GET，并添加 `title`、`artist`、`album`、`kind` 查询参数（kind 为 `lyrics`、`cover` 或 `background`）。配置了自定义 Key 时以 `Authorization: Bearer ...` 传递。仅显式配置的 API 接收该 Key，不给图片 CDN 传 Key。URL 变更时需重填已有 Key。
+地址填不带查询参数的 HTTPS 端点。应用发起 GET，并添加 `title`、`artist`、`album`、`kind` 查询参数（Windows 提供 `lyrics`／`cover`，`background` 保留兼容；Android 二级界面提供三种资源）。配置了自定义 Key 时以 `Authorization: Bearer ...` 传递。仅显式配置的 API 接收该 Key。Android 图片仅同源时可带该接口 Key，跨域 CDN 不带；Windows 图片请求不附 Key。URL 变更时需重填已有 Key。
 
 歌词返回示例：
 
@@ -34,8 +34,12 @@
 {"results":[{"title":"专辑或图片标题","artist":"歌手","imageUrl":"https://cdn.example.com/art.jpg"}]}
 ```
 
-也可直接返回数组。图片必须为不需要鉴权、不重定向的公开 HTTPS 链接；拒绝内网地址，最多 8 MB，校验并重新编码为本地 JPEG 后展示。每次最多显示 8 个候选。主进程给预览颁发绑定歌曲与类型的 token，10 分钟后过期。只有确认应用才写入歌曲。
+也可直接返回数组。图片必须使用公开 HTTPS，不得重定向或访问内网；JSON 上限 2 MiB，图片 8 MiB，校验并重新编码为本地 JPEG 后展示。手动查找每次最多显示 8 个候选，确认后才替换现有资源。自动查找默认关闭，需在设置中主动开启；仅对播放中的歌曲补齐缺失资源，不覆盖已有的内嵌或手动资源。
 
-默认歌词来自 [LRCLIB](https://lrclib.net/docs)。默认图片来自 [TheAudioDB](https://www.theaudiodb.com/free_music_api)：封面按艺术家与专辑查询，背景按艺术家查询；留空 Key 使用其公开示例接口，可能有额度/覆盖限制。可填自己的 TheAudioDB Key。
+默认歌词来自 [LRCLIB](https://lrclib.net/docs)：自动查找依次尝试歌名＋艺术家＋专辑、歌名＋艺术家、歌名。封面默认优先内嵌、自有和明确配置的来源，不使用公共图片测试入口。Windows 的 TheAudioDB 须显式填写 Key，留空不请求；Android 使用已配置的 JSON 图片服务。两端 iTunes 都默认关闭、可在设置单独确认开启，作为后备来源。Apple 对专辑图用途有限制；开启不代表获得图片授权，请核对 [Apple 接口条款](https://performance-partners.apple.com/search-api)。背景默认在本机由封面放大模糊、无额外请求；Android 也可通过背景 API 手动选择独立背景。
+
+自动查找只发送正在播放歌曲的歌名、艺术家、专辑等必要元数据，不发送音频、WebDAV 凭据或历史记录。失败会静默跳过，不影响播放；未找到结果短时间内不会重复请求。未知艺术家且文件名也无法拆出艺术家时不会自动猜测封面，可手动搜索。
 
 搜索结果不是授权证明；使用前请核对内容来源与使用条款。应用不发布歌词/图片，也不向服务上传音频文件。
+
+Android 资源设置支持最多 10 个服务、独立加密 Bearer Key、排序和启停；每一级歌词信息先按优先级尝试自定义服务，再使用 LRCLIB。接口只允许公共 HTTPS、无查询参数；实际 DNS 解析拒绝私有地址。单次检索预算约 45 秒，取消不计入六小时失败缓存。搜索最多 8 个结果，点击才下载一张预览；凭证绑定歌曲、类型和配置版本，10 分钟有效。关闭或进入后台取消并清理临时预览。图片最长边缩至不超过 768px，音频不重编码。自动封面缓存合计 64 MiB／400 张；手选图片另限 64 MiB／400 张、不自动淘汰，满时须替换或恢复默认。手选封面不被后续音频标签覆盖。

@@ -5,6 +5,7 @@ import { audioEngine, type PlayMode, type PlayState } from '../services/audioEng
 import { usePlayerStore } from '../stores/playerStore';
 import { Artwork } from './Artwork';
 import { Icon } from './Icon';
+import { usePlayback } from '../services/usePlayback';
 export const formatTime = (value: number) => Number.isFinite(value) && value >= 0
     ? `${Math.floor(value / 60)}:${Math.floor(value % 60).toString().padStart(2, '0')}` : '0:00';
 export const rangeStyle = (value: number) => ({ '--range-fill': `${Math.max(0, Math.min(100, value))}%` } as CSSProperties);
@@ -34,15 +35,15 @@ export function Transport({ song, state, songs }: {
     <button className={mode === 'repeat-one' ? 'enabled' : ''} aria-label={t("播放模式：{0}", [label])} title={label} onClick={() => audioEngine.setPlayMode(modes[(modes.indexOf(mode) + 1) % modes.length])}><Icon name="repeat" size={17}/>{mode === 'repeat-one' && <sup>1</sup>}</button>
   </div>;
 }
-export function PlayerBar({ song, state, songs, onQueue, onExpand, onFavorite, queueOpen }: {
+export function PlayerBar({ song, songs, onQueue, onExpand, onFavorite, queueOpen }: {
     song: Song | null;
-    state: PlayState;
     songs: Song[];
     onQueue: () => void;
     onExpand: () => void;
     onFavorite: (song: Song) => void;
     queueOpen: boolean;
 }) {
+    const state = usePlayback();
     const volume = usePlayerStore((store) => store.volume);
     const beforeMute = useRef(0.8);
     return <footer className={`player-bar ${song ? '' : 'idle'}`}>

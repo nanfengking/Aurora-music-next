@@ -4,6 +4,8 @@
 
 一個面向 Windows 的 WebDAV 音樂播放器。明亮與深色主題、本地聆聽偏好、可選 AI 歌單；音樂與收藏仍由你掌握。
 
+Android 手機／平板預覽版與 Android Studio 編譯步驟見 [Android 指南](docs/android/guide.zh-TW.md)。已實作原生播放、離線儲存、主題、小工具與選用 AI 歌單；完整桌面功能對齊及小米實機驗收仍待完成，不是 Android 穩定版。
+
 ![明亮主題與本地推薦](docs/images/zh-TW/home.png)
 
 ## 功能
@@ -20,11 +22,12 @@
 
 閱讀[帶圖片的使用指南](docs/guides/zh-TW.md)。開發與本機構建見 [CONTRIBUTING](CONTRIBUTING.md)。
 
-這是 **1.4.0 原始碼預覽版**。當前鎖定依賴仍有已知安全告警，正式二進位制釋出前還需升級與迴歸；現有 FFmpeg 二進位制的對應原始碼分發材料也尚未齊備。詳見 [SECURITY](SECURITY.md) 和 [第三方說明](THIRD_PARTY_NOTICES.md)，不要把開發構建宣傳為已完成安全審計的正式版。
+這是 **1.5.0 原始碼預覽版**。當前鎖定依賴仍有已知安全告警，正式二進位制釋出前還需升級與迴歸；現有 FFmpeg 二進位制的對應原始碼分發材料也尚未齊備。詳見 [SECURITY](SECURITY.md)、[Windows 更新說明](docs/UPDATES.md)和[第三方說明](THIRD_PARTY_NOTICES.md)，不要把開發構建宣傳為已完成安全審計的正式版。
 
 ## 隱私與開源
 
 演示圖中的藝術家、歌曲、封面和歷史均為虛構測試資料。原始碼包不包含賬號、真實曲庫、快取、安裝器或 FFmpeg 執行檔。API 僅在你主動啟用相應功能時接收必要資訊；見 [PRIVACY](PRIVACY.md)。
 
+上傳 GitHub 時，解壓原始碼包並上傳其內容，保留四語文件及圖片目錄。不要上傳整個開發目錄、執行資料或舊安裝包。釋出前按[檢查清單](docs/QA_CHECKLIST.md)複核。
 
 Copyright © 2026 jinlaoshi. 專案原創程式碼採用 [GPL-3.0-only](LICENSE)；第三方元件遵循各自許可證。by jinlaoshi

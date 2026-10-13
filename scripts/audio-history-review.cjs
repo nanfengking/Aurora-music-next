@@ -15,7 +15,8 @@ class FakeHowl {
   duration() { return 100 }
   volume() {}
 }
-const state = { volume: 0, playMode: 'sequential', setQueue() {}, setQueueIndex() {}, setPlayMode(mode) { this.playMode = mode } }
+const state = { volume: 0, playMode: 'sequential', setQueue() {}, setQueueIndex() {}, setSession() {}, setPlayMode(mode) { this.playMode = mode } }
+const preferences = { rememberPlayback: true, prefetch: false, normalizeVolume: false, crossfadeSeconds: 0 }
 global.window = { dispatchEvent() {}, electronAPI: {
   getAudioUrl: async () => ({ success: true, data: 'local-protocol://test/test.flac' }),
   recordPlayAction: async record => { events.push(record); return { success: true } },
@@ -24,7 +25,7 @@ const file = path.resolve(__dirname, '../src/services/audioEngine.ts')
 const compiled = ts.transpileModule(fs.readFileSync(file, 'utf8'), { compilerOptions: { target: ts.ScriptTarget.ES2020, module: ts.ModuleKind.CommonJS } })
 const compiledModule = new Module(file, module)
 compiledModule.filename = file; compiledModule.paths = module.paths
-compiledModule.require = name => name === 'howler' ? { Howl: FakeHowl } : name.includes('playerStore') ? { usePlayerStore: { getState: () => state } } : name.includes('i18n') ? { t: (text, values = []) => text.replace(/\{(\d+)\}/g, (_, index) => String(values[index])) } : require(name)
+compiledModule.require = name => name === 'howler' ? { Howl: FakeHowl } : name.includes('playerStore') ? { usePlayerStore: { getState: () => state } } : name.includes('playerPreferences') ? { usePlayerPreferences: { getState: () => ({ preferences }) } } : name.includes('audioTransition') ? { AudioTransition: class { retain() {} start() {} clear() {} } } : name.includes('i18n') ? { t: (text, values = []) => text.replace(/\{(\d+)\}/g, (_, index) => String(values[index])) } : require(name)
 compiledModule._compile(compiled.outputText, file)
 const { audioEngine: engine } = compiledModule.exports
 const a = { id: 'a', title: 'A', filePath: '/a.flac', sourceType: 'local', format: 'FLAC', duration: 100 }

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_music_name">Aurora · 歌曲</string>
+    <string name="widget_lyrics_name">Aurora · 歌詞</string>
+    <string name="widget_music_description">封面、歌曲名稱及播放控制。</string>
+    <string name="widget_lyrics_description">目前及下一句歌詞，附帶播放控制。</string>
+    <string name="widget_empty">下一個音樂時刻</string>
+    <string name="widget_no_lyrics">讓音樂訴說。</string>
+    <string name="widget_artwork">專輯封面</string>
+    <string name="widget_previous">上一首</string>
+    <string name="widget_next">下一首</string>
+    <string name="widget_play_pause">播放或暫停</string>
+</resources>

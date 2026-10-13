@@ -4,6 +4,8 @@ import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron'
 import type { AiPlaylistResult, DeepSeekConfigInput, DeepSeekConfigStatus, IpcResponse, Song, Playlist, PlayHistory, RecommendationFeed } from '../src/types/music'
 import type { WebDavConfig, WebDavFile, SyncProgress } from '../src/types/webdav'
 import type { AiProvider, AssetConfig, AssetKind, AssetCandidate } from '../src/types/providers'
+import type { WindowAction } from '../src/types/player'
+import type { UpdateStatus } from '../src/types/update'
 
 /**
  * Electron API —— 安全地暴露给渲染进程
@@ -11,14 +13,28 @@ import type { AiProvider, AssetConfig, AssetKind, AssetCandidate } from '../src/
  */
 const electronAPI = {
   platform: process.platform,
+  windowAction: (action: WindowAction): Promise<void> => ipcRenderer.invoke('window:action', action),
+  setAlwaysOnTop: (pinned: boolean): Promise<void> => ipcRenderer.invoke('window:pin', pinned),
   setTheme: (theme: 'light'|'dark'|'system'): Promise<void> => ipcRenderer.invoke('appearance:setTheme', theme),
   getAiProviders: (): Promise<IpcResponse<AiProvider[]>> => ipcRenderer.invoke('ai:getProviders'),
   saveAiProviders: (providers: AiProvider[]): Promise<IpcResponse<AiProvider[]>> => ipcRenderer.invoke('ai:saveProviders', providers),
   prepareCompatibleAudio: (id: string): Promise<IpcResponse<string>> => ipcRenderer.invoke('file:prepareCompatibleAudio', id),
+  getUpdateStatus: (): Promise<IpcResponse<UpdateStatus>> => ipcRenderer.invoke('updates:getStatus'),
+  checkForUpdates: (): Promise<IpcResponse<UpdateStatus>> => ipcRenderer.invoke('updates:check'),
+  downloadUpdate: (): Promise<IpcResponse<UpdateStatus>> => ipcRenderer.invoke('updates:download'),
+  installUpdate: (): Promise<IpcResponse> => ipcRenderer.invoke('updates:install'),
+  openReleasePage: (): Promise<IpcResponse> => ipcRenderer.invoke('updates:openReleases'),
+  openSoundSettings: (): Promise<IpcResponse> => ipcRenderer.invoke('system:openSoundSettings'),
+  onUpdateStatus: (listener: (status: UpdateStatus) => void): (() => void) => {
+    const handler = (_event: IpcRendererEvent, status: UpdateStatus) => listener(status)
+    ipcRenderer.on('updates:status', handler)
+    return () => ipcRenderer.removeListener('updates:status', handler)
+  },
   getAssetConfig: (): Promise<IpcResponse<AssetConfig>> => ipcRenderer.invoke('assets:getConfig'),
   saveAssetConfig: (config: AssetConfig): Promise<IpcResponse<AssetConfig>> => ipcRenderer.invoke('assets:saveConfig', config),
   searchAssets: (songId: string, kind: AssetKind, query: {title:string;artist:string;album:string}): Promise<IpcResponse<AssetCandidate[]>> => ipcRenderer.invoke('assets:search', songId, kind, query),
   applyAsset: (songId: string, kind: AssetKind, candidateId: string): Promise<IpcResponse<Song>> => ipcRenderer.invoke('assets:apply', songId, kind, candidateId),
+  autoEnrichSong: (songId: string): Promise<IpcResponse<Song>> => ipcRenderer.invoke('assets:autoEnrich', songId),
 
   // ===== 歌曲 =====
   getAllSongs: (): Promise<IpcResponse<Song[]>> =>

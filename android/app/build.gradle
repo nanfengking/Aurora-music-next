@@ -1,0 +1,72 @@
+apply plugin: 'com.android.application'
+
+android {
+    namespace = "com.aurora.musicnext"
+    compileSdk = rootProject.ext.compileSdkVersion
+    defaultConfig {
+        applicationId "com.aurora.musicnext"
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode 17
+        versionName "1.5.0-preview.11"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        aaptOptions {
+             // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
+             // Default: https://android.googlesource.com/platform/frameworks/base/+/282e181b58cf72b6ca770dc7ca5f91f135444502/tools/aapt/AaptAssets.cpp#61
+            ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    // All four widget languages must remain available without a network download.
+    bundle { language { enableSplit = false } }
+}
+
+repositories {
+    flatDir{
+        dirs '../capacitor-cordova-android-plugins/src/main/libs', 'libs'
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation "androidx.appcompat:appcompat:$androidxAppCompatVersion"
+    implementation "androidx.coordinatorlayout:coordinatorlayout:$androidxCoordinatorLayoutVersion"
+    implementation "androidx.core:core-splashscreen:$coreSplashScreenVersion"
+    implementation project(':capacitor-android')
+    implementation 'androidx.media3:media3-exoplayer:1.11.1'
+    implementation 'androidx.media3:media3-session:1.11.1'
+    implementation 'androidx.media3:media3-datasource:1.11.1'
+    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
+    implementation 'androidx.work:work-runtime:2.11.2'
+    testImplementation "junit:junit:$junitVersion"
+    testImplementation 'org.json:json:20250517'
+    // JVM fixtures only. Production uses android.util.Xml and bundles no extra XML parser.
+    testImplementation 'net.sf.kxml:kxml2:2.3.0'
+    androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"
+    implementation project(':capacitor-cordova-android-plugins')
+}
+
+apply from: 'capacitor.build.gradle'
+apply from: '../signing.gradle'
+
+// Keep isolated HTTP fixture files inside the ignored project build directory.
+tasks.withType(Test).configureEach {
+    def fixtureDirectory = layout.buildDirectory.dir('test-temp').get().asFile
+    systemProperty 'java.io.tmpdir', fixtureDirectory.absolutePath
+    doFirst { fixtureDirectory.mkdirs() }
+}
+
+try {
+    def servicesJSON = file('google-services.json')
+    if (servicesJSON.text) {
+        apply plugin: 'com.google.gms.google-services'
+    }
+} catch(Exception e) {
+    logger.info("google-services.json not found, google-services plugin not applied. Push Notifications won't work")
+}

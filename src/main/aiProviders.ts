@@ -1,6 +1,7 @@
 import type Database from 'better-sqlite3'
 import type { AiProvider } from '../types/providers'
 import { encryptSecret, decryptSecret } from './secrets'
+import { buildAiRequest, extractAiJson } from '../services/aiProtocol'
 
 type Stored = Omit<AiProvider, 'configured'> & { secret: string }
 const KEY = 'ai_providers'
@@ -24,7 +25,7 @@ export function saveProviders(db: Database.Database, input: AiProvider[]): AiPro
   const result: Stored[] = input.map((item, index) => {
     if (!/^[\w-]{1,80}$/.test(item.id) || ids.has(item.id)) throw new Error('API 标识无效或重复')
     ids.add(item.id)
-    if (!['openai','anthropic','gemini'].includes(item.protocol)) throw new Error('不支持的 API 协议')
+    if (!['openai','responses','anthropic','gemini'].includes(item.protocol)) throw new Error('不支持的 API 协议')
     const baseUrl = validateApiUrl(item.baseUrl.trim()).href.replace(/\/$/, '')
     const old = previous.get(item.id)
     const key = String(item.apiKey || '').trim()
@@ -37,11 +38,7 @@ export function saveProviders(db: Database.Database, input: AiProvider[]): AiPro
   return getProviders(db)
 }
 function request(provider: Stored, system: string, user: string): { url: string; headers: Record<string,string>; body: unknown } {
-  const base = provider.baseUrl.replace(/\/$/, '')
-  const apiKey = decryptSecret(provider.secret)
-  if (provider.protocol === 'anthropic') return { url: base.endsWith('/messages') ? base : `${base.endsWith('/v1') ? base : base + '/v1'}/messages`, headers: {'x-api-key':apiKey, 'anthropic-version':'2023-06-01'}, body:{model:provider.model, max_tokens:4096, system, messages:[{role:'user', content:user}]} }
-  if (provider.protocol === 'gemini') return { url:`${/\/v1(beta)?$/.test(base) ? base : base + '/v1beta'}/models/${encodeURIComponent(provider.model.replace(/^models\//,''))}:generateContent`, headers:{'x-goog-api-key':apiKey}, body:{systemInstruction:{parts:[{text:system}]}, contents:[{role:'user',parts:[{text:user}]}], generationConfig:{responseMimeType:'application/json'}} }
-  return { url:base.endsWith('/chat/completions') ? base : `${base}/chat/completions`, headers:{Authorization:`Bearer ${apiKey}`}, body:{model:provider.model, messages:[{role:'system',content:system},{role:'user',content:user}]} }
+  return buildAiRequest(provider, decryptSecret(provider.secret), system, user)
 }
 export async function requestJsonWithProviders<T>(
   db: Database.Database, system: string, user: string, validate: (value: unknown) => T, deadline = Date.now() + 90_000,
@@ -70,9 +67,7 @@ export async function requestJsonWithProviders<T>(
         }
       } finally { reader.releaseLock() }
       const payload = JSON.parse(Buffer.concat(chunks).toString('utf8'))
-      const content = provider.protocol === 'anthropic' ? payload.content?.filter((x:{type:string})=>x.type==='text').map((x:{text:string})=>x.text).join('') : provider.protocol === 'gemini' ? payload.candidates?.[0]?.content?.parts?.filter((x:{thought?:boolean})=>!x.thought).map((x:{text?:string})=>x.text||'').join('') : payload.choices?.[0]?.message?.content
-      if (typeof content !== 'string') throw new Error('响应格式不兼容')
-      const parsed: unknown = JSON.parse(content.slice(content.indexOf('{'), content.lastIndexOf('}')+1))
+      const parsed = extractAiJson(provider.protocol, payload)
       return { data: validate(parsed), providerName: provider.name, attempts: errors }
     } catch (error) {
       const reason = error instanceof Error && /^HTTP \d+$/.test(error.message) ? error.message : '超时、网络失败或返回格式无效'

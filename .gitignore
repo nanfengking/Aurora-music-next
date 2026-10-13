@@ -1,0 +1,76 @@
+# Dependencies
+node_modules/
+
+# Build and packaging output
+out/
+mobile/dist/
+android/.gradle/
+android/.gradle-user/
+android/.android-user/
+android/.build-tools/
+android/.build-temp/
+android/.sdk/
+android/.kotlin/
+android/build/
+android/app/build/
+android/app/src/main/assets/
+android/app/src/main/res/xml/config.xml
+android/local.properties
+release/
+dist/
+build/
+*.tsbuildinfo
+
+# Runtime data and media cache
+webdav-cache/
+webdav_cache/
+cache/
+*.db
+*.db-*
+*.sqlite
+*.sqlite3
+
+# Credentials and local configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.pfx
+*.p12
+*.jks
+*.keystore
+android/.signing/
+google-services.json
+credentials*.json
+secrets*.json
+
+# Logs and crash reports
+*.log
+logs/
+crashpad/
+*.dmp
+
+# Editor and operating-system files
+.idea/
+.vscode/
+*.suo
+*.user
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Test artifacts
+coverage/
+test-results/
+playwright-report/
+test-profile*/
+.ui-review-*/
+.ffmpeg-download/
+.ffmpeg-build.zip
+
+# Downloaded separately, never upload binaries or personal artwork to the source repository
+resources/ffmpeg/*.exe
+docs/screenshots/
+.release-stage-*/
+*.zip

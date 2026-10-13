@@ -4,7 +4,7 @@ const path = require('node:path')
 const Module = require('node:module')
 const assert = require('node:assert/strict')
 const ts = require('typescript')
-const file = path.resolve(__dirname, '../src/main/recommendation.ts')
+const file = path.resolve(__dirname, '../src/services/recommendation.ts')
 const compiled = ts.transpileModule(fs.readFileSync(file, 'utf8'), { compilerOptions: { target: ts.ScriptTarget.ES2020, module: ts.ModuleKind.CommonJS } })
 const modelModule = new Module(file, module)
 modelModule.filename = file; modelModule.paths = module.paths

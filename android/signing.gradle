@@ -1,0 +1,52 @@
+// Release keys never live in source/Gradle properties. Debug builds are unchanged.
+def inputs = ['AURORA_ANDROID_KEYSTORE', 'AURORA_ANDROID_STORE_PASSWORD',
+              'AURORA_ANDROID_KEY_ALIAS', 'AURORA_ANDROID_KEY_PASSWORD']
+def values = inputs.collectEntries { name -> [(name): providers.environmentVariable(name).orNull] }
+def configured = values.values().every { it != null && !it.trim().isEmpty() }
+def keyFile = configured ? rootProject.file(values.AURORA_ANDROID_KEYSTORE) : null
+
+if (configured) {
+    android.signingConfigs.create('privateRelease') {
+        storeFile = keyFile
+        storePassword = values.AURORA_ANDROID_STORE_PASSWORD
+        keyAlias = values.AURORA_ANDROID_KEY_ALIAS
+        keyPassword = values.AURORA_ANDROID_KEY_PASSWORD
+    }
+    android.buildTypes.release.signingConfig = android.signingConfigs.privateRelease
+}
+
+def verifySigning = tasks.register('verifyReleaseSigning') {
+    group = 'verification'
+    description = 'Fail closed on missing, debug or unexpected release signing keys.'
+    doLast {
+        if (!configured) throw new GradleException('Release signing requires all four AURORA_ANDROID signing environment variables. Debug builds need none.')
+        def expected = providers.environmentVariable('AURORA_ANDROID_CERT_SHA256').orNull?.trim()?.replace(':', '')?.toLowerCase(java.util.Locale.ROOT)
+        if (expected == null || !(expected ==~ /[0-9a-f]{64}/))
+            throw new GradleException('Set AURORA_ANDROID_CERT_SHA256 to your fixed public certificate fingerprint before building a release.')
+        if (!keyFile.isFile() || keyFile.length() > 4 * 1024 * 1024)
+            throw new GradleException('Release keystore must be an existing private file, at most 4 MiB.')
+        char[] storePassword = values.AURORA_ANDROID_STORE_PASSWORD.toCharArray()
+        char[] keyPassword = values.AURORA_ANDROID_KEY_PASSWORD.toCharArray()
+        try {
+            def store = java.security.KeyStore.getInstance(keyFile, storePassword)
+            def alias = values.AURORA_ANDROID_KEY_ALIAS
+            def certificate = store.getCertificate(alias)
+            if (!(certificate instanceof java.security.cert.X509Certificate) || !store.isKeyEntry(alias)
+                || !(store.getKey(alias, keyPassword) instanceof java.security.PrivateKey))
+                throw new GradleException('The selected alias does not contain an accessible private signing key.')
+            if (alias.equalsIgnoreCase('androiddebugkey') || certificate.subjectX500Principal.name.toLowerCase(java.util.Locale.ROOT).contains('cn=android debug'))
+                throw new GradleException('Debug keys are not accepted for release builds. Keep using debug builds for existing debug installations.')
+            certificate.checkValidity()
+            def actual = java.security.MessageDigest.getInstance('SHA-256').digest(certificate.encoded).encodeHex().toString()
+            if (actual != expected) throw new GradleException('Release certificate differs from AURORA_ANDROID_CERT_SHA256. Do not replace keys or uninstall to bypass this check.')
+            logger.lifecycle('Release signing certificate verified: ' + actual)
+        } catch (GradleException expectedError) { throw expectedError }
+          catch (Exception unavailable) { throw new GradleException('Cannot open the release signing key. Check the file, alias and passwords; credentials are not logged.') }
+        finally { java.util.Arrays.fill(storePassword, (char) 0); java.util.Arrays.fill(keyPassword, (char) 0) }
+    }
+}
+// No assemble/bundle/package path may silently produce an unsigned release.
+tasks.configureEach { task ->
+    if (task.name in ['preReleaseBuild', 'validateSigningRelease', 'packageRelease', 'signReleaseBundle'])
+        task.dependsOn(verifySigning)
+}

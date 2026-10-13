@@ -16,7 +16,7 @@ The native rebuild targets Electron's ABI, not the system Node ABI. If no compat
 
 FFmpeg is intentionally excluded from Git and the source ZIP. The setup script downloads a pinned upstream archive, verifies SHA-256 and installs only the executable needed for local playback. It does not complete binary redistribution compliance; read [SOURCE](resources/ffmpeg/SOURCE.md). It leaves an existing executable unchanged.
 
-`npm run build` generates the three translated catalogues, checks types and emits production files. `npm run pack:win` builds an NSIS installer for local testing; **it is not an approval to publicly distribute it**. Preserve the app ID and package name when upgrading an existing installation.
+`npm run build` generates the three translated catalogues, checks types and emits production files. `npm run pack:win` builds an NSIS installer and update metadata for local testing; **it is not an approval to publicly distribute them**. Preserve the app ID and package name when upgrading an existing installation. See [Windows updates](docs/UPDATES.md) for in-place installation and Release asset requirements.
 
 ## Regression tests
 
@@ -27,6 +27,7 @@ npm install --no-save --package-lock=false --ignore-scripts playwright@1.62.1
 npm run test:recommendations
 npm run test:i18n
 npm run test:features
+npm run test:audio-quality
 npm run test:ui
 npm run test:locales
 ```

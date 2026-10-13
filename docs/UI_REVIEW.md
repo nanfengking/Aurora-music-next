@@ -1,4 +1,12 @@
-# Verification record — 1.4.0 source preview
+# Verification record — 1.4.0 and 1.5.0 source previews
+
+## 1.5.0 follow-up (2026-09-28)
+
+On Windows x64, TypeScript and production builds, recommendation/audio-history tests, four-language checks, WebDAV AAC/ALAC playback, AI/asset/lyric feature checks, privacy heuristics, and the full UI review passed. The UI review also exercised manually reading a cached WebDAV track's codec, bitrate and sample rate without contacting a server. It passed both from production output and packaged ASAR.
+
+The local NSIS installer, blockmap and `latest.yml` were generated together; `verify:release` confirmed the manifest version, filename and SHA-512 match the installer. This does **not** establish a real 1.4.0 → 1.5.0 installation upgrade or the hosted check/download/install path. The GitHub repository had no published Release when this check ran. Public binary release gates in [SECURITY](../SECURITY.md) remain open.
+
+## 1.4.0 baseline
 
 Run date: 2026-09-21. Tests run on Windows x64 using the existing Electron 31.7.7 runtime. Real user profiles, keys and music were not used.
 

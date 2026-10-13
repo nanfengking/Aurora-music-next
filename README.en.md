@@ -4,6 +4,8 @@
 
 A Windows WebDAV music player with light and dark themes, local listening preferences and optional AI playlists.
 
+The Android phone/tablet preview and Android Studio build steps are in the [Android guide](docs/android/guide.en.md). Native playback, offline storage, themes, widgets and optional AI playlists are implemented; full desktop parity and Xiaomi device acceptance are still pending. This is not a stable Android release.
+
 ![Light theme and local recommendations](docs/images/en/home.png)
 
 ## Features
@@ -20,7 +22,7 @@ A Windows WebDAV music player with light and dark themes, local listening prefer
 
 Read the [illustrated guide](docs/guides/en.md). See [CONTRIBUTING](CONTRIBUTING.md) for development and local builds.
 
-This is a **1.4.0 source preview**. Locked dependencies have known security advisories. Upgrade and regression testing, plus complete corresponding-source materials for redistributed FFmpeg binaries, are required before a public binary release. See [SECURITY](SECURITY.md) and [third-party notices](THIRD_PARTY_NOTICES.md).
+This is a **1.5.0 source preview**. Locked dependencies have known security advisories. Upgrade and regression testing, plus complete corresponding-source materials for redistributed FFmpeg binaries, are required before a public binary release. See [SECURITY](SECURITY.md), [Windows updates](docs/UPDATES.md) and [third-party notices](THIRD_PARTY_NOTICES.md).
 
 ## Privacy and publishing
 

@@ -1,0 +1,55 @@
+name: Android debug APK
+
+# Ephemeral runner debug keys are not an update channel. Use Android signed APK for distribution.
+permissions:
+  contents: read
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'mobile/**'
+      - 'android/**'
+      - 'src/main/recommendation.ts'
+      - 'src/services/**'
+      - 'src/types/**'
+      - 'src/i18n/**'
+      - 'scripts/hybrid-playlist-review.cjs'
+      - 'scripts/android-sql-review.cjs'
+      - 'capacitor.config.ts'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/android-debug.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: android-actions/setup-android@v3
+      - name: Install Android SDK
+        run: sdkmanager 'platforms;android-36' 'build-tools;36.0.0'
+      - name: Build web assets and sync Android
+        run: |
+          npm ci
+          npm run android:sync
+      - name: Check shared recommendation logic
+        run: npm run test:hybrid
+      - name: Check Android SQL against host SQLite
+        run: npm run test:android-sql
+      - name: Build and check debug APK
+        working-directory: android
+        run: bash gradlew assembleDebug testDebugUnitTest lintDebug assembleDebugAndroidTest --no-daemon
+      - uses: actions/upload-artifact@v4
+        with:
+          name: aurora-android-debug
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error

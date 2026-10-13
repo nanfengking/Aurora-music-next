@@ -5,6 +5,8 @@ import { join } from 'path'
 import { closeDatabase, initDatabase } from '../src/main/database'
 import { registerIpcHandlers } from '../src/main/ipc'
 import { registerLocalProtocol } from '../src/main/protocol'
+import { registerWindowControls, rememberWindow, savedWindowBounds } from './playerWindow'
+import { registerUpdateHandlers } from '../src/main/updates'
 
 // Media elements require a privileged, stream-capable custom scheme. This must
 // be declared before Electron's ready event.
@@ -34,10 +36,10 @@ app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required')
 
 function createWindow(): BrowserWindow {
   const mainWindow = new BrowserWindow({
-    width: 1320,
-    height: 860,
-    minWidth: 980,
-    minHeight: 640,
+    ...savedWindowBounds(),
+    minWidth: 280,
+    minHeight: 116,
+    frame: false,
     show: false,
     backgroundColor: '#18181a',
     autoHideMenuBar: true,
@@ -52,6 +54,7 @@ function createWindow(): BrowserWindow {
   })
 
   mainWindow.setMenuBarVisibility(false)
+  rememberWindow(mainWindow)
 
   mainWindow.once('ready-to-show', () => mainWindow.show())
   mainWindow.webContents.setWindowOpenHandler(() => ({ action: 'deny' }))
@@ -91,6 +94,8 @@ if (!hasSingleInstanceLock) {
     registerLocalProtocol()
     // 注册 IPC handlers
     registerIpcHandlers(db)
+    registerWindowControls()
+    registerUpdateHandlers()
 
     createWindow()
 
@@ -102,7 +107,7 @@ if (!hasSingleInstanceLock) {
   })
 }
 
-app.on('before-quit', closeDatabase)
+app.on('will-quit', closeDatabase)
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {

@@ -13,7 +13,7 @@ export function playlistIds(playlist?: Playlist): string[] {
         return [];
     }
 }
-export function PlaylistsPage({ playlists, songs, selectedId, current, state, onSelect, onCreate, onDelete, onPlay, onFavorite, onAdd, onRemove }: {
+export function PlaylistsPage({ playlists, songs, selectedId, current, state, onSelect, onCreate, onDelete, onPlay, onFavorite, onAdd, onRemove, onEdit }: {
     playlists: Playlist[];
     songs: Song[];
     selectedId: string | null;
@@ -21,6 +21,7 @@ export function PlaylistsPage({ playlists, songs, selectedId, current, state, on
     state: PlayState;
     onSelect: (id: string | null) => void;
     onCreate: () => void;
+    onEdit: (playlist: Playlist) => void;
     onDelete: (id: string) => void;
     onPlay: (song: Song, queue?: Song[]) => void;
     onFavorite: (song: Song) => void;
@@ -33,7 +34,8 @@ export function PlaylistsPage({ playlists, songs, selectedId, current, state, on
     return <div className="playlists-page">{selected ? <>
     <button className="text-button back-link" onClick={() => onSelect(null)}><Icon name="back" size={16}/>{t("所有歌单")}</button>
     <div className="collection-detail"><Artwork song={tracks.find(s => s.coverPath) || tracks[0]} size="large"/><div><span className="subtle-label">{t("我的歌单")}</span><h2>{selected.name}</h2><p>{selected.description || t("{0} 首歌曲", [tracks.length])}</p><div className="button-row"><button className="primary-button" disabled={!tracks.length} onClick={() => onPlay(tracks[0], tracks)}><Icon name="play" size={17}/>{t("播放")}</button><button className="icon-button danger" onClick={() => onDelete(selected.id)} aria-label={t("删除歌单")} title={t("删除歌单")}><Icon name="trash" size={18}/></button></div></div></div>
-    <SongTable songs={tracks} current={current} state={state} onPlay={onPlay} onFavorite={onFavorite} onAdd={onAdd} onRemove={song => onRemove(selected.id, song)} emptyText={t("为这个歌单添加一些音乐")}/>
+    {selected.smartRules && <div className="smart-playlist-note"><span>{t("自动歌单")}</span><p>{t("曲库、收藏和播放记录变化时自动更新，不调用 API。播放中的队列不会被重排。")}</p><button className="text-button" onClick={() => onEdit(selected)}>{t("编辑规则")}</button></div>}
+    <SongTable songs={tracks} current={current} state={state} onPlay={onPlay} onFavorite={onFavorite} onAdd={onAdd} onRemove={selected.smartRules ? undefined : song => onRemove(selected.id, song)} emptyText={selected.smartRules ? t("暂无符合规则的歌曲") : t("为这个歌单添加一些音乐")}/>
   </> : <>
     <div className="collection-toolbar"><span>{t("{0} 个歌单", [playlists.length])}</span><button className="text-button" onClick={onCreate}><Icon name="plus" size={16}/>{t("新建歌单")}</button></div>
     <div className="collection-grid">{playlists.map(playlist => <article className="music-tile" key={playlist.id}><button className="cover-button" onClick={() => onSelect(playlist.id)} aria-label={t("打开歌单 {0}", [playlist.name])}><Artwork song={playlistIds(playlist).map(id => byId.get(id)).find(song => song?.coverPath) || byId.get(playlistIds(playlist)[0])} size="large"/><span className="cover-play"><Icon name="chevron"/></span></button><button className="tile-title" onClick={() => onSelect(playlist.id)}>{playlist.name}</button><p>{t("{0} 首歌曲", [playlistIds(playlist).length])}</p></article>)}</div>

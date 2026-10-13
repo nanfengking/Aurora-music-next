@@ -4,6 +4,8 @@
 
 Un lecteur musical WebDAV pour Windows : thèmes clair et sombre, préférences d’écoute locales et playlists assistées par IA, en option.
 
+L’aperçu Android pour téléphone/tablette et la compilation dans Android Studio sont décrits dans le [guide Android](docs/android/guide.fr.md). Lecture native, stockage hors ligne, thèmes, widgets et IA facultative sont implémentés. La parité complète et les essais Xiaomi restent à faire ; ce n’est pas une version Android stable.
+
 ![Thème clair et recommandations locales](docs/images/fr/home.png)
 
 ## Fonctionnalités
@@ -20,7 +22,7 @@ Un lecteur musical WebDAV pour Windows : thèmes clair et sombre, préférences 
 
 Consultez le [guide illustré](docs/guides/fr.md) et les [instructions de développement](CONTRIBUTING.md).
 
-Il s’agit d’un **aperçu du code source 1.4.0**. Des alertes de sécurité concernent les dépendances verrouillées. Une mise à niveau, des tests de régression et les sources correspondantes complètes du binaire FFmpeg restent nécessaires avant la diffusion publique d’un installateur. Voir [SECURITY](SECURITY.md) et les [mentions tierces](THIRD_PARTY_NOTICES.md).
+Il s’agit d’un **aperçu du code source 1.5.0**. Des alertes de sécurité concernent les dépendances verrouillées. Une mise à niveau, des tests de régression et les sources correspondantes complètes du binaire FFmpeg restent nécessaires avant la diffusion publique d’un installateur. Voir [SECURITY](SECURITY.md), les [mises à jour Windows](docs/UPDATES.md) et les [mentions tierces](THIRD_PARTY_NOTICES.md).
 
 ## Confidentialité et publication
 

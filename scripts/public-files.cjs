@@ -1,17 +1,20 @@
 const fs = require('node:fs')
 const { resolve, join } = require('node:path')
 const root = resolve(__dirname, '..')
-const roots = ['src', 'electron', 'scripts', 'docs']
-const singles = ['.gitignore', 'package.json', 'package-lock.json', 'electron.vite.config.ts', 'index.html', 'tsconfig.json', 'tsconfig.node.json', 'tsconfig.web.json', 'LICENSE', 'README.md', 'README.zh-TW.md', 'README.en.md', 'README.fr.md', 'CONTRIBUTING.md', 'PRIVACY.md', 'SECURITY.md', 'THIRD_PARTY_NOTICES.md', 'resources/icon.png', 'resources/ffmpeg/LICENSE', 'resources/ffmpeg/README.txt', 'resources/ffmpeg/SOURCE.md']
+const roots = ['src', 'electron', 'scripts', 'docs', 'mobile', 'android', '.github']
+const singles = ['.gitignore', 'package.json', 'package-lock.json', 'electron.vite.config.ts', 'capacitor.config.ts', 'index.html', 'tsconfig.json', 'tsconfig.node.json', 'tsconfig.web.json', 'LICENSE', 'README.md', 'README.android.md', 'README.zh-TW.md', 'README.en.md', 'README.fr.md', 'CONTRIBUTING.md', 'PRIVACY.md', 'SECURITY.md', 'THIRD_PARTY_NOTICES.md', 'resources/icon.png', 'resources/ffmpeg/LICENSE', 'resources/ffmpeg/README.txt', 'resources/ffmpeg/SOURCE.md']
+const privateBuildDirs = new Set(['.gradle', '.gradle-user', '.android-user', '.build-tools', '.build-temp', '.signing', '.sdk', '.idea', '.kotlin', 'build'])
 function publicFiles() {
   const files = [...singles]
   function walk(relative) {
     for (const entry of fs.readdirSync(join(root, relative), { withFileTypes: true })) {
       const name = relative + '/' + entry.name
+      // Keep signing keys, downloaded runtimes, machine settings and build caches private.
+      if (relative.startsWith('android') && entry.isDirectory() && privateBuildDirs.has(entry.name)) continue
       if (entry.isSymbolicLink()) throw new Error('Symlinks are not allowed in source export: ' + name)
-      if (name === 'docs/screenshots') continue
+      if (name === 'docs/screenshots' || name === 'mobile/dist' || name === 'android/.gradle' || name === 'android/build' || name === 'android/app/build' || name === 'android/app/src/main/assets' || name === 'android/app/src/main/res/xml/config.xml' || name === 'android/local.properties') continue
       if (entry.isDirectory()) walk(name)
-      else if (/\.(ts|tsx|css|json|cjs|ps1|md|d\.ts)$/.test(name) || /^docs\/images\/(zh-CN|zh-TW|en|fr)\/(home|settings|playlist|player)\.png$/.test(name)) files.push(name)
+      else if (/\.(ts|tsx|css|json|cjs|ps1|md|d\.ts)$/.test(name) || /^docs\/images\/(zh-CN|zh-TW|en|fr)\/(home|settings|playlist|player)\.png$/.test(name) || /^docs\/images\/android\/(phone-listen|phone-player|tablet-listen|phone-settings|playback-options|download-tasks|storage-settings|asset-preview|asset-settings)\.png$/.test(name) || /^mobile\/.*\.html$/.test(name) || /^\.github\/.*\.yml$/.test(name) || /^android\/.*\.(java|gradle|properties|pro|xml|png|jar|bat|gitignore|gitkeep)$/.test(name) || name === 'android/gradlew') files.push(name)
       else throw new Error('Unexpected public source file; review before export: ' + name)
     }
   }

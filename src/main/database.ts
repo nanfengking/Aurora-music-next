@@ -4,7 +4,7 @@ import { existsSync } from 'fs'
 import { join } from 'path'
 
 let db: Database.Database | null = null
-const CURRENT_SCHEMA_VERSION = 2
+const CURRENT_SCHEMA_VERSION = 3
 
 function ensureSongColumn(database: Database.Database, name: string, definition: string): void {
   const columns = database.pragma('table_info(songs)') as Array<{ name: string }>
@@ -108,6 +108,12 @@ export function initDatabase(): Database.Database {
   ensureSongColumn(db, 'playCount', 'INTEGER DEFAULT 0')
   ensureSongColumn(db, 'skipCount', 'INTEGER DEFAULT 0')
   ensureSongColumn(db, 'lastPlayedAt', 'INTEGER')
+  ensureSongColumn(db, 'codec', 'TEXT')
+  for (const name of ['bitrate', 'sampleRate', 'bitDepth', 'channels', 'replayGainDb', 'replayPeak']) {
+    ensureSongColumn(db, name, 'REAL')
+  }
+  const playlistColumns = db.pragma('table_info(playlists)') as Array<{ name: string }>
+  if (!playlistColumns.some(column => column.name === 'smartRules')) db.exec('ALTER TABLE playlists ADD COLUMN smartRules TEXT')
 
   db.exec(`
     CREATE INDEX IF NOT EXISTS idx_songs_source_title ON songs(sourceType, title COLLATE NOCASE);

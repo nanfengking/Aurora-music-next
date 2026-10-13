@@ -17,6 +17,8 @@
 - [ ] Test actual selected API accounts/models with explicit permission and budget.
 - [ ] Verify background audio, Windows media controls, sleep/resume and very large libraries.
 - [ ] Test clean install, upgrade retention and uninstall on a separate Windows account.
+- [x] Local 1.5.0 build emits NSIS installer, blockmap and matching `latest.yml`; application update UI stays disabled in development mode.
+- [ ] Publish a real Release with matching update assets and verify the full check/download/install cycle on an already installed 1.4.0 copy.
 - [ ] Sign the executable/installer for public distribution and publish verified hashes.
 
 ## Release gates still open

@@ -5,6 +5,7 @@ import type { PlayState } from '../services/audioEngine';
 import { Artwork } from './Artwork';
 import { Icon } from './Icon';
 import { formatTime } from './PlayerBar';
+import { SongDetails } from './SongDetails';
 interface SongTableProps {
     songs: Song[];
     current: Song | null;
@@ -18,6 +19,7 @@ interface SongTableProps {
 }
 export function SongTable({ songs, current, state, onPlay, onFavorite, onAdd, onRemove, emptyText = t("这里还没有歌曲"), compact = false }: SongTableProps) {
     const [page, setPage] = useState(0);
+    const [detail, setDetail] = useState<Song | null>(null);
     const pageSize = 100;
     useEffect(() => setPage(0), [songs]);
     if (!songs.length)
@@ -35,9 +37,11 @@ export function SongTable({ songs, current, state, onPlay, onFavorite, onAdd, on
         {!compact && <span className="song-duration" role="cell">{song.duration > 0 ? formatTime(song.duration) : '—'}</span>}
         <div className="song-actions"><button className={song.isFavorite ? 'favorite' : ''} onClick={() => onFavorite(song)} aria-label={`${song.isFavorite ? t("取消喜欢") : t("喜欢")} ${song.title}`} title={song.isFavorite ? t("取消喜欢") : t("喜欢")}><Icon name="heart" size={16} filled={Boolean(song.isFavorite)}/></button>
           <button onClick={() => onAdd(song)} aria-label={t("添加 {0} 到歌单", [song.title])} title={t("添加到歌单")}><Icon name="plus" size={17}/></button>
+          <button onClick={() => setDetail(song)} aria-label={t("查看 {0} 的详情", [song.title])} title={t("歌曲详情")}><Icon name="info" size={16}/></button>
           {onRemove && <button onClick={() => onRemove(song)} aria-label={t("从歌单移除 {0}", [song.title])} title={t("从歌单移除")}><Icon name="close" size={16}/></button>}</div>
       </div>;
         })}</div>
     {!compact && songs.length > pageSize && <div className="pagination"><span>{t("{0}–{1} / {2} 首", [page * pageSize + 1, Math.min((page + 1) * pageSize, songs.length), songs.length])}</span><button className="icon-button" disabled={page === 0} aria-label={t("上一页")} onClick={() => setPage(page - 1)}><Icon name="back"/></button><button className="icon-button" disabled={(page + 1) * pageSize >= songs.length} aria-label={t("下一页")} onClick={() => setPage(page + 1)}><Icon name="chevron"/></button></div>}
+    {detail && <SongDetails song={detail} onClose={() => setDetail(null)}/>}
   </div>;
 }

@@ -2,6 +2,8 @@ import { t } from '../i18n'
 import { Howl } from 'howler';
 import type { PlayHistory, Song } from '../types/music';
 import { usePlayerStore } from '../stores/playerStore';
+import { usePlayerPreferences } from '../stores/playerPreferences';
+import { AudioTransition } from './audioTransition';
 type PlayStateListener = (state: PlayState) => void;
 export type PlayMode = 'sequential' | 'smart-shuffle' | 'repeat-one';
 export interface PlayState {
@@ -40,10 +42,15 @@ class AudioEngine {
     private recentKeys: string[] = [];
     private prefetchedNext: Song | null = null;
     private prefetchTimer: ReturnType<typeof setTimeout> | null = null;
+    private transition = new AudioTransition();
+    private restoredPosition = 0;
+    private lastSavedAt = 0;
+    private restoreDone = false;
+    private trackGain = 1;
     getState(): PlayState {
         return {
             isPlaying: this.howl?.playing() ?? false,
-            currentTime: (this.howl?.seek() as number) ?? 0,
+            currentTime: (this.howl?.seek() as number) ?? this.restoredPosition,
             duration: this.howl?.duration() ?? (this.currentSong?.duration ?? 0),
             progress: this.getProgress(),
             isLoading: this.loading,
@@ -58,23 +65,57 @@ class AudioEngine {
     getPlayMode(): PlayMode {
         return usePlayerStore.getState().playMode;
     }
+    restore(songs: Song[]): void {
+        if (this.restoreDone || this.currentSong) return;
+        this.restoreDone = true;
+        if (!usePlayerPreferences.getState().preferences.rememberPlayback) return;
+        const saved = usePlayerStore.getState();
+        const byId = new Map(songs.map(song => [song.id, song]));
+        const song = saved.currentId ? byId.get(saved.currentId) : undefined;
+        if (!song) return;
+        this.queue = saved.queue.map(id => byId.get(id)).filter((item): item is Song => Boolean(item));
+        if (!this.queue.some(item => item.id === song.id)) this.queue.unshift(song);
+        this.queueIndex = this.queue.findIndex(item => item.id === song.id);
+        this.currentSong = song;
+        this.restoredPosition = song.duration > 0 ? Math.min(saved.position, Math.max(0, song.duration - 0.1)) : saved.position;
+        saved.setQueue(this.queue.map(item => item.id), this.queueIndex);
+        this.configureMediaSession(song);
+        this.notifyListeners();
+    }
+    saveSession(): void {
+        if (!usePlayerPreferences.getState().preferences.rememberPlayback || !this.currentSong) return;
+        usePlayerStore.getState().setSession(this.currentSong.id, this.getState().currentTime);
+        this.lastSavedAt = Date.now();
+    }
+    applyPreferences(): void {
+        this.howl?.volume(this.effectiveVolume());
+        if (!usePlayerPreferences.getState().preferences.crossfadeSeconds) this.transition.clear();
+        this.schedulePrefetch();
+    }
+    private effectiveVolume(): number {
+        return usePlayerStore.getState().volume * (usePlayerPreferences.getState().preferences.normalizeVolume ? this.trackGain : 1);
+    }
     setPlayMode(mode: PlayMode): void {
         usePlayerStore.getState().setPlayMode(mode);
         this.prefetchedNext = null;
         this.schedulePrefetch();
     }
-    async play(song: Song, allSongs?: Song[], compatiblePath?: string): Promise<void> {
+    async play(song: Song, allSongs?: Song[], compatiblePath?: string, startAt = 0): Promise<void> {
         const sameSession = Boolean(compatiblePath && this.currentSong?.id === song.id);
         if (!sameSession)
             this.recordSkipIfNeeded();
         const requestId = ++this.requestId;
+        const outgoing = !sameSession && usePlayerPreferences.getState().preferences.crossfadeSeconds && this.howl?.playing() ? this.howl : null;
+        if (outgoing) this.howl = null;
         this.destroy();
+        this.transition.retain(outgoing);
         if (!sameSession) {
             this.didStart = false;
             this.terminalRecorded = false;
             this.listeningSeconds = 0;
         }
         this.currentSong = song;
+        this.restoredPosition = startAt;
         this.lastError = null;
         this.loading = true;
         this.loadingMessage = t("正在加载音频…");
@@ -86,6 +127,12 @@ class AudioEngine {
             this.queueIndex = allSongs.findIndex((item) => item.id === song.id || item.remotePath === song.remotePath);
             this.prefetchedNext = null;
         }
+        else if (!this.queue.some(item => item.id === song.id)) {
+            this.queue = [song];
+            this.queueIndex = 0;
+            usePlayerStore.getState().setQueue([song.id], 0);
+        }
+        this.saveSession();
         try {
             let filePath = song.filePath;
             let src = '';
@@ -101,6 +148,9 @@ class AudioEngine {
                     return;
                 }
                 compatiblePath = decoded.data;
+                const refreshed = await window.electronAPI.getSongById(song.id);
+                if (requestId !== this.requestId) return;
+                if (refreshed.data) this.currentSong = song = refreshed.data;
             }
             if (compatiblePath)
                 filePath = compatiblePath;
@@ -138,11 +188,15 @@ class AudioEngine {
             // Howler html5 模式下格式名：mp3/flac/ogg/wav/aac/m4a/webm 等
             const knownFormats = ['mp3', 'flac', 'ogg', 'wav', 'aac', 'm4a', 'mp4', 'webm', 'wma', 'opus', 'aiff', 'ape'];
             const howlFormat = knownFormats.includes(ext) ? (ext === 'mp4' ? 'm4a' : ext) : 'mp3';
+            // ReplayGain is applied conservatively: attenuate only, with peak protection.
+            const gain = Number.isFinite(song.replayGainDb) ? 10 ** (song.replayGainDb! / 20) : 1;
+            this.trackGain = Math.min(1, gain, song.replayPeak && song.replayPeak > 0 ? 1 / song.replayPeak : 1);
+            let firstPlay = true;
             this.howl = new Howl({
                 src: [src],
                 html5: true,
                 format: [howlFormat],
-                volume: usePlayerStore.getState().volume,
+                volume: outgoing ? 0 : this.effectiveVolume(),
                 // 缓存文件走本地 Range，未缓存文件走带鉴权的 WebDAV Range 协议。
                 preload: true,
                 onload: () => {
@@ -151,6 +205,10 @@ class AudioEngine {
                     this.clearLoadTimeout();
                     this.lastError = null;
                     this.loading = false;
+                    if (startAt > 0 && this.howl) {
+                        this.howl.seek(Math.min(startAt, Math.max(0, this.howl.duration() - 0.1)));
+                    }
+                    this.restoredPosition = 0;
                     this.notifyListeners();
                 },
                 onplay: () => {
@@ -158,6 +216,10 @@ class AudioEngine {
                         return;
                     this.clearLoadTimeout();
                     this.loading = false;
+                    if (firstPlay && this.howl) {
+                        firstPlay = false;
+                        this.transition.start(this.howl, this.effectiveVolume(), usePlayerPreferences.getState().preferences.crossfadeSeconds);
+                    }
                     this.notifyListeners();
                     if (!this.didStart) {
                         this.didStart = true;
@@ -178,6 +240,7 @@ class AudioEngine {
                         navigator.mediaSession.playbackState = 'paused';
                 },
                 onstop: () => {
+                    if (requestId !== this.requestId) return;
                     this.notifyListeners();
                     this.stopProgressUpdates();
                 },
@@ -246,26 +309,35 @@ class AudioEngine {
     }
     /** 跳转到指定秒数。 */
     seek(seconds: number): void {
-        if (!this.howl)
+        if (!this.howl) {
+            if (this.currentSong) this.restoredPosition = Math.max(0, Math.min(seconds, this.currentSong.duration || seconds));
+            this.saveSession();
+            this.notifyListeners();
             return;
+        }
         const duration = this.howl.duration() || 0;
         this.howl.seek(Math.max(0, Math.min(seconds, duration)));
         this.notifyListeners();
+        this.saveSession();
     }
     /** 暂停 */
     pause(): void {
+        this.transition.clear();
         if (!this.howl)
             return;
         this.howl.pause();
         this.stopProgressUpdates();
         this.notifyListeners();
+        this.saveSession();
         if (this.didStart)
             this.recordAction('pause', this.getHeardProgress());
     }
     /** 恢复播放 */
     resume(): void {
-        if (!this.howl)
+        if (!this.howl) {
+            if (this.currentSong) void this.play(this.currentSong, undefined, undefined, this.restoredPosition);
             return;
+        }
         this.howl.play();
         this.startProgressUpdates();
         this.notifyListeners();
@@ -274,7 +346,8 @@ class AudioEngine {
     setVolume(vol: number): void {
         const value = Math.max(0, Math.min(1, vol));
         usePlayerStore.getState().setVolume(value);
-        this.howl?.volume(value);
+        this.transition.clear();
+        this.howl?.volume(this.effectiveVolume());
     }
     /** 下一曲 */
     next(songs: Song[]): void {
@@ -312,9 +385,7 @@ class AudioEngine {
             return;
         }
         // 情况4：同一首歌，实例已被销毁（播放完毕/出错）→ 重新播放
-        if (song) {
-            this.play(song);
-        }
+        if (song || this.currentSong) this.resume();
     }
     /** 注册状态变化监听器，返回取消订阅函数 */
     onStateChange(listener: PlayStateListener): () => void {
@@ -326,6 +397,8 @@ class AudioEngine {
     // ===== 私有方法 =====
     /** 销毁当前 Howl 实例 */
     private destroy(): void {
+        this.transition.clear();
+        if (this.prefetchTimer) clearTimeout(this.prefetchTimer);
         this.clearLoadTimeout();
         this.stopProgressUpdates();
         if (this.howl) {
@@ -336,7 +409,7 @@ class AudioEngine {
     /** 获取播放进度 0~1 */
     private getProgress(): number {
         if (!this.howl)
-            return 0;
+            return this.currentSong?.duration ? this.restoredPosition / this.currentSong.duration : 0;
         const duration = this.howl.duration();
         if (!duration || duration <= 0)
             return 0;
@@ -355,6 +428,7 @@ class AudioEngine {
     }
     /** 通知错误 */
     private notifyError(error: string): void {
+        this.transition.clear();
         this.clearLoadTimeout();
         this.lastError = error;
         this.loading = false;
@@ -376,6 +450,10 @@ class AudioEngine {
             if (this.howl?.playing()) {
                 this.updateListeningTime();
                 this.notifyListeners();
+                if (Date.now() - this.lastSavedAt >= 5000) this.saveSession();
+                const seconds = usePlayerPreferences.getState().preferences.crossfadeSeconds;
+                if (seconds && !this.loading && this.howl.duration() > seconds * 2 &&
+                    this.howl.duration() - (this.howl.seek() as number) <= seconds) this.next(this.queue);
             }
         }, 250);
     }
@@ -445,6 +523,10 @@ class AudioEngine {
     private schedulePrefetch(): void {
         if (this.prefetchTimer)
             clearTimeout(this.prefetchTimer);
+        if (!usePlayerPreferences.getState().preferences.prefetch) {
+            this.prefetchedNext = null;
+            return;
+        }
         const candidate = this.peekNext();
         this.prefetchedNext = candidate;
         if (!candidate || candidate.localCachePath || !candidate.remotePath)
@@ -501,7 +583,7 @@ class AudioEngine {
                 this.notifyError(decoded.error || t("兼容解码失败"));
                 return;
             }
-            await this.play(song, undefined, decoded.data);
+            await this.play(song, undefined, decoded.data, this.restoredPosition);
         }
         catch {
             if (requestId === this.requestId)

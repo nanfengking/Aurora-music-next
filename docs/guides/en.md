@@ -2,7 +2,7 @@
 
 [简体中文](zh-CN.md) · [繁體中文](zh-TW.md) · [English](en.md) · [Français](fr.md) · [Home](../../README.en.md)
 
-For Aurora Music Next 1.4.0. All screenshots use fictional demo content, not downloadable commercial music. This is a source preview; see [release blockers](../../SECURITY.md).
+For Aurora Music Next 1.5.0. All screenshots use fictional demo content, not downloadable commercial music. This is a source preview; see [release blockers](../../SECURITY.md).
 
 ## 1. Launch, language and appearance
 
@@ -46,7 +46,7 @@ Review and edit the result before Save playlist. Previews are not automatically 
 
 ## 6. Lyrics and images
 
-Open Now playing through the bottom artwork, then choose the resource-search button. Check title, artist and album, search, preview and explicitly apply. Defaults use LRCLIB for lyrics and TheAudioDB for images. Custom endpoints are configured in Settings; see the [API contract](../API_INTEGRATION.md).
+Enable automatic lookup for missing lyrics and covers in Settings to query only the currently playing track. Lyrics use three passes: title + artist + album, title + artist, then title. Covers default to embedded, owned and configured sources. TheAudioDB requires your key; iTunes is a separate opt-in, off by default. Enabling grants no artwork rights; read [Apple’s terms](https://performance-partners.apple.com/search-api). The background is enlarged and blurred from the cover. You can still open Now Playing from the bottom artwork to search, preview and apply a result manually. Custom endpoint details are in the [API contract](../API_INTEGRATION.md).
 
 Timed lyric lines support seeking; plain text does not provide exact timing. Results may be missing or incorrect. Availability is not a copyright licence.
 
@@ -62,6 +62,10 @@ Settings controls the audio cache limit and clearing. Clearing preserves playlis
 - Esc: dismiss an overlay.
 
 ## 8. Troubleshooting and privacy
+
+In Settings, “View audio quality and devices” shows the current track’s known codec, bitrate, sample rate and Windows default output. For a WebDAV track with missing metadata, “Read detailed audio quality” downloads only that track into the existing cache and parses it; it does not scan the library. If the device name is unavailable, open Windows sound settings. The player does not apply full-track noise reduction by default because it can dull detail and dynamics. Compare a better source file and check headphones, Bluetooth and system effects first.
+
+A newer installer from the same Aurora Music Next series can be run over the old version without uninstalling. Installed builds can also check, download and confirm updates from Settings. No in-app update is available until the corresponding GitHub Release is published. See [Windows updates](../UPDATES.md).
 
 Connection errors: check endpoint, network and account access. API errors: check protocol, version root, model ID and credits; re-enter the key when changing the endpoint. Missing recommendations: synchronise again and check metadata and filters. The app never invents external tracks.
 

@@ -293,6 +293,37 @@ export function downloadSingleSong(config: WebDavConfig, input: Song): Promise<I
   return task
 }
 
+async function readCachedMetadata(song: Song, localPath: string): Promise<void> {
+  try {
+    const metadata = await parseFile(localPath, { duration: true })
+    let coverPath: string | null = null
+    const picture = metadata.common.picture?.[0]
+    if (picture?.data?.length) {
+      const extension = picture.format.includes('png') ? '.png' : picture.format.includes('webp') ? '.webp' : '.jpg'
+      coverPath = join(COVER_DIR, `${song.id}${extension}`)
+      writeFileSync(coverPath, picture.data)
+    }
+    const lyric = metadata.common.lyrics?.[0]
+    const lyricsText = lyric?.syncText?.length
+      ? lyric.syncText.map((line) => {
+        const seconds = Math.max(0, Number(line.timestamp || 0) / 1000)
+        const minutes = Math.floor(seconds / 60).toString().padStart(2, '0')
+        const rest = (seconds % 60).toFixed(2).padStart(5, '0')
+        return `[${minutes}:${rest}]${line.text}`
+      }).join('\n')
+      : lyric?.text || null
+    getDb().prepare(`UPDATE songs SET title = ?, artist = ?, album = ?, year = ?, genre = ?, duration = ?, format = ?,
+      coverPath = COALESCE(?, coverPath), customLyrics = COALESCE(NULLIF(customLyrics, ''), ?) WHERE id = ?`)
+      .run(metadata.common.title || song.title, metadata.common.artist || song.artist || '未知艺术家', metadata.common.album || song.album || '',
+        metadata.common.year || song.year || null, metadata.common.genre?.join(', ') || song.genre || '', metadata.format.duration || song.duration || 0,
+        (metadata.format.container || song.format || extname(localPath).slice(1)).toUpperCase(), coverPath, lyricsText, song.id)
+    getDb().prepare(`UPDATE songs SET codec = ?, bitrate = ?, sampleRate = ?, bitDepth = ?, channels = ?, replayGainDb = ?, replayPeak = ? WHERE id = ?`)
+      .run(metadata.format.codec || null, metadata.format.bitrate || null, metadata.format.sampleRate || null,
+        metadata.format.bitsPerSample || null, metadata.format.numberOfChannels || null,
+        metadata.common.replaygain_track_gain?.dB ?? null, metadata.common.replaygain_track_peak?.ratio ?? null, song.id)
+  } catch { /* Metadata is optional; a readable audio cache is still useful. */ }
+}
+
 async function downloadSingleSongImpl(config: WebDavConfig, input: Song): Promise<IpcResponse<string>> {
   if (!input.remotePath) return { success: false, error: '歌曲缺少远程路径' }
   const file: WebDavFile = {
@@ -307,6 +338,7 @@ async function downloadSingleSongImpl(config: WebDavConfig, input: Song): Promis
       (!song.remoteSize || localSize === song.remoteSize)
     if (cacheMatches) {
       cache.touch(song.id)
+      if (!song.codec || !song.sampleRate) await readCachedMetadata(song, song.localCachePath)
       return { success: true, data: song.localCachePath }
     }
     try { unlinkSync(song.localCachePath) } catch { /* best effort */ }
@@ -330,30 +362,7 @@ async function downloadSingleSongImpl(config: WebDavConfig, input: Song): Promis
     return { success: false, error: errorMessage(error) }
   }
   cache.recordCache(song.id, localPath, size)
-  try {
-    const metadata = await parseFile(localPath, { duration: true })
-    let coverPath: string | null = null
-    const picture = metadata.common.picture?.[0]
-    if (picture?.data?.length) {
-      const extension = picture.format.includes('png') ? '.png' : picture.format.includes('webp') ? '.webp' : '.jpg'
-      coverPath = join(COVER_DIR, `${song.id}${extension}`)
-      writeFileSync(coverPath, picture.data)
-    }
-    const lyric = metadata.common.lyrics?.[0]
-    const lyricsText = lyric?.syncText?.length
-      ? lyric.syncText.map((line) => {
-        const seconds = Math.max(0, Number(line.timestamp || 0) / 1000)
-        const minutes = Math.floor(seconds / 60).toString().padStart(2, '0')
-        const rest = (seconds % 60).toFixed(2).padStart(5, '0')
-        return `[${minutes}:${rest}]${line.text}`
-      }).join('\n')
-      : lyric?.text || null
-    getDb().prepare(`UPDATE songs SET title = ?, artist = ?, album = ?, year = ?, genre = ?, duration = ?, format = ?,
-      coverPath = COALESCE(?, coverPath), customLyrics = COALESCE(NULLIF(customLyrics, ''), ?) WHERE id = ?`)
-      .run(metadata.common.title || song.title, metadata.common.artist || '未知艺术家', metadata.common.album || '',
-        metadata.common.year || null, metadata.common.genre?.join(', ') || '', metadata.format.duration || 0,
-        (metadata.format.container || song.format || suffix.slice(1)).toUpperCase(), coverPath, lyricsText, song.id)
-  } catch { /* metadata is optional */ }
+  await readCachedMetadata(song, localPath)
   return { success: true, data: localPath }
 }
 

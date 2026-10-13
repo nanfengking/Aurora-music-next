@@ -35,3 +35,9 @@ Read [FFmpeg legal guidance](https://ffmpeg.org/legal.html) and the included GPL
 The geometric demo covers, synthetic tones, track names and four-line demo lyrics are original fixtures created for this project. Screenshots generated from those fixtures may be distributed with the project under GPL-3.0-only. They contain no copied commercial album covers or actual listening history.
 
 DeepSeek, OpenAI, Anthropic, Gemini, LRCLIB and TheAudioDB are independent services, not project sponsors. Their names identify integrations. Returned lyrics/images remain subject to their owners' rights and service terms; an API result is not permission to redistribute it.
+
+iTunes artwork is off by default and a separate opt-in, not an unrestricted image library. Read [Apple’s Search API terms](https://performance-partners.apple.com/search-api) before use. Windows no longer uses TheAudioDB’s public test key by default. These conservative defaults are not a legal clearance for any returned image or lyric.
+
+Android JVM tests use JSON-java 20250517 ([public-domain notice](https://github.com/stleary/JSON-java/blob/20250517/LICENSE)). It is a test-only dependency, not added to the Android runtime APK. Android itself supplies the production JSON implementation. The JVM test fixture does not prove Android JSON/framework behavior.
+
+Android XML JVM tests use kXML2 2.3.0 (BSD-style license; the included XmlPull API is public domain). This dependency is test-only and is not bundled in the runtime APK. Production uses Android's built-in `android.util.Xml` parser; host fixtures are not a substitute for Android instrumentation or real-server testing.

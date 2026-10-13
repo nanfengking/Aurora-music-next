@@ -122,7 +122,7 @@ html[lang="fr"] .topbar-caption { max-width:220px; }
 :root[data-theme="light"] .shortcut-list kbd { background:#30273506; border-color:#3027350d; }
 :root[data-theme="light"] .now-playing-dialog { background:#f3eeea; }
 :root[data-theme="light"] .now-playing-dialog .dialog-header h2 { color:#6f616e; }
-:root[data-theme="light"] .full-backdrop { opacity:.13; filter:blur(95px) saturate(.65); }
+:root[data-theme="light"] .full-backdrop { opacity:.23; filter:blur(75px) saturate(.75); }
 :root[data-theme="light"] .listening-record > .artwork { box-shadow:0 22px 65px #5b374529; }
 :root[data-theme="light"] .listening-title p,:root[data-theme="light"] .listening-record .timeline span { color:#70636c; }
 :root[data-theme="light"] .lyrics-scroll button { color:#8c7c855e; }

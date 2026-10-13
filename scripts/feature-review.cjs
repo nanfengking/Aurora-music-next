@@ -78,8 +78,8 @@ async function run() {
         if(init.method==='PROPFIND')return new Response('<?xml version="1.0"?><d:multistatus xmlns:d="DAV:"></d:multistatus>',{status:207,headers:{'Content-Type':'application/xml'}})
         if(globalThis.hybridMode==='unavailable')return new Response('',{status:503})
         const body=init.body?JSON.parse(init.body):{}
-        const system=body.system || body.systemInstruction?.parts?.[0]?.text || body.messages?.find(m=>m.role==='system')?.content || ''
-        const user=body.contents?.[0]?.parts?.[0]?.text || body.messages?.find(m=>m.role==='user')?.content || '{}'
+        const system=body.instructions || body.system || body.systemInstruction?.parts?.[0]?.text || body.messages?.find(m=>m.role==='system')?.content || ''
+        const user=body.input || body.contents?.[0]?.parts?.[0]?.text || body.messages?.find(m=>m.role==='user')?.content || '{}'
         const data=JSON.parse(user)
         const planning=system.includes('音乐场景解析器')
         const ids=data.catalog?.filter(s=>s.id.startsWith('rare-')).map(s=>s.id) || []
@@ -88,7 +88,15 @@ async function run() {
         if(url.includes('anthropic.example'))return Response.json({content:[{type:'text',text:selection}]})
         if(url.includes('gemini.example'))return Response.json({candidates:[{content:{parts:[{text:selection}]}}]})
         if(url.includes('openai.example'))return Response.json({choices:[{message:{content:selection}}]})
+        if(url.includes('responses.example'))return Response.json({status:'completed',output:[{type:'reasoning',summary:[]},{type:'message',role:'assistant',content:[{type:'output_text',text:selection}]}]})
         if(url.startsWith('https://1.1.1.1/test-art'))return new Response(image,{headers:{'Content-Type':'image/png'}})
+        if(url.startsWith('https://itunes.apple.com/search'))return Response.json({results:[{trackName:'Opt-in Song',artistName:'Fixture Artist',collectionName:'Fixture Album',trackTimeMillis:180000,artworkUrl100:'https://1.1.1.1/test-art.png'}]})
+        if(url.includes('assets.example/auto-lyrics')) {
+          const query=new URL(url).searchParams
+          if(query.get('title')==='Last Resort')return Response.json({results:query.get('artist')?[]:[{title:'Last Resort',artist:'Another Singer',lyrics:'last-level lyric'}]})
+          return Response.json({results:query.get('album')?[]:[{title:'Song',artist:'Singer',album:'Other',lyrics:'[00:00.00]automatic lyric'}]})
+        }
+        if(url.includes('assets.example/auto-cover'))return Response.json({results:[{title:'Album',artist:'Singer',album:'Album',imageUrl:'https://1.1.1.1/test-art.png'}]})
         if(url.includes('assets.example'))return Response.json({results:[{title:'Resource fixture',artist:'Aurora',lyrics:'[00:00.00]原创测试文本',imageUrl:'https://1.1.1.1/test-art.png'}]})
         throw new Error('Unexpected external request in isolated test')
       }
@@ -100,10 +108,15 @@ async function run() {
     assert.equal(generated.success,true);assert.equal(generated.data.providerName,'second');assert.deepEqual(generated.data.songIds,['aac']);assert.equal(generated.data.attempts.length,2);assert.equal(generated.data.source,'hybrid');assert.equal(generated.data.diagnostics.librarySize,2)
     let calls=await app.evaluate(()=>globalThis.featureCalls)
     assert.match(calls[0].url,/priority.example\/v1\/chat\/completions$/);assert.match(calls[1].url,/anthropic.example\/v1\/messages$/);assert.equal(calls[1].headers['x-api-key'],'fake-test-key')
-    for(const protocol of ['gemini','openai']) {
+    for(const protocol of ['gemini','responses','openai']) {
       const list=[provider(protocol,protocol,`https://${protocol}.example/${protocol==='gemini'?'v1beta':'v1'}`)]
       await page.evaluate(async list=>window.electronAPI.saveAiProviders(list),list)
       generated=await page.evaluate(()=>window.electronAPI.generateAiPlaylist('安静一点'));assert.equal(generated.success,true)
+      if(protocol==='responses') {
+        const responseCall=await app.evaluate(()=>globalThis.featureCalls.filter(call=>call.url.includes('responses.example')).at(-1))
+        assert.match(responseCall.url,/\/v1\/responses$/)
+        const body=JSON.parse(responseCall.body);assert.equal(body.store,false);assert.ok(body.input && body.instructions);assert.equal(body.messages,undefined)
+      }
     }
     const settings=await page.evaluate(()=>window.electronAPI.getSettings());assert.ok(!JSON.stringify(settings).includes('fake-test-key'));assert.equal(settings.data.ai_providers,undefined)
     const blocked=await page.evaluate(()=>window.electronAPI.setSettings('ai_providers','[]'));assert.equal(blocked.success,false)
@@ -138,14 +151,14 @@ async function run() {
     assert.equal(await app.evaluate(()=>globalThis.featureCalls.length),callCount)
     const after=await page.evaluate(()=>window.electronAPI.getPlaylists());assert.equal(after.data.length,before.data.length)
     for(const mode of ['unavailable','bad-selection','bad-plan']) {
-      await app.evaluate((_electron,mode)=>{globalThis.hybridMode=mode},mode)
+      await app.evaluate((_electron,mode)=>{globalThis.hybridMode=mode; return true},mode)
       const fallback=await page.evaluate(()=>window.electronAPI.generateAiPlaylist('40分钟爵士'))
       assert.equal(fallback.success,true);assert.equal(fallback.data.diagnostics.durationSeconds,2400)
       assert.ok(fallback.data.songIds.every(id=>id.startsWith('rare-')))
       assert.ok(fallback.data.diagnostics.warnings.length>0, JSON.stringify({mode,result:fallback.data}))
       if(mode==='unavailable')assert.equal(fallback.data.source,'local')
     }
-    await app.evaluate(()=>{globalThis.hybridMode='normal'})
+    await app.evaluate(()=>{globalThis.hybridMode='normal'; return true})
     calls=await app.evaluate(()=>globalThis.featureCalls)
     for(const call of calls.filter(call=>call.body)) {
       assert.ok(!call.body.includes('remotePath'));assert.ok(!call.body.includes('filePath'));assert.ok(!call.body.includes('play_history'));assert.ok(!call.body.includes('fake-test-key'))
@@ -153,8 +166,19 @@ async function run() {
     assert.equal((await page.evaluate(()=>window.electronAPI.generateAiPlaylist('古典'))).success,false)
     assert.equal((await page.evaluate(()=>window.electronAPI.recordPlayAction({songId:'missing',action:'complete',progress:1,timestamp:0}))).success,false)
     console.log('HYBRID_PASS: full 368-song retrieval, 40-minute fit, offline zero calls, API failures/invalid JSON, taste profile, privacy and preview-only')
-    console.log('API_PASS: OpenAI, Anthropic, Gemini, ordered fallback, ID filtering, key redaction, protected settings, origin-change guard')
+    console.log('API_PASS: Chat Completions, raw Responses, Anthropic, Gemini, ordered fallback, ID filtering, key redaction, protected settings, origin-change guard')
 
+    const defaultAssets=await page.evaluate(()=>window.electronAPI.getAssetConfig())
+    assert.equal(defaultAssets.data.itunesEnabled,false)
+    const resourceCallsBefore=await app.evaluate(()=>globalThis.featureCalls.length)
+    const conservativeCover=await page.evaluate(()=>window.electronAPI.searchAssets('aac','cover',{title:'Opt-in Song',artist:'Fixture Artist',album:'Fixture Album'}))
+    assert.equal(conservativeCover.success,true);assert.equal(conservativeCover.data.length,0)
+    assert.equal(await app.evaluate(()=>globalThis.featureCalls.length),resourceCallsBefore,'Conservative artwork defaults must make no built-in image requests')
+    result=await page.evaluate(config=>window.electronAPI.saveAssetConfig({...config,itunesEnabled:true}),defaultAssets.data)
+    assert.equal(result.data.itunesEnabled,true)
+    const optInCover=await page.evaluate(()=>window.electronAPI.searchAssets('aac','cover',{title:'Opt-in Song',artist:'Fixture Artist',album:'Fixture Album'}))
+    assert.equal(optInCover.success,true);assert.equal(optInCover.data.length,1);assert.equal(optInCover.data[0].source,'Apple iTunes')
+    console.log('CONSERVATIVE_ASSET_PASS: zero default image requests; iTunes requires explicit opt-in. Fetch uses synthetic fixtures.')
     result=await page.evaluate(()=>window.electronAPI.saveAssetConfig({lyricsUrl:'https://assets.example/lyrics',coverUrl:'https://assets.example/covers',backgroundUrl:'https://assets.example/backgrounds',configured:false,audioDbConfigured:false}))
     assert.equal(result.success,true)
     for(const kind of ['lyrics','cover','background']) {
@@ -166,13 +190,33 @@ async function run() {
     }
     console.log('ASSETS_PASS: custom lyric/cover/background APIs, bounded image decoding, preview tokens, explicit apply persistence')
     await page.getByRole('button',{name:'正在播放与歌词',exact:true}).click()
-    await page.getByRole('button',{name:'查找歌词、封面与背景',exact:true}).click()
+    await page.getByRole('button',{name:'查找歌词与封面',exact:true}).click()
     await page.getByRole('button',{name:'搜索资源',exact:true}).click()
     await page.getByRole('button',{name:/Resource fixture/}).click()
     await page.screenshot({path:join(screenshots,'resource-finder.png'),scale:'css'})
     await page.getByRole('button',{name:'应用选中资源',exact:true}).click()
     await page.getByRole('dialog',{name:'查找音乐资源',exact:true}).waitFor({state:'hidden'})
     console.log('ASSET_UI_PASS: search, preview, selection and apply in player')
+    await app.evaluate(({app},root)=>{
+      const require=globalThis.reviewRequire, path=require('node:path')
+      const Database=require(path.join(root,'node_modules/better-sqlite3'))
+      const db=new Database(path.join(app.getPath('userData'),'musicPlayer.db'))
+      db.prepare("INSERT INTO songs (id,title,artist,album,duration,filePath,sourceType) VALUES ('auto-test','Song','Singer','Album',240,'/auto-test.mp3','webdav')").run()
+      db.close()
+    },root)
+    result=await page.evaluate(()=>window.electronAPI.saveAssetConfig({lyricsUrl:'https://assets.example/auto-lyrics',coverUrl:'https://assets.example/auto-cover',backgroundUrl:'',autoLookup:true,configured:false,audioDbConfigured:false}))
+    assert.equal(result.success,true)
+    const automatic=await page.evaluate(()=>window.electronAPI.autoEnrichSong('auto-test'))
+    assert.equal(automatic.success,true)
+    assert.equal(automatic.data.customLyrics,'[00:00.00]automatic lyric')
+    assert.ok(automatic.data.coverPath)
+    const lookups=await app.evaluate(()=>globalThis.featureCalls.filter(call=>call.url.includes('assets.example/auto-')))
+    assert.equal(lookups.filter(call=>call.url.includes('auto-lyrics')).length,2)
+    assert.equal(lookups.filter(call=>call.url.includes('auto-cover')).length,1)
+    assert.ok(lookups.every(call=>!call.url.includes('remotePath')&&!call.url.includes('webdav_password')))
+    await page.evaluate(()=>window.electronAPI.autoEnrichSong('auto-test'))
+    assert.equal((await app.evaluate(()=>globalThis.featureCalls.filter(call=>call.url.includes('assets.example/auto-')))).length,3)
+    console.log('AUTO_ASSET_PASS: opt-in lookup, two lyric fallback levels, exact cover, no duplicate requests or credential leakage')
     await page.reload()
     await page.getByRole('heading',{name:'你的聆听偏好',exact:true}).waitFor()
     await page.getByText('依据与数据完整度',{exact:true}).click()
@@ -183,7 +227,7 @@ async function run() {
     await composer.getByRole('button',{name:'智能歌单',exact:true}).click()
     await composer.getByLabel('此刻想听什么？',{exact:true}).fill('40分钟爵士')
     await composer.getByRole('button',{name:'生成预览',exact:true}).click()
-    await composer.getByText('已检索全部 368 首',{exact:false}).waitFor()
+    await composer.getByText('已检索全部 369 首',{exact:false}).waitFor()
     assert.match(await composer.locator('.playlist-diagnostics').innerText(),/40 分钟/)
     await composer.locator('.playlist-diagnostics').scrollIntoViewIfNeeded()
     const draftLayout=await composer.locator('.draft-tracks').evaluate(el=>({width:el.clientWidth,scroll:el.scrollWidth,children:[...el.children].map(c=>({tag:c.tagName,width:c.clientWidth,scroll:c.scrollWidth}))}))
@@ -199,6 +243,19 @@ async function run() {
     assert.equal(playlists.data.length,before.data.length+1)
     assert.equal(JSON.parse(playlists.data[0].songIds).length,10)
     console.log('HYBRID_UI_PASS: taste evidence, whole-library coverage, online/offline switch and explicit playlist save')
+    await app.evaluate(({app},root)=>{
+      const require=globalThis.reviewRequire, path=require('node:path')
+      const Database=require(path.join(root,'node_modules/better-sqlite3'))
+      const db=new Database(path.join(app.getPath('userData'),'musicPlayer.db'))
+      db.prepare("INSERT INTO songs (id,title,artist,album,duration,filePath,sourceType) VALUES ('last-level','Last Resort','Singer','Album',240,'/last-level.mp3','webdav')").run()
+      db.close()
+    },root)
+    const lastLevel=await page.evaluate(()=>window.electronAPI.autoEnrichSong('last-level'))
+    assert.equal(lastLevel.data.customLyrics,'last-level lyric')
+    const fallbackCalls=await app.evaluate(()=>globalThis.featureCalls.filter(call=>call.url.includes('auto-lyrics')&&call.url.includes('Last+Resort')))
+    assert.equal(fallbackCalls.length,3)
+    assert.equal(new URL(fallbackCalls[2].url).searchParams.get('artist'),'')
+    console.log('LYRIC_FALLBACK_PASS: title + artist + album, then title + artist, then title only')
     await app.evaluate(()=>{globalThis.fetch=globalThis.realFetch})
   } finally {
     if(app)await app.close()

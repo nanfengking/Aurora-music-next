@@ -1,22 +1,27 @@
 import { t, tm, artistLabel } from '../i18n'
-import { useState } from 'react';
-import type { AiPlaylistResult, Playlist, Song } from '../types/music';
+import { useMemo, useState } from 'react';
+import type { AiPlaylistResult, Playlist, Song, SmartPlaylistRules } from '../types/music';
+import { DEFAULT_SMART_RULES, parseSmartRules, selectSmartSongs } from '../services/smartPlaylists';
+import { SmartPlaylistFields } from './SmartPlaylistFields';
 import { Modal } from './Modal';
 import { Artwork } from './Artwork';
 import { Icon } from './Icon';
-export function PlaylistComposer({ songs, aiConfigured, initialSong, onClose, onGenerate, onSave, onSettings }: {
+export function PlaylistComposer({ songs, aiConfigured, initialSong, initialPlaylist, onClose, onGenerate, onSave, onSettings }: {
     songs: Song[];
     aiConfigured: boolean;
     initialSong?: Song | null;
+    initialPlaylist?: Playlist | null;
     onClose: () => void;
     onGenerate: (prompt: string, useAi: boolean) => Promise<AiPlaylistResult | null>;
-    onSave: (name: string, ids: string[], description?: string | null) => Promise<Playlist | null>;
+    onSave: (name: string, ids: string[], description?: string | null, rules?: SmartPlaylistRules) => Promise<Playlist | null>;
     onSettings: () => void;
 }) {
-    const [mode, setMode] = useState<'manual' | 'ai'>('manual');
-    const [name, setName] = useState('');
+    const [mode, setMode] = useState<'manual' | 'ai' | 'rules'>(initialPlaylist ? 'rules' : 'manual');
+    const [name, setName] = useState(initialPlaylist?.name || '');
+    const [rules, setRules] = useState(() => { try { return parseSmartRules(initialPlaylist?.smartRules) || DEFAULT_SMART_RULES } catch { return DEFAULT_SMART_RULES } });
+    const ruleTracks = useMemo(() => selectSmartSongs(songs, rules), [songs, rules]);
     const [prompt, setPrompt] = useState('');
-    const [description, setDescription] = useState('');
+    const [description, setDescription] = useState(initialPlaylist?.description || '');
     const [ids, setIds] = useState<string[]>(initialSong ? [initialSong.id] : []);
     const [busy, setBusy] = useState(false);
     const [generated, setGenerated] = useState(false);
@@ -54,7 +59,7 @@ export function PlaylistComposer({ songs, aiConfigured, initialSong, onClose, on
             return;
         setBusy(true);
         try {
-            if (await onSave(name.trim(), ids, description || null))
+            if (await onSave(name.trim(), mode === 'rules' ? [] : ids, description || null, mode === 'rules' ? rules : undefined))
                 onClose();
         }
         catch {
@@ -65,17 +70,19 @@ export function PlaylistComposer({ songs, aiConfigured, initialSong, onClose, on
         }
     };
     const byId = new Map(songs.map(song => [song.id, song]));
-    return <Modal title={t("新建歌单")} onClose={onClose} className="composer-dialog">
-    <div className="dialog-tabs"><button disabled={busy} className={mode === 'manual' ? 'active' : ''} onClick={() => setMode('manual')}>{t("自己挑选")}</button><button disabled={busy} className={mode === 'ai' ? 'active' : ''} onClick={() => setMode('ai')}><Icon name="sparkles" size={15}/>{t("智能歌单")}</button></div>
+    return <Modal title={initialPlaylist ? t("编辑规则") : t("新建歌单")} onClose={onClose} className="composer-dialog">
+    {!initialPlaylist && <div className="dialog-tabs"><button disabled={busy} className={mode === 'manual' ? 'active' : ''} onClick={() => setMode('manual')}>{t("自己挑选")}</button><button disabled={busy} className={mode === 'ai' ? 'active' : ''} onClick={() => setMode('ai')}><Icon name="sparkles" size={15}/>{t("智能歌单")}</button><button disabled={busy} className={mode === 'rules' ? 'active' : ''} onClick={() => setMode('rules')}>{t("自动歌单")}</button></div>}
+    {mode === 'rules' && <><SmartPlaylistFields rules={rules} onChange={setRules}/><p className="rule-preview" role="status">{t("当前匹配 {0} 首歌曲", [ruleTracks.length])}</p></>}
     {mode === 'ai' && <div className="composer-ai"><label className="field"><span>{t("此刻想听什么？")}</span><textarea rows={3} maxLength={500} value={prompt} disabled={busy} onChange={event => setPrompt(event.target.value)} placeholder={t("雨夜，想听一些安静的华语歌曲，大约 45 分钟。")}/></label>
       {aiConfigured ? <label className="hybrid-toggle"><input type="checkbox" checked={useAi} disabled={busy} onChange={event => setUseAi(event.target.checked)}/>{t("使用 AI 理解场景并编排歌单")}</label> : <p className="inline-note">{t("当前可用本地推荐；接入 DeepSeek 等 API 可增强场景理解。")}<button className="text-button" onClick={onSettings}>{t("前往设置")}</button></p>}
       <div className="composer-generate"><small>{useAi && aiConfigured ? t("通常 2 次 API 请求，失败按优先级切换可能增加费用。仅发送需求、音乐偏好摘要及最多 240 首候选信息；不上传音频、路径和原始历史。") : t("全曲库本地筛选，不调用 API；支持基础场景、歌手、类型和时长。")}</small><button className="secondary-button" disabled={busy || prompt.trim().length < 2 || !songs.length} onClick={() => void generate()}>{busy ? <i className="spinner"/> : <Icon name="sparkles" size={16}/>}{t("生成预览")}</button></div>
       {!songs.length && <p className="inline-note">{t("请先同步音乐库，再生成智能歌单。")}</p>}
     </div>}
-    {(mode === 'manual' || generated) && <>
+    {(mode !== 'ai' || generated) && <>
       <label className="field"><span>{t("歌单名称")}</span><input autoFocus={mode === 'manual'} maxLength={80} value={name} onChange={event => setName(event.target.value)} placeholder={t("给这一刻取个名字")}/></label>
       <label className="field"><span>{t("描述")}<small>{t("选填")}</small></span><input maxLength={240} value={description} onChange={event => setDescription(event.target.value)} placeholder={t("关于这张歌单的一点想法")}/></label>
-      {ids.length > 0 && <div className="draft-tracks"><p>{t("{0} 首歌曲 · 可移除不合适的歌曲", [ids.length])}</p>{ids.map(id => { const song = byId.get(id); return song && <div key={id}><Artwork song={song} size="small"/><span><b>{song.title}</b><small>{artistLabel(song.artist)}</small></span><button className="icon-button" aria-label={t("移除 {0}", [song.title])} onClick={() => setIds(ids.filter(value => value !== id))}><Icon name="close" size={17}/></button></div>; })}</div>}
+      {mode !== 'rules' && ids.length > 0 && <div className="draft-tracks"><p>{t("{0} 首歌曲 · 可移除不合适的歌曲", [ids.length])}</p>{ids.map(id => { const song = byId.get(id); return song && <div key={id}><Artwork song={song} size="small"/><span><b>{song.title}</b><small>{artistLabel(song.artist)}</small></span><button className="icon-button" aria-label={t("移除 {0}", [song.title])} onClick={() => setIds(ids.filter(value => value !== id))}><Icon name="close" size={17}/></button></div>; })}</div>}
+      {mode === 'rules' && <div className="draft-tracks">{ruleTracks.slice(0, 20).map(song => <div key={song.id}><Artwork song={song} size="small"/><span><b>{song.title}</b><small>{artistLabel(song.artist)}</small></span></div>)}</div>}
     </>}
     {provider && <p className="inline-note">{t("由 {0} 生成 · 保存前可编辑", [provider === '本地行为模型' ? t(provider) : provider])}</p>}
     {diagnostics && <div className="playlist-diagnostics"><p>{t("已检索全部 {0} 首 · 筛选后 {1} 首 · 编排候选 {2} 首", [diagnostics.librarySize, diagnostics.eligibleSize, diagnostics.candidateSize])}</p><p>{diagnostics.estimatedTracks ? t("生成时估计时长 {0} 分钟", [Math.round(diagnostics.durationSeconds / 60)]) : t("生成时总时长 {0} 分钟", [Math.round(diagnostics.durationSeconds / 60)])}{diagnostics.targetSeconds ? t(" / 目标 {0} 分钟", [Math.round(diagnostics.targetSeconds / 60)]) : ''}{t("；手动移除歌曲后时长会变化。")}</p>{diagnostics.warnings.map(warning => <p key={warning}>{tm(warning)}</p>)}{attempts.length > 0 && <details><summary>{t("查看接口切换记录")}</summary>{attempts.map((attempt, index) => <p key={index}>{tm(attempt)}</p>)}</details>}</div>}

@@ -2,7 +2,7 @@
 
 ## Release gate
 
-This is a development/source preview, not a security-audited production binary. On 2026-09-21, the final npm audit check reported **20 findings: 3 moderate, 16 high and 1 critical**. Audit counts can change with registry advisory updates. These include development/build transitive dependencies; they are not proof that every advisory is exploitable in the packaged player. No dependency-major upgrade or automatic forced audit fix was applied during the localization/privacy work.
+This is a development/source preview, not a security-audited production binary. On 2026-09-28, installing the updater dependency reported **23 findings: 6 moderate, 16 high and 1 critical**. Audit counts can change with registry advisory updates. These include development/build transitive dependencies; they are not proof that every advisory is exploitable in the packaged player. No dependency-major upgrade or automatic forced audit fix was applied during this work.
 
 Important flagged components include Electron 31.7.7, Vite 5.4.21 and transitive tar in the build toolchain. Examples:
 - [Electron context-isolation advisory](https://github.com/electron/electron/security/advisories/GHSA-h7rp-cf8h-j98x).

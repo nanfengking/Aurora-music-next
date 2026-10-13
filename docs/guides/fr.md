@@ -2,7 +2,7 @@
 
 [简体中文](zh-CN.md) · [繁體中文](zh-TW.md) · [English](en.md) · [Français](fr.md) · [Accueil](../../README.fr.md)
 
-Pour Aurora Music Next 1.4.0. Les captures utilisent uniquement des données fictives et ne proposent aucun téléchargement musical. Cette version est un aperçu du code source ; voir les [points bloquants](../../SECURITY.md).
+Pour Aurora Music Next 1.5.0. Les captures utilisent uniquement des données fictives et ne proposent aucun téléchargement musical. Cette version est un aperçu du code source ; voir les [points bloquants](../../SECURITY.md).
 
 ## 1. Démarrage, langue et apparence
 
@@ -46,7 +46,7 @@ Vérifiez le résultat avant Enregistrer la playlist. Un aperçu n’est pas enr
 
 ## 6. Paroles, pochettes et fonds
 
-Cliquez sur la pochette inférieure pour ouvrir En cours de lecture, puis utilisez la recherche de ressources. Vérifiez titre, artiste et album, recherchez, prévisualisez et appliquez explicitement. Les sources par défaut sont LRCLIB pour les paroles et TheAudioDB pour les images. Des services personnalisés peuvent être définis dans Réglages ; voir le [contrat API](../API_INTEGRATION.md).
+Activez la recherche automatique des paroles et pochettes manquantes dans Réglages : seule la piste en cours est recherchée. Les paroles sont cherchées par titre + artiste + album, puis titre + artiste, puis titre. Priorité aux pochettes intégrées, personnelles ou sources configurées. TheAudioDB exige votre clé ; iTunes est facultatif, désactivé par défaut. L’activation n’accorde aucun droit : lisez [les conditions Apple](https://performance-partners.apple.com/search-api). L’arrière-plan est agrandi et flouté à partir de la pochette. Vous pouvez aussi ouvrir la vue de lecture depuis la pochette du bas pour rechercher, prévisualiser et appliquer manuellement. Voir le [contrat API](../API_INTEGRATION.md).
 
 Les lignes horodatées permettent de changer la position ; un texte simple n’offre pas de synchronisation précise. Les résultats peuvent manquer ou être erronés. Leur disponibilité n’accorde aucun droit d’auteur.
 
@@ -62,6 +62,10 @@ Réglages permet de limiter ou vider le cache audio. L’index, les favoris et l
 - Échap : fermer une fenêtre superposée.
 
 ## 8. Dépannage et confidentialité
+
+Dans Réglages, « Voir la qualité audio et les appareils » affiche le codec, le débit, la fréquence d’échantillonnage connus et la sortie Windows par défaut. Si les données d’un morceau WebDAV manquent, « Lire les détails audio » ne télécharge que ce morceau dans le cache existant pour analyser ses métadonnées ; la bibliothèque entière n’est pas analysée. Si le nom de l’appareil manque, ouvrez les paramètres audio Windows. Le lecteur n’applique pas de réduction du bruit à toute la piste par défaut, car cela peut atténuer les détails et la dynamique. Comparez d’abord un meilleur fichier source et vérifiez casque, Bluetooth et effets système.
+
+Un nouvel installateur Aurora Music Next peut remplacer l’ancienne version sans désinstallation. Les versions installées peuvent aussi rechercher, télécharger et confirmer une mise à jour depuis Réglages. Aucune mise à jour intégrée n’est disponible avant la publication de la version GitHub correspondante. Voir les [mises à jour Windows](../UPDATES.md).
 
 Connexion : vérifiez adresse, réseau et autorisations. API : vérifiez protocole, racine de version, modèle et crédit ; une nouvelle adresse exige de saisir à nouveau la clé. Titres absents : resynchronisez et vérifiez tags et filtres. Le lecteur n’invente pas de morceaux extérieurs.
 

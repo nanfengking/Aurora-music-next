@@ -5,9 +5,13 @@ export type IconName =
   | 'refresh' | 'back' | 'play' | 'pause' | 'prev' | 'next' | 'music' | 'trash'
   | 'eye' | 'eyeoff' | 'shuffle' | 'repeat' | 'sequence' | 'plus' | 'queue'
   | 'sparkles' | 'album' | 'artist' | 'clock' | 'cloud' | 'check' | 'close'
-  | 'volume' | 'chevron' | 'grid' | 'list' | 'lyrics' | 'download'
+  | 'volume' | 'chevron' | 'grid' | 'list' | 'lyrics' | 'download' | 'info' | 'pin' | 'expand' | 'minus'
 
 const PATHS: Record<IconName, ReactNode> = {
+  info: <><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7v1"/></>,
+  pin: <><path d="m8 3 8 0-1 7 3 3v2H6v-2l3-3zM12 15v6"/></>,
+  expand: <><rect x="4" y="4" width="16" height="16" rx="2"/></>,
+  minus: <path d="M5 12h14"/>,
   home: <><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v10h13V10M9 20v-6h6v6"/></>,
   browse: <><path d="M3 8h7l2 2h9v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M3 8V6a2 2 0 0 1 2-2h4l2 2h7a2 2 0 0 1 2 2v2"/></>,
   library: <><path d="M4 4v16M8 4v16"/><path d="m12 5 7-2 2 16-7 2z"/></>,

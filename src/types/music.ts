@@ -26,6 +26,13 @@ export interface Song {
   skipCount?: number
   lastPlayedAt?: number | null
   createdAt: string
+  codec?: string | null
+  bitrate?: number | null
+  sampleRate?: number | null
+  bitDepth?: number | null
+  channels?: number | null
+  replayGainDb?: number | null
+  replayPeak?: number | null
 }
 
 export interface Playlist {
@@ -35,6 +42,18 @@ export interface Playlist {
   songIds: string // JSON 数组
   createdAt: string
   updatedAt: string
+  smartRules?: string | null
+}
+
+export interface SmartPlaylistRules {
+  version: 1
+  favoritesOnly: boolean
+  artist: string
+  genre: string
+  recentDays: number
+  limit: number
+  durationMinutes: number
+  sort: 'recent' | 'most-played' | 'newest' | 'title'
 }
 
 export interface PlayHistory {

@@ -18,6 +18,10 @@
     "electron/**/*.ts",
     "src/main/**/*.ts",
     "src/types/**/*.ts",
+    "src/services/smartPlaylists.ts",
+    "src/services/aiProtocol.ts",
+    "src/services/hybridPlaylist.ts",
+    "src/services/recommendation.ts",
     "electron.vite.config.ts"
   ]
 }

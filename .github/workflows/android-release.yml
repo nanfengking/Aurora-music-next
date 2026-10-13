@@ -1,0 +1,80 @@
+name: Android signed APK
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: android-signed-build
+  cancel-in-progress: false
+
+jobs:
+  build:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: android-release
+    env:
+      AURORA_ANDROID_CERT_SHA256: ${{ vars.AURORA_ANDROID_CERT_SHA256 }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '22'
+          cache: npm
+      - uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3 # v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: android-actions/setup-android@9fc6c4e9069bf8d3d10b2204b1fb8f6ef7065407 # v3
+      - name: Install Android SDK
+        run: sdkmanager 'platforms;android-36' 'build-tools;36.0.0'
+      - name: Build and check shared code
+        run: |
+          npm ci
+          npm run android:sync
+          npm run test:recommendations
+          npm run test:hybrid
+          npm run test:android-sql
+          npm run privacy:check
+      - name: Check native code without signing secrets
+        working-directory: android
+        run: bash gradlew :app:testDebugUnitTest :app:lintDebug :app:assembleDebugAndroidTest --no-daemon --no-configuration-cache
+      - name: Restore private signing key
+        env:
+          KEYSTORE_BASE64: ${{ secrets.AURORA_ANDROID_KEYSTORE_BASE64 }}
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs'), path = require('node:path')
+          const value = (process.env.KEYSTORE_BASE64 || '').replace(/\s/g, '')
+          if (!value || value.length > 6 * 1024 * 1024 || !/^[A-Za-z0-9+/]+={0,2}$/.test(value)) throw new Error('Missing or invalid private keystore secret')
+          const key = Buffer.from(value, 'base64')
+          if (!key.length || key.length > 4 * 1024 * 1024 || key.toString('base64') !== value) throw new Error('Invalid private keystore encoding')
+          const directory = path.join(process.env.GITHUB_WORKSPACE, 'android/.signing')
+          fs.mkdirSync(directory, { recursive: true, mode: 0o700 })
+          fs.writeFileSync(path.join(directory, 'aurora-ci.jks'), key, { flag: 'wx', mode: 0o600 })
+          NODE
+      - name: Build signed APK
+        working-directory: android
+        env:
+          AURORA_ANDROID_KEYSTORE: ${{ github.workspace }}/android/.signing/aurora-ci.jks
+          AURORA_ANDROID_STORE_PASSWORD: ${{ secrets.AURORA_ANDROID_STORE_PASSWORD }}
+          AURORA_ANDROID_KEY_ALIAS: ${{ secrets.AURORA_ANDROID_KEY_ALIAS }}
+          AURORA_ANDROID_KEY_PASSWORD: ${{ secrets.AURORA_ANDROID_KEY_PASSWORD }}
+        run: bash gradlew :app:assembleRelease --no-daemon --no-configuration-cache
+      - name: Verify release artifact
+        run: node scripts/android-release-check.cjs
+      - name: Remove only the restored CI key
+        if: always()
+        run: |
+          node -e "require('node:fs').rmSync(require('node:path').join(process.env.GITHUB_WORKSPACE, 'android/.signing/aurora-ci.jks'), {force:true})"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: aurora-android-signed
+          path: |
+            android/app/build/outputs/apk/release/app-release.apk
+            android/app/build/outputs/apk/release/release-verification.json
+          if-no-files-found: error

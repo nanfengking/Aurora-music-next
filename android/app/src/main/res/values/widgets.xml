@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_previous_icon" translatable="false">Ⅰ◀</string>
+    <string name="widget_next_icon" translatable="false">▶Ⅰ</string>
+    <string name="widget_play_icon" translatable="false">▶</string>
+    <string name="widget_brand" translatable="false">AURORA MUSIC</string>
+    <string name="widget_music_name">Aurora · Track</string>
+    <string name="widget_lyrics_name">Aurora · Lyrics</string>
+    <string name="widget_music_description">Artwork, track name and playback controls.</string>
+    <string name="widget_lyrics_description">Current and next lyric lines with playback controls.</string>
+    <string name="widget_empty">Your next moment</string>
+    <string name="widget_no_lyrics">Let the music speak.</string>
+    <string name="widget_artwork">Album artwork</string>
+    <string name="widget_previous">Previous track</string>
+    <string name="widget_next">Next track</string>
+    <string name="widget_play_pause">Play or pause</string>
+</resources>

@@ -529,6 +529,26 @@
     "en": "Lyrics, covers and backgrounds",
     "fr": "Paroles, pochettes et arrière-plans"
   },
+  "歌词与封面": {
+    "zh-TW": "歌詞與封面",
+    "en": "Lyrics and covers",
+    "fr": "Paroles et pochettes"
+  },
+  "背景由当前封面放大并模糊生成；也可在播放页面手动挑选歌词或封面。": {
+    "zh-TW": "背景由當前封面放大並模糊生成；也可在播放頁面手動挑選歌詞或封面。",
+    "en": "The background is enlarged and blurred from the current cover. You can also choose lyrics or a cover manually in Now Playing.",
+    "fr": "L’arrière-plan est créé en agrandissant et floutant la pochette actuelle. Vous pouvez aussi choisir les paroles ou une pochette dans la vue de lecture."
+  },
+  "播放时自动查找缺失的歌词和封面": {
+    "zh-TW": "播放時自動查詢缺失的歌詞和封面",
+    "en": "Automatically find missing lyrics and covers during playback",
+    "fr": "Rechercher automatiquement les paroles et pochettes manquantes pendant la lecture"
+  },
+  "开启后仅针对正在播放的歌曲联网：歌词按歌名＋艺术家＋专辑、歌名＋艺术家、歌名三级查询 LRCLIB；封面优先匹配 TheAudioDB 的艺术家与专辑，找不到时用 Apple iTunes 精确匹配歌曲。若设置了自定义接口，则先使用该接口。只发送歌曲元数据，不发送音频或 WebDAV 凭据；结果可能受限流或版权限制。": {
+    "zh-TW": "開啟後僅針對正在播放的歌曲聯網：歌詞按歌名＋藝術家＋專輯、歌名＋藝術家、歌名三級查詢 LRCLIB；封面優先匹配 TheAudioDB 的藝術家與專輯，找不到時用 Apple iTunes 精確匹配歌曲。若設定了自定義介面，則先使用該介面。只發送歌曲後設資料，不傳送音訊或 WebDAV 憑據；結果可能受限流或版權限制。",
+    "en": "When enabled, only the playing track is queried online. Lyrics use three LRCLIB passes: title + artist + album, title + artist, then title. Covers first match artist + album in TheAudioDB, then match the track exactly in Apple iTunes. Configured custom endpoints take priority. Only track metadata is sent, never audio or WebDAV credentials. Rate limits and rights may affect results.",
+    "fr": "Une fois activée, seule la piste en lecture est recherchée en ligne. Les paroles suivent trois recherches LRCLIB : titre + artiste + album, titre + artiste, puis titre. Les pochettes sont d’abord comparées par artiste et album dans TheAudioDB, puis par piste exacte dans Apple iTunes. Les API personnalisées configurées sont prioritaires. Seules les métadonnées sont envoyées, jamais l’audio ni les identifiants WebDAV. Les limites et droits peuvent affecter les résultats."
+  },
   "在正在播放页面点击“查找资源”，预览并确认后才替换。": {
     "zh-TW": "在正在播放頁面點選“查詢資源”，預覽並確認後才替換。",
     "en": "Find resources in Now playing. Preview and confirm before replacing anything.",
@@ -613,6 +633,11 @@
     "zh-TW": "查詢歌詞、封面與背景",
     "en": "Find lyrics, cover and background",
     "fr": "Rechercher paroles, pochette et arrière-plan"
+  },
+  "查找歌词与封面": {
+    "zh-TW": "查詢歌詞與封面",
+    "en": "Find lyrics and cover",
+    "fr": "Rechercher paroles et pochette"
   },
   "播放进度": {
     "zh-TW": "播放進度",
@@ -2054,9 +2079,579 @@
     "en": "User guide",
     "fr": "Guide d’utilisation"
   },
+  "播放器与个性化": {
+    "zh-TW": "播放器與個性化",
+    "en": "Player and personalization",
+    "fr": "Lecteur et personnalisation"
+  },
+  "窗口随大小切换形态，拖动顶部可移动窗口。": {
+    "zh-TW": "視窗隨大小切換形態，拖動頂部可移動視窗。",
+    "en": "The player adapts to window size. Drag the top bar to move it.",
+    "fr": "Le lecteur s’adapte à la taille de la fenêtre. Faites glisser la barre supérieure pour le déplacer."
+  },
+  "记住歌曲、进度和队列": {
+    "zh-TW": "記住歌曲、進度和佇列",
+    "en": "Remember track, position and queue",
+    "fr": "Mémoriser le morceau, la position et la file"
+  },
+  "窗口置顶": {
+    "zh-TW": "視窗置頂",
+    "en": "Keep window on top",
+    "fr": "Garder la fenêtre au premier plan"
+  },
+  "提前缓存下一首": {
+    "zh-TW": "提前快取下一首",
+    "en": "Prefetch the next track",
+    "fr": "Précharger le morceau suivant"
+  },
+  "音量均衡（ReplayGain）": {
+    "zh-TW": "音量均衡（ReplayGain）",
+    "en": "Volume normalization (ReplayGain)",
+    "fr": "Normalisation du volume (ReplayGain)"
+  },
+  "交叉淡化": {
+    "zh-TW": "交叉淡化",
+    "en": "Crossfade",
+    "fr": "Fondu enchaîné"
+  },
+  "{0} 秒": {
+    "zh-TW": "{0} 秒",
+    "en": "{0} seconds",
+    "fr": "{0} secondes"
+  },
+  "歌词字号": {
+    "zh-TW": "歌詞字號",
+    "en": "Lyrics size",
+    "fr": "Taille des paroles"
+  },
+  "封面氛围背景": {
+    "zh-TW": "封面氛圍背景",
+    "en": "Artwork backdrop",
+    "fr": "Arrière-plan de pochette"
+  },
+  "强调色": {
+    "zh-TW": "強調色",
+    "en": "Accent color",
+    "fr": "Couleur d’accent"
+  },
+  "玫瑰": {
+    "zh-TW": "玫瑰",
+    "en": "Rose",
+    "fr": "Rose"
+  },
+  "海蓝": {
+    "zh-TW": "海藍",
+    "en": "Ocean blue",
+    "fr": "Bleu océan"
+  },
+  "森林": {
+    "zh-TW": "森林",
+    "en": "Forest",
+    "fr": "Forêt"
+  },
+  "紫罗兰": {
+    "zh-TW": "紫羅蘭",
+    "en": "Violet",
+    "fr": "Violet"
+  },
+  "音量均衡仅对已读取 ReplayGain 标签的歌曲生效；交叉淡化取决于下一首音频的加载速度。预下载默认关闭。": {
+    "zh-TW": "音量均衡僅對已讀取 ReplayGain 標籤的歌曲生效；交叉淡化取決於下一首音訊的載入速度。預下載預設關閉。",
+    "en": "Normalization uses existing ReplayGain tags. Crossfade depends on how quickly the next track loads. Prefetch is off by default.",
+    "fr": "La normalisation utilise les balises ReplayGain existantes. Le fondu dépend du chargement du morceau suivant. Le préchargement est désactivé par défaut."
+  },
+  "恢复播放后保持暂停，按播放继续。": {
+    "zh-TW": "恢復播放後保持暫停，按播放繼續。",
+    "en": "Restored tracks stay paused until you press Play.",
+    "fr": "Les morceaux restaurés restent en pause jusqu’à ce que vous appuyiez sur Lecture."
+  },
+  "恢复播放器默认设置": {
+    "zh-TW": "恢復播放器預設設定",
+    "en": "Restore player defaults",
+    "fr": "Rétablir les réglages du lecteur"
+  },
+  "小播放器": {
+    "zh-TW": "小播放器",
+    "en": "Mini player",
+    "fr": "Mini-lecteur"
+  },
+  "歌词播放器": {
+    "zh-TW": "歌詞播放器",
+    "en": "Lyrics player",
+    "fr": "Lecteur avec paroles"
+  },
+  "完整播放器": {
+    "zh-TW": "完整播放器",
+    "en": "Full player",
+    "fr": "Lecteur complet"
+  },
+  "窗口形态": {
+    "zh-TW": "視窗形態",
+    "en": "Window layout",
+    "fr": "Disposition de la fenêtre"
+  },
+  "最小化": {
+    "zh-TW": "最小化",
+    "en": "Minimize",
+    "fr": "Réduire"
+  },
+  "最大化或还原": {
+    "zh-TW": "最大化或還原",
+    "en": "Maximize or restore",
+    "fr": "Agrandir ou restaurer"
+  },
+  "关闭窗口": {
+    "zh-TW": "關閉視窗",
+    "en": "Close window",
+    "fr": "Fermer la fenêtre"
+  },
+  "打开完整播放器选择音乐": {
+    "zh-TW": "開啟完整播放器選擇音樂",
+    "en": "Open the full player to choose music",
+    "fr": "Ouvrez le lecteur complet pour choisir un morceau"
+  },
+  "歌曲详情": {
+    "zh-TW": "歌曲詳情",
+    "en": "Track details",
+    "fr": "Détails du morceau"
+  },
+  "未读取": {
+    "zh-TW": "未讀取",
+    "en": "Not read yet",
+    "fr": "Non lu"
+  },
+  "音乐类型": {
+    "zh-TW": "音樂型別",
+    "en": "Genre",
+    "fr": "Genre"
+  },
+  "发行年份": {
+    "zh-TW": "發行年份",
+    "en": "Release year",
+    "fr": "Année de sortie"
+  },
+  "文件格式": {
+    "zh-TW": "檔案格式",
+    "en": "File format",
+    "fr": "Format du fichier"
+  },
+  "音频编码": {
+    "zh-TW": "音訊編碼",
+    "en": "Audio codec",
+    "fr": "Codec audio"
+  },
+  "采样率": {
+    "zh-TW": "取樣率",
+    "en": "Sample rate",
+    "fr": "Fréquence d’échantillonnage"
+  },
+  "比特率": {
+    "zh-TW": "位元率",
+    "en": "Bit rate",
+    "fr": "Débit binaire"
+  },
+  "位深": {
+    "zh-TW": "位深",
+    "en": "Bit depth",
+    "fr": "Profondeur de bits"
+  },
+  "声道数": {
+    "zh-TW": "聲道數",
+    "en": "Channels",
+    "fr": "Canaux"
+  },
+  "文件大小": {
+    "zh-TW": "檔案大小",
+    "en": "File size",
+    "fr": "Taille du fichier"
+  },
+  "播放次数": {
+    "zh-TW": "播放次數",
+    "en": "Play count",
+    "fr": "Nombre d’écoutes"
+  },
+  "WebDAV 路径": {
+    "zh-TW": "WebDAV 路徑",
+    "en": "WebDAV path",
+    "fr": "Chemin WebDAV"
+  },
+  "仅展示已读取的信息；打开详情不会下载音频。未读取的项目会在音频缓存解析后补充。": {
+    "zh-TW": "僅展示已讀取的資訊；開啟詳情不會下載音訊。未讀取的專案會在音訊快取解析後補充。",
+    "en": "Only available information is shown. Opening details does not download audio. More details appear after a track is cached and analyzed.",
+    "fr": "Seules les informations déjà lues sont affichées. Ouvrir les détails ne télécharge pas l’audio. Les autres données apparaissent après la mise en cache et l’analyse."
+  },
+  "暂无歌词": {
+    "zh-TW": "暫無歌詞",
+    "en": "No lyrics yet",
+    "fr": "Aucune parole disponible"
+  },
+  "编辑规则": {
+    "zh-TW": "編輯規則",
+    "en": "Edit rules",
+    "fr": "Modifier les règles"
+  },
+  "自动歌单": {
+    "zh-TW": "自動歌單",
+    "en": "Auto-updating playlist",
+    "fr": "Liste de lecture automatique"
+  },
+  "当前匹配 {0} 首歌曲": {
+    "zh-TW": "當前匹配 {0} 首歌曲",
+    "en": "{0} tracks currently match",
+    "fr": "{0} morceaux correspondent actuellement"
+  },
+  "查看 {0} 的详情": {
+    "zh-TW": "檢視 {0} 的詳情",
+    "en": "View details for {0}",
+    "fr": "Voir les détails de {0}"
+  },
+  "曲库、收藏和播放记录变化时自动更新，不调用 API。播放中的队列不会被重排。": {
+    "zh-TW": "曲庫、收藏和播放記錄變化時自動更新，不呼叫 API。播放中的佇列不會被重排。",
+    "en": "Updates when the library, favorites or listening history changes. Uses no API and does not reorder the current queue.",
+    "fr": "Se met à jour quand la bibliothèque, les favoris ou l’historique changent. N’utilise aucune API et ne réorganise pas la file en cours."
+  },
+  "暂无符合规则的歌曲": {
+    "zh-TW": "暫無符合規則的歌曲",
+    "en": "No tracks match these rules",
+    "fr": "Aucun morceau ne correspond à ces règles"
+  },
+  "仅喜欢的歌曲": {
+    "zh-TW": "僅喜歡的歌曲",
+    "en": "Favorites only",
+    "fr": "Favoris uniquement"
+  },
+  "艺术家包含": {
+    "zh-TW": "藝術家包含",
+    "en": "Artist contains",
+    "fr": "Artiste contient"
+  },
+  "不限": {
+    "zh-TW": "不限",
+    "en": "Any",
+    "fr": "Tous"
+  },
+  "音乐类型包含": {
+    "zh-TW": "音樂型別包含",
+    "en": "Genre contains",
+    "fr": "Genre contient"
+  },
+  "最近听过": {
+    "zh-TW": "最近聽過",
+    "en": "Recently played",
+    "fr": "Écouté récemment"
+  },
+  "最近 {0} 天": {
+    "zh-TW": "最近 {0} 天",
+    "en": "Last {0} days",
+    "fr": "Ces {0} derniers jours"
+  },
+  "排序方式": {
+    "zh-TW": "排序方式",
+    "en": "Sort by",
+    "fr": "Trier par"
+  },
+  "最常播放": {
+    "zh-TW": "最常播放",
+    "en": "Most played",
+    "fr": "Les plus écoutés"
+  },
+  "最近入库": {
+    "zh-TW": "最近入庫",
+    "en": "Recently added",
+    "fr": "Ajoutés récemment"
+  },
+  "歌曲名称": {
+    "zh-TW": "歌曲名稱",
+    "en": "Track title",
+    "fr": "Titre du morceau"
+  },
+  "最多歌曲数": {
+    "zh-TW": "最多歌曲數",
+    "en": "Maximum tracks",
+    "fr": "Nombre maximal de morceaux"
+  },
+  "时长上限（分钟，0 为不限）": {
+    "zh-TW": "時長上限（分鐘，0 為不限）",
+    "en": "Duration limit (minutes, 0 for none)",
+    "fr": "Durée maximale (minutes, 0 pour aucune limite)"
+  },
+  "设置时长上限后，仅纳入已知时长的歌曲，总时长不会超过上限。": {
+    "zh-TW": "設定時長上限後，僅納入已知時長的歌曲，總時長不會超過上限。",
+    "en": "With a duration limit, only tracks with known lengths are included and the total stays within the limit.",
+    "fr": "Avec une limite de durée, seuls les morceaux de durée connue sont inclus et le total reste dans la limite."
+  },
   "开源许可": {
     "zh-TW": "開源許可",
     "en": "Open-source license",
     "fr": "Licence libre"
+  },
+  "应用更新": {
+    "zh-TW": "應用更新",
+    "en": "App updates",
+    "fr": "Mises à jour de l’application"
+  },
+  "当前版本 {0}；同系列新版可直接覆盖安装，无需先卸载。": {
+    "zh-TW": "當前版本 {0}；同系列新版可直接覆蓋安裝，無需先解除安裝。",
+    "en": "Current version {0}; newer versions of this edition can be installed over it without uninstalling first.",
+    "fr": "Version actuelle {0} ; les nouvelles versions de cette édition s’installent directement sans désinstallation préalable."
+  },
+  "点击检查更新。": {
+    "zh-TW": "點選檢查更新。",
+    "en": "Check for updates when you are ready.",
+    "fr": "Vérifiez les mises à jour quand vous le souhaitez."
+  },
+  "正在检查 GitHub Releases…": {
+    "zh-TW": "正在檢查 GitHub Releases…",
+    "en": "Checking GitHub Releases…",
+    "fr": "Vérification des versions GitHub…"
+  },
+  "发现新版本 {0}。": {
+    "zh-TW": "發現新版本 {0}。",
+    "en": "Version {0} is available.",
+    "fr": "La version {0} est disponible."
+  },
+  "下载中：{0}%": {
+    "zh-TW": "下載中：{0}%",
+    "en": "Downloading: {0}%",
+    "fr": "Téléchargement : {0}%"
+  },
+  "新版本已下载，安装时会关闭并重新打开播放器。": {
+    "zh-TW": "新版本已下載，安裝時會關閉並重新開啟播放器。",
+    "en": "The new version is downloaded. Installing will close and reopen the player.",
+    "fr": "La nouvelle version est téléchargée. L’installation fermera puis rouvrira le lecteur."
+  },
+  "当前已是最新版本。": {
+    "zh-TW": "當前已是最新版本。",
+    "en": "You are up to date.",
+    "fr": "Votre application est à jour."
+  },
+  "更新失败，请稍后重试。": {
+    "zh-TW": "更新失敗，請稍後重試。",
+    "en": "Update failed. Try again later.",
+    "fr": "La mise à jour a échoué. Réessayez plus tard."
+  },
+  "应用内更新仅支持已安装的 Windows 正式版。": {
+    "zh-TW": "應用內更新僅支援已安裝的 Windows 正式版。",
+    "en": "In-app updates require an installed Windows release.",
+    "fr": "Les mises à jour intégrées nécessitent une version Windows installée."
+  },
+  "更新下载进度": {
+    "zh-TW": "更新下載進度",
+    "en": "Update download progress",
+    "fr": "Progression du téléchargement"
+  },
+  "只从项目 GitHub Releases 获取更新；下载和安装均由你确认。": {
+    "zh-TW": "只從專案 GitHub Releases 獲取更新；下載和安裝均由你確認。",
+    "en": "Updates come only from the project’s GitHub Releases. You confirm both download and installation.",
+    "fr": "Les mises à jour proviennent uniquement des versions GitHub du projet. Vous confirmez le téléchargement et l’installation."
+  },
+  "查看发布页": {
+    "zh-TW": "檢視釋出頁",
+    "en": "View releases",
+    "fr": "Voir les versions"
+  },
+  "下载新版本": {
+    "zh-TW": "下載新版本",
+    "en": "Download new version",
+    "fr": "Télécharger la nouvelle version"
+  },
+  "安装并重启": {
+    "zh-TW": "安裝並重啟",
+    "en": "Install and restart",
+    "fr": "Installer et redémarrer"
+  },
+  "检查更新": {
+    "zh-TW": "檢查更新",
+    "en": "Check for updates",
+    "fr": "Vérifier les mises à jour"
+  },
+  "音质与设备": {
+    "zh-TW": "音質與裝置",
+    "en": "Audio quality and devices",
+    "fr": "Qualité audio et appareils"
+  },
+  "查看当前歌曲的源文件信息与 Windows 输出设备。": {
+    "zh-TW": "檢視當前歌曲的原始檔資訊與 Windows 輸出裝置。",
+    "en": "See the current track’s source quality and Windows output device.",
+    "fr": "Consultez la qualité de la source et la sortie audio Windows du morceau en cours."
+  },
+  "不修改音频文件，也不在后台扫描曲库。": {
+    "zh-TW": "不修改音訊檔案，也不在後臺掃描曲庫。",
+    "en": "Does not modify audio files or scan the library in the background.",
+    "fr": "Ne modifie pas les fichiers audio et n’analyse pas la bibliothèque en arrière-plan."
+  },
+  "查看音质与设备": {
+    "zh-TW": "檢視音質與裝置",
+    "en": "View audio quality and devices",
+    "fr": "Voir la qualité audio et les appareils"
+  },
+  "音质与听歌设备": {
+    "zh-TW": "音質與聽歌裝置",
+    "en": "Audio quality and listening device",
+    "fr": "Qualité audio et appareil d’écoute"
+  },
+  "无损或 PCM 编码": {
+    "zh-TW": "無損或 PCM 編碼",
+    "en": "Lossless or PCM encoding",
+    "fr": "Codage sans perte ou PCM"
+  },
+  "较高码率有损音源": {
+    "zh-TW": "較高位元速率有損音源",
+    "en": "Higher-bitrate lossy source",
+    "fr": "Source avec perte à débit élevé"
+  },
+  "有损音源": {
+    "zh-TW": "有損音源",
+    "en": "Lossy source",
+    "fr": "Source avec perte"
+  },
+  "音质信息未读取": {
+    "zh-TW": "音質資訊未讀取",
+    "en": "Audio quality not read yet",
+    "fr": "Qualité audio non encore lue"
+  },
+  "读取详细音质": {
+    "zh-TW": "讀取詳細音質",
+    "en": "Read detailed audio quality",
+    "fr": "Lire les détails audio"
+  },
+  "正在读取音质信息…": {
+    "zh-TW": "正在讀取音質資訊…",
+    "en": "Reading audio quality…",
+    "fr": "Lecture des détails audio…"
+  },
+  "仅下载当前这一首到现有缓存；可能使用网络流量与磁盘空间。": {
+    "zh-TW": "僅下載當前這一首到現有快取；可能使用網路流量與磁碟空間。",
+    "en": "Downloads only this track into the existing cache; it may use network data and disk space.",
+    "fr": "Télécharge uniquement ce morceau dans le cache existant ; cela peut utiliser des données et de l’espace disque."
+  },
+  "请先在设置中保存 WebDAV 连接。": {
+    "zh-TW": "請先在設定中儲存 WebDAV 連線。",
+    "en": "Save your WebDAV connection in settings first.",
+    "fr": "Enregistrez d’abord votre connexion WebDAV dans les réglages."
+  },
+  "读取音质信息失败。": {
+    "zh-TW": "讀取音質資訊失敗。",
+    "en": "Could not read audio quality information.",
+    "fr": "Impossible de lire les informations de qualité audio."
+  },
+  "已缓存歌曲，但音频文件没有提供可识别的编码信息。": {
+    "zh-TW": "已快取歌曲，但音訊檔案沒有提供可識別的編碼資訊。",
+    "en": "Track cached, but no recognizable codec information was available.",
+    "fr": "Morceau mis en cache, mais aucune information de codec reconnaissable n’était disponible."
+  },
+  "Windows 系统默认输出（设备名称不可用）": {
+    "zh-TW": "Windows 系統預設輸出（裝置名稱不可用）",
+    "en": "Windows default output (device name unavailable)",
+    "fr": "Sortie Windows par défaut (nom indisponible)"
+  },
+  "播放一首歌曲后可查看源文件音质。": {
+    "zh-TW": "播放一首歌曲後可檢視原始檔音質。",
+    "en": "Play a track to see its source quality.",
+    "fr": "Lisez un morceau pour voir la qualité de sa source."
+  },
+  "系统可见的默认输出": {
+    "zh-TW": "系統可見的預設輸出",
+    "en": "System-visible default output",
+    "fr": "Sortie par défaut visible par le système"
+  },
+  "实际播放设备可能受 Windows 每应用输出设置影响；这里不一定能读取设备名称，也不能据此判断蓝牙传输音质。": {
+    "zh-TW": "實際播放裝置可能受 Windows 每應用輸出設定影響；這裡不一定能讀取裝置名稱，也不能據此判斷藍牙傳輸音質。",
+    "en": "Windows per-app output settings may affect the actual device. Its name may be unavailable here, and this does not reveal Bluetooth transmission quality.",
+    "fr": "Les réglages de sortie par application de Windows peuvent changer l’appareil réel. Son nom peut être indisponible ici et cela ne révèle pas la qualité Bluetooth."
+  },
+  "查看系统可见的输出设备": {
+    "zh-TW": "檢視系統可見的輸出裝置",
+    "en": "Show visible output devices",
+    "fr": "Afficher les sorties visibles"
+  },
+  "未提供设备名称": {
+    "zh-TW": "未提供裝置名稱",
+    "en": "Device name unavailable",
+    "fr": "Nom de l’appareil indisponible"
+  },
+  "当前环境无法读取输出设备列表，仍可在 Windows 声音设置中查看。": {
+    "zh-TW": "當前環境無法讀取輸出裝置列表，仍可在 Windows 聲音設定中檢視。",
+    "en": "Output devices cannot be listed here; check Windows sound settings instead.",
+    "fr": "Impossible de lister les sorties ici ; consultez les paramètres audio de Windows."
+  },
+  "打开 Windows 声音设置": {
+    "zh-TW": "開啟 Windows 聲音設定",
+    "en": "Open Windows sound settings",
+    "fr": "Ouvrir les paramètres audio Windows"
+  },
+  "低码率或有损文件可能听起来发糊；软件无法恢复源文件已经丢失的细节。": {
+    "zh-TW": "低位元速率或有損檔案可能聽起來發糊；軟體無法恢復原始檔已經丟失的細節。",
+    "en": "Low-bitrate or lossy files may sound dull. Software cannot restore details lost from the source.",
+    "fr": "Les fichiers à faible débit ou avec perte peuvent sembler ternes. Un logiciel ne peut pas restaurer les détails perdus."
+  },
+  "无损音源仍可能受录音、系统音效、蓝牙编码和播放设备影响。": {
+    "zh-TW": "無損音源仍可能受錄音、系統音效、藍牙編碼和播放裝置影響。",
+    "en": "Even lossless audio is affected by the recording, system effects, Bluetooth codec and playback device.",
+    "fr": "Même une source sans perte dépend de l’enregistrement, des effets système, du codec Bluetooth et de l’appareil."
+  },
+  "这首歌的采样率偏低；即使是 PCM 或无损编码，原始声音细节也可能有限。": {
+    "zh-TW": "這首歌的取樣率偏低；即使是 PCM 或無損編碼，原始聲音細節也可能有限。",
+    "en": "This track has a low sample rate; even PCM or lossless encoding may contain limited original detail.",
+    "fr": "Ce morceau a une faible fréquence d’échantillonnage ; même un codage PCM ou sans perte peut offrir peu de détails d’origine."
+  },
+  "码率标签不能单独证明真实音质；如信息未读取，请先播放或缓存歌曲。": {
+    "zh-TW": "位元速率標籤不能單獨證明真實音質；如資訊未讀取，請先播放或快取歌曲。",
+    "en": "Bitrate alone does not prove sound quality. Play or cache the track if metadata has not been read.",
+    "fr": "Le débit seul ne prouve pas la qualité. Lisez ou mettez le morceau en cache si les métadonnées manquent."
+  },
+  "底噪可能来自录音或输出设备。播放器不会默认对整首音乐降噪，以免削弱高频与动态；ReplayGain 只做防削波衰减，不会放大底噪。": {
+    "zh-TW": "底噪可能來自錄音或輸出裝置。播放器不會預設對整首音樂降噪，以免削弱高頻與動態；ReplayGain 只做防削波衰減，不會放大底噪。",
+    "en": "Hiss may come from the recording or output device. Full-track noise reduction is off to preserve detail and dynamics. ReplayGain only attenuates to avoid clipping; it does not amplify hiss.",
+    "fr": "Le souffle peut venir de l’enregistrement ou de la sortie. La réduction du bruit sur toute la piste est désactivée pour préserver les détails et la dynamique. ReplayGain atténue seulement pour éviter l’écrêtage ; il n’amplifie pas le souffle."
+  },
+  "更新检查或下载失败，请稍后重试；也可以从 GitHub Releases 下载新版安装包直接覆盖安装。": {
+    "zh-TW": "更新檢查或下載失敗，請稍後重試；也可以從 GitHub Releases 下載新版安裝包直接覆蓋安裝。",
+    "en": "Update check or download failed. Try again later, or install the new setup file over this version from GitHub Releases.",
+    "fr": "La vérification ou le téléchargement a échoué. Réessayez plus tard ou installez la nouvelle version depuis GitHub Releases."
+  },
+  "仅已安装的 Windows 正式版支持应用内更新。": {
+    "zh-TW": "僅已安裝的 Windows 正式版支援應用內更新。",
+    "en": "Only installed Windows releases support in-app updates.",
+    "fr": "Seules les versions Windows installées prennent en charge les mises à jour intégrées."
+  },
+  "未能获取 GitHub 更新信息。请确认已发布包含安装包和 latest.yml 的正式 Release。": {
+    "zh-TW": "未能獲取 GitHub 更新資訊。請確認已釋出包含安裝包和 latest.yml 的正式 Release。",
+    "en": "Could not get GitHub update information. A published Release must include the installer and latest.yml.",
+    "fr": "Impossible d’obtenir les informations de mise à jour GitHub. Une version publiée doit inclure l’installateur et latest.yml."
+  },
+  "更新下载失败，请稍后重试。": {
+    "zh-TW": "更新下載失敗，請稍後重試。",
+    "en": "Update download failed. Try again later.",
+    "fr": "Le téléchargement a échoué. Réessayez plus tard."
+  },
+  "只为当前歌曲补齐缺失资源，不替换已有封面。歌词按三级信息匹配；封面默认仅用内嵌、自有或已配置来源。TheAudioDB 需明确填写 Key，iTunes 单独开启。只发送歌曲元数据，不发送音频或 WebDAV 凭据；请核对资源使用权限。": {
+    "zh-TW": "只為當前歌曲補齊缺失資源，不替換已有封面。歌詞按三級資訊匹配；封面預設僅用內嵌、自有或已配置來源。TheAudioDB 需明確填寫 Key，iTunes 單獨開啟。只發送歌曲後設資料，不傳送音訊或 WebDAV 憑據；請核對資源使用許可權。",
+    "en": "Fill missing resources for the current track without replacing existing artwork. Lyrics use three matching tiers. Default artwork comes only from embedded, owned or configured sources. TheAudioDB requires your key; iTunes is a separate opt-in. Only metadata is sent, not audio or WebDAV credentials. Check resource rights.",
+    "fr": "Compléter les ressources du titre sans remplacer les pochettes existantes. Paroles : trois niveaux de recherche. Pochettes intégrées, personnelles ou sources configurées par défaut. TheAudioDB exige votre clé ; iTunes est facultatif. Métadonnées uniquement, sans audio ni identifiants WebDAV. Vérifiez les droits."
+  },
+  "留空不使用 TheAudioDB": {
+    "zh-TW": "留空不使用 TheAudioDB",
+    "en": "Leave blank to skip TheAudioDB",
+    "fr": "Vide pour ne pas utiliser TheAudioDB"
+  },
+  "歌词留空使用 LRCLIB；封面留空不默认联网": {
+    "zh-TW": "歌詞留空使用 LRCLIB；封面留空不預設聯網",
+    "en": "Empty lyrics URL uses LRCLIB; empty cover URL makes no default image request",
+    "fr": "Paroles : LRCLIB si vide ; pochettes : aucune requête d’image par défaut"
+  },
+  "Apple 对专辑图用途有限制，不是无限制免费图库。请先阅读条款并确认使用合规，是否启用？": {
+    "zh-TW": "Apple 對專輯圖用途有限制，不是無限制免費相簿。請先閱讀條款並確認使用合規，是否啟用？",
+    "en": "Apple restricts artwork use; this is not an unrestricted image library. Read the terms and ensure your use complies. Enable?",
+    "fr": "Apple limite l’usage des images : ce n’est pas une banque d’images libre. Lisez les conditions et vérifiez votre conformité. Activer ?"
+  },
+  "单独启用 iTunes 封面（默认关闭）": {
+    "zh-TW": "單獨啟用 iTunes 封面（預設關閉）",
+    "en": "Opt in to iTunes artwork (off by default)",
+    "fr": "Activer les pochettes iTunes (désactivé par défaut)"
+  },
+  "查看 Apple 接口条款": {
+    "zh-TW": "檢視 Apple 介面條款",
+    "en": "Read Apple’s API terms",
+    "fr": "Conditions de l’API Apple"
   }
 }

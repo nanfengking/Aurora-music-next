@@ -7,6 +7,7 @@ import { registerAssetHandlers } from './assets'
 import { encryptSecret, decryptSecret } from './secrets'
 import { recommendationFeed } from './recommendation'
 import { generateHybridPlaylist } from './hybridPlaylist'
+import { parseSmartRules } from '../services/smartPlaylists'
 import type { AiProvider } from '../types/providers'
 import { WebDavClient, CacheManager, startSync, getSyncProgress, cancelSync, downloadSingleSong, indexWebDavLibrary, registerWebDavFile } from './webdav'
 import type {
@@ -165,12 +166,14 @@ export function registerIpcHandlers(database: Database.Database): void {
       if (!name) throw new Error('歌单名称不能为空')
       const description = playlist?.description == null ? null : String(playlist.description).trim().slice(0, 500)
       const songIds = normalizePlaylistSongIds(playlist?.songIds)
+      const rules = parseSmartRules(playlist?.smartRules)
+      const smartRules = rules ? JSON.stringify(rules) : null
       db.prepare(`
-        INSERT INTO playlists (id, name, description, songIds, createdAt, updatedAt)
-        VALUES (?, ?, ?, ?, COALESCE(NULLIF(?, ''), datetime('now')), datetime('now'))
+        INSERT INTO playlists (id, name, description, songIds, smartRules, createdAt, updatedAt)
+        VALUES (?, ?, ?, ?, ?, COALESCE(NULLIF(?, ''), datetime('now')), datetime('now'))
         ON CONFLICT(id) DO UPDATE SET name = excluded.name, description = excluded.description,
-          songIds = excluded.songIds, updatedAt = datetime('now')
-      `).run(id, name, description, songIds, String(playlist?.createdAt || ''))
+          songIds = excluded.songIds, smartRules = excluded.smartRules, updatedAt = datetime('now')
+      `).run(id, name, description, rules ? '[]' : songIds, smartRules, String(playlist?.createdAt || ''))
       return { success: true }
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err)
@@ -190,6 +193,7 @@ export function registerIpcHandlers(database: Database.Database): void {
 
   ipcMain.handle('music:addToPlaylist', async (_event, playlistId: string, songId: string): Promise<IpcResponse> => {
     try {
+      if ((db.prepare('SELECT smartRules FROM playlists WHERE id = ?').get(playlistId) as Playlist | undefined)?.smartRules) throw new Error('自动歌单请通过编辑规则调整歌曲')
       const row = db.prepare('SELECT songIds FROM playlists WHERE id = ?').get(playlistId) as { songIds: string } | undefined
       if (!row) return { success: false, error: 'Playlist not found' }
       const ids: string[] = JSON.parse(row.songIds)
@@ -207,6 +211,7 @@ export function registerIpcHandlers(database: Database.Database): void {
 
   ipcMain.handle('music:removeFromPlaylist', async (_event, playlistId: string, songId: string): Promise<IpcResponse> => {
     try {
+      if ((db.prepare('SELECT smartRules FROM playlists WHERE id = ?').get(playlistId) as Playlist | undefined)?.smartRules) throw new Error('自动歌单请通过编辑规则调整歌曲')
       const row = db.prepare('SELECT songIds FROM playlists WHERE id = ?').get(playlistId) as { songIds: string } | undefined
       if (!row) return { success: false, error: 'Playlist not found' }
       const ids: string[] = JSON.parse(row.songIds).filter((id: string) => id !== songId)

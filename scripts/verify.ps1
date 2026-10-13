@@ -69,6 +69,24 @@ if ($RequireInstaller) {
   if ((Get-Item -LiteralPath $installer).Length -lt 50MB) {
     throw 'Windows installer is unexpectedly small.'
   }
+  $latestPath = Join-Path $workspace 'release/latest.yml'
+  if (-not (Test-Path -LiteralPath $latestPath -PathType Leaf)) {
+    throw 'Update manifest latest.yml is missing.'
+  }
+  $latest = Get-Content -LiteralPath $latestPath -Raw
+  if ($latest -notmatch [regex]::Escape("version: $($manifest.version)")) {
+    throw 'Update manifest version does not match package.json.'
+  }
+  if ($latest -notmatch [regex]::Escape("url: $(Split-Path $installer -Leaf)")) {
+    throw 'Update manifest does not reference the current installer.'
+  }
+  $sha = [Security.Cryptography.SHA512]::Create()
+  $inputStream = [IO.File]::OpenRead($installer)
+  try { $installerHash = [Convert]::ToBase64String($sha.ComputeHash($inputStream)) }
+  finally { $inputStream.Dispose(); $sha.Dispose() }
+  if ($latest -notmatch [regex]::Escape("sha512: $installerHash")) {
+    throw 'Update manifest checksum does not match the installer.'
+  }
 }
 
 Write-Host 'Aurora verification passed.' -ForegroundColor Green

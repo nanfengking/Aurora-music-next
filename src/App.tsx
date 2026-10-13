@@ -1,7 +1,7 @@
 import { t, tm, artistLabel } from './i18n'
 import { useLanguageStore } from './stores/languageStore'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import type { AiPlaylistResult, DeepSeekConfigStatus, Playlist, Song, RecommendationFeed } from './types/music';
+import type { AiPlaylistResult, DeepSeekConfigStatus, Playlist, Song, RecommendationFeed, SmartPlaylistRules } from './types/music';
 import type { WebDavConfig, WebDavFile } from './types/webdav';
 import { audioEngine, type PlayState } from './services/audioEngine';
 import { usePlayerStore } from './stores/playerStore';
@@ -20,6 +20,10 @@ import { PreferencesPage } from './pages/PreferencesPage';
 import './styles/app.css';
 import { useThemeStore, applyTheme } from './stores/themeStore';
 import './styles/light.css';
+import './styles/player.css';
+import { CompactPlayer, WindowBar, usePlayerLayout } from './components/PlayerWindow';
+import { usePlayerPreferences } from './stores/playerPreferences';
+import { resolveSmartPlaylists } from './services/smartPlaylists';
 type Page = 'home' | 'browse' | 'library' | 'albums' | 'artists' | 'recent' | 'playlists' | 'favorites' | 'settings';
 const EMPTY_CONFIG: WebDavConfig = { url: '', username: '', password: '' };
 const EMPTY_AI: DeepSeekConfigStatus = { configured: false, baseUrl: 'https://api.deepseek.com', model: 'deepseek-chat' };
@@ -65,6 +69,18 @@ function createPlaylist(name: string, songIds: string[] = [], description: strin
     return { id: `pl-${random}`, name, description, songIds: JSON.stringify(songIds), createdAt: timestamp, updatedAt: timestamp };
 }
 export default function App() {
+    const layout = usePlayerLayout();
+    const preferences = usePlayerPreferences(store => store.preferences);
+    useEffect(() => {
+        document.documentElement.dataset.accent = preferences.accent;
+        void window.electronAPI.setAlwaysOnTop(preferences.alwaysOnTop);
+        audioEngine.applyPreferences();
+    }, [preferences]);
+    useEffect(() => {
+        const save = () => audioEngine.saveSession();
+        window.addEventListener('beforeunload', save);
+        return () => window.removeEventListener('beforeunload', save);
+    }, []);
     const locale = useLanguageStore(store => store.locale);
     useEffect(() => { document.documentElement.lang = locale }, [locale]);
     const { theme, setTheme } = useThemeStore();
@@ -85,7 +101,9 @@ export default function App() {
     const [songs, setSongs] = useState<Song[]>([]);
     const [feed, setFeed] = useState<RecommendationFeed | null>(null);
     const recommendations = feed?.songs || [];
-    const [playlists, setPlaylists] = useState<Playlist[]>([]);
+    const [storedPlaylists, setPlaylists] = useState<Playlist[]>([]);
+    const playlists = useMemo(() => resolveSmartPlaylists(storedPlaylists, songs), [storedPlaylists, songs]);
+    const [editingPlaylist, setEditingPlaylist] = useState<Playlist | null>(null);
     const [selectedPlaylistId, setSelectedPlaylistId] = useState<string | null>(null);
     const [query, setQuery] = useState('');
     const [loading, setLoading] = useState(false);
@@ -97,9 +115,18 @@ export default function App() {
     const [message, setMessage] = useState<string | null>(null);
     const [playerState, setPlayerState] = useState<PlayState>(IDLE);
     const [current, setCurrent] = useState<Song | null>(null);
+    const [assetConfigRevision, setAssetConfigRevision] = useState(0);
     const [songToAdd, setSongToAdd] = useState<Song | null>(null);
     const [queueOpen, setQueueOpen] = useState(false);
     const [fullPlayerOpen, setFullPlayerOpen] = useState(false);
+    useEffect(() => {
+        if (layout === 'full') return;
+        setFullPlayerOpen(false);
+        setQueueOpen(false);
+        setComposerOpen(false);
+        setSongToAdd(null);
+        setDeleteId(null);
+    }, [layout]);
     const directoryCache = useRef(new Map<string, WebDavFile[]>());
     const notificationTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
     const mainRef = useRef<HTMLElement>(null);
@@ -179,8 +206,10 @@ export default function App() {
                 if (configResponse.data.url)
                     void listRemote('', configResponse.data);
             }
-            if (songResponse.data)
+            if (songResponse.data) {
                 setSongs(songResponse.data);
+                audioEngine.restore(songResponse.data);
+            }
             if (recommendationResponse.data)
                 setFeed(recommendationResponse.data);
             if (playlistResponse.data) {
@@ -196,13 +225,27 @@ export default function App() {
         return () => { active = false; };
     }, [listRemote, notify]);
     useEffect(() => audioEngine.onStateChange((state) => {
-        setPlayerState(state);
+        setPlayerState(previous => previous.isPlaying === state.isPlaying && previous.isLoading === state.isLoading && previous.error === state.error ? previous : state);
         setCurrent(audioEngine.getCurrentSong());
     }), []);
+    useEffect(() => {
+        const refresh = () => setAssetConfigRevision(value => value + 1);
+        window.addEventListener('aurora:asset-config-change', refresh);
+        return () => window.removeEventListener('aurora:asset-config-change', refresh);
+    }, []);
     useEffect(() => {
         if (current?.id && !playerState.isLoading)
             void loadLibrary();
     }, [current?.id, playerState.isLoading, loadLibrary]);
+    useEffect(() => {
+        if (!current?.id || !playerState.isPlaying || playerState.isLoading) return;
+        let active = true;
+        void window.electronAPI.autoEnrichSong(current.id).then(response => {
+            if (!active || !response.data) return;
+            setSongs(items => items.map(song => song.id === response.data!.id ? response.data! : song));
+        }).catch(() => { /* Online metadata is optional; playback must continue. */ });
+        return () => { active = false; };
+    }, [current?.id, playerState.isPlaying, playerState.isLoading, assetConfigRevision]);
     useEffect(() => {
         const keyboard = (event: KeyboardEvent) => {
             if (document.querySelector('dialog[open]'))
@@ -286,8 +329,8 @@ export default function App() {
             notify(response.error || t("曲库同步失败"));
         setSyncing(false);
     }, [config, loadLibrary, notify, syncing]);
-    const saveNewPlaylist = useCallback(async (name: string, songIds: string[] = [], description: string | null = null) => {
-        const playlist = createPlaylist(name, songIds, description);
+    const saveNewPlaylist = useCallback(async (name: string, songIds: string[] = [], description: string | null = null, rules?: SmartPlaylistRules) => {
+        const playlist = { ...(editingPlaylist || createPlaylist(name, songIds, description)), name, description, songIds: JSON.stringify(songIds), smartRules: rules ? JSON.stringify(rules) : null };
         const response = await window.electronAPI.savePlaylist(playlist);
         if (!response.success) {
             notify(response.error || t("歌单创建失败"));
@@ -296,7 +339,7 @@ export default function App() {
         await loadPlaylists();
         setSelectedPlaylistId(playlist.id);
         return playlist;
-    }, [loadPlaylists, notify]);
+    }, [editingPlaylist, loadPlaylists, notify]);
     const deletePlaylist = useCallback(async (id: string) => {
         setDeleteBusy(true);
         try {
@@ -343,12 +386,13 @@ export default function App() {
     const normalizedQuery = query.trim().toLocaleLowerCase();
     const visibleSongs = useMemo(() => !normalizedQuery ? songs : songs.filter((song) => `${song.title} ${artistLabel(song.artist)} ${song.album} ${song.genre}`.toLocaleLowerCase().includes(normalizedQuery)), [normalizedQuery, songs]);
     const visibleFiles = useMemo(() => !normalizedQuery ? files : files.filter((file) => file.name.toLocaleLowerCase().includes(normalizedQuery)), [files, normalizedQuery]);
-    const favorites = visibleSongs.filter((song) => song.isFavorite);
-    const queueSongs = queueIds.map((id) => songs.find((song) => song.id === id)).filter(Boolean) as Song[];
+    const favorites = useMemo(() => visibleSongs.filter((song) => song.isFavorite), [visibleSongs]);
+    const songsById = useMemo(() => new Map(songs.map(song => [song.id, song])), [songs]);
+    const queueSongs = useMemo(() => queueIds.map(id => songsById.get(id)).filter((song): song is Song => Boolean(song)), [queueIds, songsById]);
     const pageInfo = PAGE_INFO[page];
-    const playingSong = current ? songs.find(song => song.id === current.id) || current : null;
+    const playingSong = current ? songsById.get(current.id) || current : null;
     const recentlyPlayed = useMemo(() => songs.filter(song => song.lastPlayedAt).sort((a, b) => Number(b.lastPlayedAt) - Number(a.lastPlayedAt)), [songs]);
-    const openComposer = () => { setComposerSong(null); setComposerOpen(true); };
+    const openComposer = () => { setEditingPlaylist(null); setComposerSong(null); setComposerOpen(true); };
     const renderPage = () => {
         if (normalizedQuery && !['browse', 'settings'].includes(page)) {
             return <div className="search-results"><div className="result-summary"><Icon name="search"/><span><b>“{query.trim()}”</b><small>{t("找到 {0} 首歌曲", [visibleSongs.length])}</small></span></div><SongTable songs={visibleSongs} current={current} state={playerState} onPlay={play} onFavorite={toggleFavorite} onAdd={setSongToAdd} emptyText={t("没有匹配的歌曲")}/></div>;
@@ -360,12 +404,13 @@ export default function App() {
             case 'albums':
             case 'artists': return <CollectionPage songs={visibleSongs} current={current} state={playerState} tab={page === 'library' ? 'songs' : page} onPlay={play} onFavorite={toggleFavorite} onAdd={setSongToAdd}/>;
             case 'recent': return <SongTable songs={recentlyPlayed} current={current} state={playerState} onPlay={play} onFavorite={toggleFavorite} onAdd={setSongToAdd} emptyText={t("从第一首开始")}/>;
-            case 'playlists': return <PlaylistsPage playlists={playlists} songs={songs} selectedId={selectedPlaylistId} current={current} state={playerState} onSelect={setSelectedPlaylistId} onCreate={openComposer} onDelete={setDeleteId} onPlay={play} onFavorite={toggleFavorite} onAdd={setSongToAdd} onRemove={(playlistId, song) => void removeFromPlaylist(playlistId, song)}/>;
+            case 'playlists': return <PlaylistsPage playlists={playlists} songs={songs} selectedId={selectedPlaylistId} current={current} state={playerState} onSelect={setSelectedPlaylistId} onCreate={openComposer} onEdit={playlist => { setEditingPlaylist(playlist); setComposerOpen(true); }} onDelete={setDeleteId} onPlay={play} onFavorite={toggleFavorite} onAdd={setSongToAdd} onRemove={(playlistId, song) => void removeFromPlaylist(playlistId, song)}/>;
             case 'favorites': return <div><div className="collection-toolbar"><span>{t("{0} 首歌曲", [favorites.length])}</span><button className="text-button" disabled={!favorites.length} onClick={() => favorites[0] && play(favorites[0], favorites)}><Icon name="play" size={15}/>{t("播放全部")}</button></div><SongTable songs={favorites} current={current} state={playerState} onPlay={play} onFavorite={toggleFavorite} onAdd={setSongToAdd} emptyText={t("把心动的音乐收藏在这里")}/></div>;
-            case 'settings': return <PreferencesPage config={config} setConfig={setConfig} aiStatus={aiStatus} onAiChanged={setAiStatus} onConnected={(root) => { const cleaned = cleanFiles(root); directoryCache.current.clear(); directoryCache.current.set('', cleaned); setFiles(cleaned); setRemotePath(''); setPathHistory([]); setPage('browse'); }} notify={notify}/>;
+            case 'settings': return <PreferencesPage config={config} setConfig={setConfig} aiStatus={aiStatus} onAiChanged={setAiStatus} onConnected={(root) => { const cleaned = cleanFiles(root); directoryCache.current.clear(); directoryCache.current.set('', cleaned); setFiles(cleaned); setRemotePath(''); setPathHistory([]); setPage('browse'); }} notify={notify} currentSong={playingSong}/>;
         }
     };
-    return (<div className="app-shell">
+    if (layout !== 'full') return <div className={`desktop-app layout-${layout}`}><WindowBar layout={layout}/><CompactPlayer layout={layout} song={playingSong} songs={songs} onResourcesChanged={() => void loadLibrary()}/></div>;
+    return (<div className="desktop-app layout-full"><WindowBar layout={layout}/><div className="app-shell">
       <aside className="sidebar">
         <button className="brand" onClick={() => navigate('home')} aria-label={t("Aurora 首页")}><span className="brand-symbol"><Icon name="music" size={22}/></span><b>Aurora<span>Music</span></b></button>
         <div className="sidebar-navigation">
@@ -393,19 +438,19 @@ export default function App() {
           <div className="page-container" key={page}>{ready ? renderPage() : <div className="soft-empty" role="status"><i className="spinner"/><p>{t("正在读取音乐库…")}</p></div>}</div>
         </main>
       </div>
-      <PlayerBar song={playingSong} state={playerState} songs={songs} onQueue={() => setQueueOpen(value => !value)} queueOpen={queueOpen} onExpand={() => setFullPlayerOpen(true)} onFavorite={toggleFavorite}/>
+      <PlayerBar song={playingSong} songs={songs} onQueue={() => setQueueOpen(value => !value)} queueOpen={queueOpen} onExpand={() => setFullPlayerOpen(true)} onFavorite={toggleFavorite}/>
       {message && <div className="toast" role="status"><span>{tm(message)}</span><button className="icon-button" aria-label={t("关闭提示")} onClick={() => setMessage(null)}><Icon name="close" size={15}/></button></div>}
       {songToAdd && <Modal title={t("添加到歌单")} onClose={() => setSongToAdd(null)}>
         <div className="adding-track"><Artwork song={songToAdd} size="small"/><div><b>{songToAdd.title}</b><small>{artistLabel(songToAdd.artist)}</small></div></div>
-        <div className="playlist-picker">{playlists.map(playlist => <button key={playlist.id} onClick={() => void addToPlaylist(playlist.id, songToAdd)}><Icon name="playlist" size={19}/><span>{playlist.name}</span><Icon name="plus" size={16}/></button>)}</div>
-        <button className="new-playlist-action" onClick={() => { setComposerSong(songToAdd); setSongToAdd(null); setComposerOpen(true); }}><Icon name="plus" size={17}/>{t("新建歌单")}</button>
+        <div className="playlist-picker">{playlists.filter(playlist => !playlist.smartRules).map(playlist => <button key={playlist.id} onClick={() => void addToPlaylist(playlist.id, songToAdd)}><Icon name="playlist" size={19}/><span>{playlist.name}</span><Icon name="plus" size={16}/></button>)}</div>
+        <button className="new-playlist-action" onClick={() => { setEditingPlaylist(null); setComposerSong(songToAdd); setSongToAdd(null); setComposerOpen(true); }}><Icon name="plus" size={17}/>{t("新建歌单")}</button>
       </Modal>}
-      {composerOpen && <PlaylistComposer songs={songs} aiConfigured={aiStatus.configured} initialSong={composerSong} onClose={() => setComposerOpen(false)} onGenerate={generateAiPlaylist} onSettings={() => { setComposerOpen(false); navigate('settings'); }} onSave={async (name, ids, description) => { const playlist = await saveNewPlaylist(name, ids, description); if (playlist) {
+      {composerOpen && <PlaylistComposer songs={songs} aiConfigured={aiStatus.configured} initialSong={composerSong} initialPlaylist={editingPlaylist} onClose={() => setComposerOpen(false)} onGenerate={generateAiPlaylist} onSettings={() => { setComposerOpen(false); navigate('settings'); }} onSave={async (name, ids, description, rules) => { const playlist = await saveNewPlaylist(name, ids, description, rules); if (playlist) {
         navigate('playlists');
         notify(t("歌单已保存"));
     } ; return playlist; }}/>}
       {deleteId && <Modal title={t("删除这张歌单？")} onClose={() => !deleteBusy && setDeleteId(null)}><p className="dialog-description">{t("将删除歌单“{0}”，音乐库中的歌曲会保留。", [playlists.find(p => p.id === deleteId)?.name || ''])}</p><footer className="dialog-footer"><button className="secondary-button" disabled={deleteBusy} onClick={() => setDeleteId(null)}>{t("取消")}</button><button className="primary-button" disabled={deleteBusy} onClick={() => void deletePlaylist(deleteId)}>{deleteBusy ? t("正在删除…") : t("删除歌单")}</button></footer></Modal>}
       {queueOpen && <aside className="queue-drawer" aria-label={t("播放队列")}><header><div><h2>{t("接下来播放")}</h2><p>{t("{0} 首歌曲", [queueSongs.length])}</p></div><button className="icon-button" aria-label={t("关闭队列")} onClick={() => setQueueOpen(false)}><Icon name="close"/></button></header><div className="queue-tracks">{queueSongs.map((song, index) => <button className={index === queueIndex ? 'active' : ''} key={song.id + '-' + index} onClick={() => void play(song, queueSongs)}><Artwork song={song} size="small"/><span><b>{song.title}</b><small>{artistLabel(song.artist)}</small></span>{index === queueIndex && <span className={'playing-bars ' + (playerState.isPlaying ? '' : 'paused')}><i /><i /><i /></span>}</button>)}</div>{!queueSongs.length && <div className="soft-empty"><Icon name="queue" size={28}/><p>{t("播放一首音乐，从这里继续。")}</p></div>}</aside>}
-      {fullPlayerOpen && playingSong && <NowPlaying song={playingSong} songs={songs} state={playerState} onClose={() => setFullPlayerOpen(false)} onFavorite={toggleFavorite} onResourcesChanged={() => void loadLibrary()}/>}
-    </div>);
+      {fullPlayerOpen && playingSong && <NowPlaying song={playingSong} songs={songs} onClose={() => setFullPlayerOpen(false)} onFavorite={toggleFavorite} onResourcesChanged={() => void loadLibrary()}/>}
+    </div></div>);
 }

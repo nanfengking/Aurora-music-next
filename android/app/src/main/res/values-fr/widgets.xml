@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_music_name">Aurora · Titre</string>
+    <string name="widget_lyrics_name">Aurora · Paroles</string>
+    <string name="widget_music_description">Pochette, titre et commandes de lecture.</string>
+    <string name="widget_lyrics_description">Paroles actuelles et suivantes, avec commandes de lecture.</string>
+    <string name="widget_empty">Votre prochain instant musical</string>
+    <string name="widget_no_lyrics">Laissez parler la musique.</string>
+    <string name="widget_artwork">Pochette de l’album</string>
+    <string name="widget_previous">Titre précédent</string>
+    <string name="widget_next">Titre suivant</string>
+    <string name="widget_play_pause">Lire ou mettre en pause</string>
+</resources>

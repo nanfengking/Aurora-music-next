@@ -11,7 +11,7 @@ const rules = [
 ]
 const findings = [], files = publicFiles()
 for (const file of files) {
-  if (file.endsWith('.png')) continue // Image review is a separate, required manual check.
+  if (file.endsWith('.png') || file.endsWith('.jar')) continue // Binary review is separate and manual.
   const lines = fs.readFileSync(join(root, file), 'utf8').split(/\r?\n/)
   lines.forEach((line, index) => {
     for (const [rule, expression] of rules) if (expression.test(line)) findings.push({ file, line: index + 1, rule })
