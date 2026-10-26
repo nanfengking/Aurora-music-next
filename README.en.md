@@ -22,12 +22,14 @@ The Android phone/tablet preview and Android Studio build steps are in the [Andr
 
 Read the [illustrated guide](docs/guides/en.md). See [CONTRIBUTING](CONTRIBUTING.md) for development and local builds.
 
-This is a **1.5.0 source preview**. Locked dependencies have known security advisories. Upgrade and regression testing, plus complete corresponding-source materials for redistributed FFmpeg binaries, are required before a public binary release. See [SECURITY](SECURITY.md), [Windows updates](docs/UPDATES.md) and [third-party notices](THIRD_PARTY_NOTICES.md).
+[Download 1.5.0-preview.12](https://github.com/nanfengking/Aurora-music-next/releases/tag/v1.5.0-preview.12) · [Release notes](docs/releases/1.5.0-preview.12.md)
+
+This preview includes an Android APK and the complete Windows/Android application source. Android improves durable settings, language restoration, cold-start playback and widget controls. The APK retains the previous preview signing identity; install over the existing preview without uninstalling it first. Windows installers are deferred until the matching FFmpeg source and build materials are available. See [SECURITY](SECURITY.md) and [third-party notices](THIRD_PARTY_NOTICES.md).
 
 ## Privacy and publishing
 
 Screenshots contain fictional demo tracks, artists, artwork and history. The source archive excludes credentials, real libraries, caches, installers and the FFmpeg executable. Read [PRIVACY](PRIVACY.md) for network boundaries.
 
-For GitHub, extract and upload the source archive contents, keeping the documentation image folders. Do not upload the development directory or application data. Follow the [release checklist](docs/QA_CHECKLIST.md).
+Credentials, listening history and offline files stay outside the source distribution. Report problems with the application version, platform and reproduction steps, omitting account details and private URLs.
 
 Copyright © 2026 jinlaoshi. Original project code: [GPL-3.0-only](LICENSE). Third-party components retain their own licences. by jinlaoshi

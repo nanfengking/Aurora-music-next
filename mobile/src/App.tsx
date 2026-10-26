@@ -4,8 +4,8 @@ import { t as desktopText } from '../../src/i18n'
 import { Artwork, Empty, Modal, Track } from './components'
 import { bytes } from './format'
 import { native, useAppearance, useLibrary, useOverview, usePlayback } from './hooks'
-import { getLocale, setLocale, t, type Locale } from './i18n'
-import { mobileMusic, type LibraryQuery, type MobileSong, type RemoteEntry } from './native'
+import { t } from './i18n'
+import { mobileMusic, type Appearance, type LibraryQuery, type MobileSong, type RemoteEntry } from './native'
 import { ArtworkBackdrop, NowPlaying } from './NowPlaying'
 import { SettingsPage } from './Settings'
 import { SongDetails } from './SongDetails'
@@ -18,9 +18,8 @@ import { assetError } from './AssetProviders'
 type Page = 'listen' | 'library' | 'cloud' | 'settings'
 function savedOffline() { try { return localStorage.getItem('aurora-android-offline') === 'true' } catch { return false } }
 
-export function App() {
+export function App({ initialAppearance }: { initialAppearance?: Appearance }) {
   const [page, setPage] = useState<Page>('listen')
-  const [locale, updateLocale] = useState(getLocale)
   const [offlineOnly, setOfflineOnly] = useState(savedOffline)
   const [query, setQuery] = useState('')
   const [libraryTab, setLibraryTab] = useState<'songs' | 'albums' | 'artists' | 'playlists'>('songs')
@@ -41,7 +40,7 @@ export function App() {
   const library = useLibrary(query, offlineOnly, onError, libraryFilter)
   const overview = useOverview(onError)
   const playback = usePlayback(onError)
-  const appearance = useAppearance(onError)
+  const appearance = useAppearance(onError, initialAppearance)
   // Keep the native decoder shared, and do not mount a second hidden lyric/artwork tree on phones.
   useEffect(() => {
     const media = matchMedia('(min-width: 1000px)')
@@ -72,10 +71,6 @@ export function App() {
   useEffect(() => {
     try { localStorage.setItem('aurora-android-offline', String(offlineOnly)) } catch { /* optional preference storage */ }
   }, [offlineOnly])
-  useEffect(() => {
-    document.documentElement.lang = locale
-    if (native) void mobileMusic.setLanguage({ language: locale }).catch(onError)
-  }, [locale, onError])
   useEffect(() => {
     if (!message) return
     const timer = window.setTimeout(() => setMessage(''), 6000)
@@ -147,7 +142,6 @@ export function App() {
   const row = (song: MobileSong, queue?: MobileSong[]) => <Track key={song.id} song={song} playing={song.id === playback.status.songId}
     onPlay={() => void play(song, queue)} onDetail={() => void openDetails(song)} onDownload={() => void download(song)}/>
   const changePage = (next: Page) => { setPage(next); if (next === 'cloud' && connected.url) void browse(path); window.scrollTo(0, 0) }
-  const changeLocale = (value: Locale) => { setLocale(value); updateLocale(value); document.documentElement.lang = value }
 
   return <div className={'mobile-app ' + (playback.song ? 'has-player' : '')}>
     <header className="app-header"><span className="wordmark">AURORA<span>music</span></span><button className={'offline-chip ' + (offlineOnly ? 'active' : '')} aria-pressed={offlineOnly} onClick={() => setOfflineOnly(value => !value)}>{offlineOnly ? t('offline') : t('online')}</button></header>
@@ -177,7 +171,7 @@ export function App() {
         if (entry.directory) void browse(entry.href)
         else if (entry.songId) act(mobileMusic.play({ songIds: [entry.songId], startId: entry.songId, offlineOnly }).then(playback.refresh))
       }}><span aria-hidden="true">{entry.directory ? '▤' : '♫'}</span><strong>{entry.name}</strong><small>{entry.directory ? '›' : bytes(entry.size)}</small></button>)}</div></> : <Empty/>}</>}
-      {page === 'settings' && <SettingsPage appearance={appearance.value} saveAppearance={appearance.save} locale={locale} setLocale={changeLocale} offlineOnly={offlineOnly} setOfflineOnly={setOfflineOnly}
+      {page === 'settings' && <SettingsPage appearance={appearance.value} saveAppearance={appearance.save} locale={appearance.value.language} setLocale={appearance.saveLanguage} offlineOnly={offlineOnly} setOfflineOnly={setOfflineOnly}
         offlineTotal={overview.offlineTotal} connected={connected} setConnected={setConnected} onChanged={refreshAll} onError={onError} notify={setMessage}/>}
     </main>
     {playback.song && !widePlayer && <aside className="mini-player"><button className="mini-track" onClick={() => setPlayerOpen(true)}><Artwork song={playback.song} revision={playback.status.revision}/><span><strong>{playback.song.title}</strong><small>{playback.status.buffering ? t('buffering') : playback.song.artist || t('unknown')}</small></span></button><button className="icon-button" aria-label={playback.status.playWhenReady && !playback.status.error ? t('pause') : t('play')} onClick={() => act(mobileMusic.toggle())}>{playback.status.playWhenReady && !playback.status.error ? 'Ⅱ' : '▶'}</button><div className="mini-progress" style={{ width: Math.min(100, 100 * playback.status.position / (playback.status.duration || 1)) + '%' }}/></aside>}

@@ -73,8 +73,9 @@ public class ServicePlaybackInstrumentedTest {
         }
         assertTrue(marker.edit().putBoolean("owned", true).commit());
         ownsFixture = true;
+        NativePreferences.forApplication(context).ready().get(6, TimeUnit.SECONDS);
         new PlaybackSettings(context).save(new JSONObject().put("volume", 0).put("repeatMode", "off")
-            .put("shuffle", false).put("prefetch", false).put("crossfadeSeconds", 0).put("rememberPlayback", true));
+            .put("shuffle", false).put("prefetch", false).put("crossfadeSeconds", 0).put("rememberPlayback", true)).get(6, TimeUnit.SECONDS);
         seed("a", "A"); seed("b", "B");
         store.replaceQueue(new JSONArray().put(id("a")).put(id("b")), "", false, id("a"));
     }

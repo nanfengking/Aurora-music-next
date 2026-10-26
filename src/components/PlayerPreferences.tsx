@@ -1,6 +1,5 @@
 import { t } from '../i18n'
 import { usePlayerPreferences } from '../stores/playerPreferences'
-import { usePlayerStore } from '../stores/playerStore'
 import { Icon } from './Icon'
 
 export function PlayerPreferences() {
@@ -8,7 +7,7 @@ export function PlayerPreferences() {
   return <section className="settings-card wide player-preferences">
     <div className="setting-title"><span><Icon name="settings"/></span><div><h2>{t("播放器与个性化")}</h2><p>{t("窗口随大小切换形态，拖动顶部可移动窗口。")}</p></div></div>
     <div className="preference-grid">
-      <label><span>{t("记住歌曲、进度和队列")}</span><input type="checkbox" checked={value.rememberPlayback} onChange={event => { update({ rememberPlayback: event.target.checked }); if (!event.target.checked) usePlayerStore.persist.clearStorage() }}/></label>
+      <label><span>{t("记住歌曲、进度和队列")}</span><input type="checkbox" checked={value.rememberPlayback} onChange={event => update({ rememberPlayback: event.target.checked })}/></label>
       <label><span>{t("窗口置顶")}</span><input type="checkbox" checked={value.alwaysOnTop} onChange={event => update({ alwaysOnTop: event.target.checked })}/></label>
       <label><span>{t("提前缓存下一首")}</span><input type="checkbox" checked={value.prefetch} onChange={event => update({ prefetch: event.target.checked })}/></label>
       <label><span>{t("音量均衡（ReplayGain）")}</span><input type="checkbox" checked={value.normalizeVolume} onChange={event => update({ normalizeVolume: event.target.checked })}/></label>

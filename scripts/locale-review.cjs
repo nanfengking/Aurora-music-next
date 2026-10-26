@@ -3,6 +3,7 @@ const { resolve, join, sep } = require('node:path')
 const fs = require('node:fs')
 const assert = require('node:assert/strict')
 const messages = require('../src/i18n/messages.json')
+const { resizeReviewWindow } = require('./review-window.cjs')
 const root = resolve(__dirname, '..')
 async function run() {
   const profile = fs.mkdtempSync(join(root, '.ui-review-locales-'))
@@ -30,7 +31,7 @@ async function run() {
       await page.getByRole('button', { name: text('设置'), exact: true }).click()
       await page.getByTestId('language-select').selectOption(locale)
       assert.equal(await page.locator('html').getAttribute('lang'), locale)
-      await application.evaluate(({ BrowserWindow }) => BrowserWindow.getAllWindows()[0].setContentSize(1320, 860))
+      await resizeReviewWindow(application, page, 1320, 860)
       await shot('settings')
       await page.locator('.settings-signature').scrollIntoViewIfNeeded()
       assert.equal(await page.locator('.settings-signature').innerText(), 'by jinlaoshi')
@@ -70,7 +71,7 @@ async function run() {
       await shot('player')
       await page.keyboard.press('Escape')
       for (const width of [980, 1600]) {
-        await application.evaluate(({ BrowserWindow }, width) => BrowserWindow.getAllWindows()[0].setContentSize(width, 860), width)
+        await resizeReviewWindow(application, page, width, 860)
         await page.getByRole('button', { name: L('设置'), exact: true }).click()
         assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false, locale + ': responsive overflow')
       }

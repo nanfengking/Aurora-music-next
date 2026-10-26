@@ -2,9 +2,9 @@
 
 [简体中文](../../README.android.md) · [繁體中文](guide.zh-TW.md) · [English](guide.en.md) · [Français](guide.fr.md)
 
-Version 1.5.0-preview.11, versionCode 17. Targets: Xiaomi 14 Ultra and Xiaomi Pad 8 Pro. The player now fills the screen with smaller artwork and a larger lyric region; details, resource lookup and playback settings are in More actions. App-owned choices and switches follow the theme. Existing audio/cache/widget fixes are retained. Isolated Android 16 tests cover short background-service playback, widget receiver controls and public MP3/AAC decoding, seeking and cache, not your WebDAV account, long screen-off playback or Xiaomi acceptance. The reported specific M4A issue is deferred at your request, not declared fixed. Install over the previous preview and retest. This is not a stable release.
+Version 1.5.0-preview.12, versionCode 18. Targets: Xiaomi 14 Ultra and Xiaomi Pad 8 Pro. This is a preview; provider-specific playback, some M4A files and long screen-off operation still require device testing. Install over the previous preview without uninstalling first. [Release notes](../releases/1.5.0-preview.12.md).
 
-This preview centers the play/pause icon inside its circular button and aligns all three transport controls. Playback, decoding and cache behavior are unchanged.
+Settings are saved in commit order. Native language/theme restoration precedes interface startup; cold media-session and widget controls are improved. Pending UI calls end when the interface closes, while accepted saves and native background playback continue independently.
 
 <img src="../images/android/phone-listen.png" width="280" alt="Phone layout with synthetic demo songs and Chinese UI">
 

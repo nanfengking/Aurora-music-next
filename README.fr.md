@@ -22,12 +22,14 @@ L’aperçu Android pour téléphone/tablette et la compilation dans Android Stu
 
 Consultez le [guide illustré](docs/guides/fr.md) et les [instructions de développement](CONTRIBUTING.md).
 
-Il s’agit d’un **aperçu du code source 1.5.0**. Des alertes de sécurité concernent les dépendances verrouillées. Une mise à niveau, des tests de régression et les sources correspondantes complètes du binaire FFmpeg restent nécessaires avant la diffusion publique d’un installateur. Voir [SECURITY](SECURITY.md), les [mises à jour Windows](docs/UPDATES.md) et les [mentions tierces](THIRD_PARTY_NOTICES.md).
+[Télécharger 1.5.0-preview.12](https://github.com/nanfengking/Aurora-music-next/releases/tag/v1.5.0-preview.12) · [Notes de version](docs/releases/1.5.0-preview.12.md)
+
+Cet aperçu fournit l’APK Android et le code source complet de l’application Windows/Android. Il améliore l’enregistrement des préférences, la restauration de la langue, le démarrage à froid et les commandes des widgets. L’APK conserve la signature de l’aperçu précédent : installez-le par-dessus sans désinstaller l’application. L’installateur Windows sera proposé après préparation des sources et des éléments de compilation correspondant à FFmpeg. Voir [SECURITY](SECURITY.md) et les [mentions tierces](THIRD_PARTY_NOTICES.md).
 
 ## Confidentialité et publication
 
 Les captures utilisent uniquement des morceaux, artistes, images et historiques fictifs. L’archive source exclut identifiants, bibliothèque réelle, caches, installateurs et exécutable FFmpeg. Voir [PRIVACY](PRIVACY.md).
 
-Pour GitHub, décompressez l’archive source et publiez son contenu en conservant les dossiers d’images. Ne publiez pas tout le dossier de développement ni les données de l’application. Suivez la [liste de vérification](docs/QA_CHECKLIST.md).
+Pour signaler un problème, indiquez la version, le système et les étapes de reproduction, sans identifiants, URL privées ni clés.
 
 Copyright © 2026 jinlaoshi. Code original sous [GPL-3.0-only](LICENSE). Les composants tiers conservent leurs licences. by jinlaoshi

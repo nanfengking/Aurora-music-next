@@ -96,9 +96,11 @@ class AudioEngine {
         return usePlayerStore.getState().volume * (usePlayerPreferences.getState().preferences.normalizeVolume ? this.trackGain : 1);
     }
     setPlayMode(mode: PlayMode): void {
-        usePlayerStore.getState().setPlayMode(mode);
-        this.prefetchedNext = null;
-        this.schedulePrefetch();
+        void usePlayerStore.getState().setPlayMode(mode).then(saved => {
+            if (!saved) return;
+            this.prefetchedNext = null;
+            this.schedulePrefetch();
+        });
     }
     async play(song: Song, allSongs?: Song[], compatiblePath?: string, startAt = 0): Promise<void> {
         const sameSession = Boolean(compatiblePath && this.currentSong?.id === song.id);
@@ -345,9 +347,11 @@ class AudioEngine {
     /** 设置音量 */
     setVolume(vol: number): void {
         const value = Math.max(0, Math.min(1, vol));
-        usePlayerStore.getState().setVolume(value);
-        this.transition.clear();
-        this.howl?.volume(this.effectiveVolume());
+        void usePlayerStore.getState().setVolume(value).then(saved => {
+            if (!saved) return;
+            this.transition.clear();
+            this.howl?.volume(this.effectiveVolume());
+        });
     }
     /** 下一曲 */
     next(songs: Song[]): void {

@@ -2,15 +2,15 @@ import { useEffect, useState } from 'react'
 import { bytes } from './format'
 import { Choice } from './Choice'
 import { native } from './hooks'
-import { languages, t, type Locale } from './i18n'
-import { mobileMusic, type Appearance } from './native'
+import { languages, t } from './i18n'
+import { mobileMusic, type Appearance, type AppearancePatch, type NativeLanguage } from './native'
 import { AiProviderSettings } from './AiProviders'
 import { PlaybackOptionsDialog } from './PlaybackOptions'
 import { DownloadsDialog } from './Downloads'
 import { AssetProviderSettings } from './AssetProviders'
 
 export function SettingsPage({ appearance, saveAppearance, locale, setLocale, offlineOnly, setOfflineOnly, offlineTotal, connected, setConnected, onChanged, onError, notify }: {
-  appearance: Appearance; saveAppearance: (value: Partial<Appearance>) => Promise<void>; locale: Locale; setLocale: (value: Locale) => void
+  appearance: Appearance; saveAppearance: (value: AppearancePatch) => Promise<void>; locale: NativeLanguage; setLocale: (value: NativeLanguage) => Promise<void>
   offlineOnly: boolean; setOfflineOnly: (value: boolean) => void; offlineTotal: number
   connected: { url: string; username: string }; setConnected: (value: { url: string; username: string }) => void
   onChanged: () => void; onError: (error: unknown) => void; notify: (message: string) => void
@@ -63,7 +63,8 @@ export function SettingsPage({ appearance, saveAppearance, locale, setLocale, of
       <label className="switch-row">{t('lowPower')}<input type="checkbox" checked={appearance.lowPowerVisuals} onChange={event => act(saveAppearance({ lowPowerVisuals: event.target.checked }))}/></label><p>{t('lowPowerHint')}</p>
       <Choice label={t('lyricsSize')} value={appearance.lyricsSize} onChange={size => act(saveAppearance({ lyricsSize: Number(size) }))}
         options={[18, 24, 30, 36].map(size => ({ value: String(size), label: size + ' px' }))}/><p>{t('lyricsSizeHint')}</p>
-      <Choice label={t('language')} setting="language" value={locale} onChange={language => setLocale(language as Locale)} options={languages}/>
+      <Choice label={t('language')} setting="language" value={locale} onChange={language => act(setLocale(language as NativeLanguage))}
+        options={native ? [{ value: '', label: t('system') }, ...languages] : languages}/>
     </section>
     <section className="settings-group"><h2>{t('playbackOptions')}</h2><p>{t('nativePlaybackHint')}</p>
       <button className="outlined-button" onClick={() => setOptionsOpen(true)}>{t('playbackAndDevices')}</button>

@@ -16,13 +16,20 @@ import androidx.media3.common.Player;
 import androidx.media3.session.MediaController;
 import androidx.media3.session.SessionToken;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.MoreExecutors;
+import com.google.common.util.concurrent.SettableFuture;
 import java.io.File;
+import java.lang.ref.WeakReference;
+import java.util.Map;
+import java.util.WeakHashMap;
 
 /** Native widgets never instantiate a WebView and only refresh on relevant changes. */
 public class MusicWidgetProvider extends AppWidgetProvider {
     private static final String ACTION_CONTROL = "com.aurora.musicnext.WIDGET_CONTROL";
     private static String cachedCover = "";
     private static Bitmap artwork;
+    private static final Map<Context, Refresh> refreshes = new WeakHashMap<>();
     protected boolean lyrics() { return false; }
 
     static boolean hasWidgets(Context context) {
@@ -30,7 +37,16 @@ public class MusicWidgetProvider extends AppWidgetProvider {
         return manager.getAppWidgetIds(new ComponentName(context, MusicWidgetProvider.class)).length > 0
             || manager.getAppWidgetIds(new ComponentName(context, LyricsWidgetProvider.class)).length > 0;
     }
-    static void refresh(Context context) {
+    static ListenableFuture<Void> refresh(Context context) {
+        Context application = context.getApplicationContext();
+        Refresh refresh;
+        synchronized (refreshes) {
+            refresh = refreshes.get(application);
+            if (refresh == null) { refresh = new Refresh(application); refreshes.put(application, refresh); refresh.start(); }
+        }
+        return Futures.nonCancellationPropagating(refresh.result);
+    }
+    private static void paint(Context context) {
         AppWidgetManager manager = AppWidgetManager.getInstance(context);
         WidgetSnapshot value = WidgetSnapshot.load(context);
         update(context, manager, manager.getAppWidgetIds(new ComponentName(context, MusicWidgetProvider.class)), value, false);
@@ -38,10 +54,12 @@ public class MusicWidgetProvider extends AppWidgetProvider {
     }
 
     @Override public void onUpdate(Context context, AppWidgetManager manager, int[] ids) {
+        if (!ready(context)) { refresh(context); return; }
         update(context, manager, ids, WidgetSnapshot.load(context), lyrics());
         PlaybackService.widgetsChanged();
     }
     @Override public void onAppWidgetOptionsChanged(Context context, AppWidgetManager manager, int id, Bundle options) {
+        if (!ready(context)) { refresh(context); return; }
         update(context, manager, new int[]{id}, WidgetSnapshot.load(context), lyrics());
     }
     @Override public void onDisabled(Context context) {
@@ -50,26 +68,78 @@ public class MusicWidgetProvider extends AppWidgetProvider {
     }
 
     @Override public void onReceive(Context context, Intent intent) {
-        if (!ACTION_CONTROL.equals(intent.getAction())) { super.onReceive(context, intent); return; }
-        String action = intent.getStringExtra("control");
-        if (!"toggle".equals(action) && !"next".equals(action) && !"previous".equals(action)) return;
-        PendingResult pending = goAsync();
+        boolean control = ACTION_CONTROL.equals(intent.getAction());
+        boolean update = AppWidgetManager.ACTION_APPWIDGET_UPDATE.equals(intent.getAction())
+            || AppWidgetManager.ACTION_APPWIDGET_OPTIONS_CHANGED.equals(intent.getAction())
+            || AppWidgetManager.ACTION_APPWIDGET_RESTORED.equals(intent.getAction());
+        if (!control && !update) { super.onReceive(context, intent); return; }
+        String action = control ? intent.getStringExtra("control") : null;
+        if (control && !"toggle".equals(action) && !"next".equals(action) && !"previous".equals(action)) return;
         // A manifest receiver's restricted context cannot bind a MediaController service.
         Context application = context.getApplicationContext();
-        ListenableFuture<MediaController> future = new MediaController.Builder(application,
-            new SessionToken(application, new ComponentName(application, PlaybackService.class))).buildAsync();
-        android.os.Handler handler = new android.os.Handler(android.os.Looper.getMainLooper());
-        java.util.concurrent.atomic.AtomicBoolean finished = new java.util.concurrent.atomic.AtomicBoolean();
-        Runnable finish = () -> {
-            if (finished.compareAndSet(false, true)) { MediaController.releaseFuture(future); pending.finish(); }
-        };
-        Runnable timeout = finish;
-        handler.postDelayed(timeout, 8000);
-        future.addListener(() -> {
-            if (finished.get()) return;
+        new Broadcast(application, goAsync(), intent, action).start();
+    }
+
+    private static boolean ready(Context context) {
+        try { NativePreferences.forApplication(context).requireReady(); return true; }
+        catch (IllegalStateException cold) { return false; }
+    }
+    private static final class Refresh {
+        final Context context;
+        final SettableFuture<Void> result = SettableFuture.create();
+        final android.os.Handler handler = new android.os.Handler(android.os.Looper.getMainLooper());
+        final Runnable timeout = () -> finish(new java.util.concurrent.TimeoutException("Widget preferences timed out"));
+        ListenableFuture<NativePreferenceRecord> hydration;
+        Refresh(Context context) { this.context = context; }
+        void start() {
+            handler.postDelayed(timeout, 8000); hydration = NativePreferences.forApplication(context).ready();
+            WeakReference<Refresh> weak = new WeakReference<>(this);
+            hydration.addListener(() -> { Refresh current = weak.get(); if (current != null) current.handler.post(current::apply); }, MoreExecutors.directExecutor());
+        }
+        void apply() {
+            if (result.isDone()) return;
+            try { Futures.getDone(hydration); paint(context); finish(null); }
+            catch (Exception error) { finish(error); }
+        }
+        void finish(Exception error) {
+            if (result.isDone()) return;
             handler.removeCallbacks(timeout);
+            synchronized (refreshes) { if (refreshes.get(context) == this) refreshes.remove(context); }
+            if (error == null) result.set(null); else result.setException(error);
+        }
+    }
+
+    /** One broadcast owns one deadline spanning hydration AND binding, never two fresh timers. */
+    private final class Broadcast {
+        final Context context; final PendingResult pending; final Intent intent; final String action;
+        final android.os.Handler handler = new android.os.Handler(android.os.Looper.getMainLooper());
+        final Runnable timeout = this::finish;
+        ListenableFuture<NativePreferenceRecord> hydration;
+        ListenableFuture<MediaController> controller;
+        boolean finished;
+        Broadcast(Context context, PendingResult pending, Intent intent, String action) {
+            this.context = context; this.pending = pending; this.intent = intent; this.action = action;
+        }
+        void start() {
+            handler.postDelayed(timeout, 8000); hydration = NativePreferences.forApplication(context).ready();
+            WeakReference<Broadcast> weak = new WeakReference<>(this);
+            // The timeout keeps this owner alive; the shared initializer must not do so after expiry.
+            hydration.addListener(() -> { Broadcast current = weak.get(); if (current != null) current.handler.post(current::hydrated); }, MoreExecutors.directExecutor());
+        }
+        void hydrated() {
+            if (finished) return;
             try {
-                MediaController player = future.get();
+                Futures.getDone(hydration);
+                if (action == null) { MusicWidgetProvider.super.onReceive(context, intent); finish(); return; }
+                controller = new MediaController.Builder(context,
+                    new SessionToken(context, new ComponentName(context, PlaybackService.class))).buildAsync();
+                controller.addListener(this::connected, ContextCompat.getMainExecutor(context));
+            } catch (Exception failure) { finish(); }
+        }
+        void connected() {
+            if (finished) return;
+            try {
+                MediaController player = Futures.getDone(controller);
                 if ("toggle".equals(action)) {
                     if (player.getPlayerError() == null && player.getPlayWhenReady()) player.pause();
                     else {
@@ -79,10 +149,15 @@ public class MusicWidgetProvider extends AppWidgetProvider {
                     }
                 } else if ("next".equals(action) && player.hasNextMediaItem()) player.seekToNextMediaItem();
                 else if ("previous".equals(action)) player.seekToPreviousMediaItem();
-            } catch (Exception ignored) {
-                // An empty or disconnected queue remains idle; never start unrelated audio.
-            } finally { finish.run(); }
-        }, ContextCompat.getMainExecutor(application));
+            } catch (Exception ignored) { /* Empty/disconnected queues stay idle. */ }
+            finally { finish(); }
+        }
+        void finish() {
+            if (finished) return;
+            finished = true; handler.removeCallbacks(timeout);
+            try { if (controller != null) MediaController.releaseFuture(controller); }
+            finally { if (pending != null) pending.finish(); }
+        }
     }
 
     private static PendingIntent control(Context context, int id, String action) {
@@ -92,8 +167,8 @@ public class MusicWidgetProvider extends AppWidgetProvider {
     }
     private static void update(Context context, AppWidgetManager manager, int[] ids, WidgetSnapshot value, boolean lyrics) {
         if (ids.length == 0) return;
-        context = AppearanceSettings.localized(context);
         AppearanceSettings theme = new AppearanceSettings(context);
+        context = AppearanceSettings.localized(context);
         Bitmap image = cover(context, value.cover);
         for (int id : ids) {
             int width = manager.getAppWidgetOptions(id).getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, 250);

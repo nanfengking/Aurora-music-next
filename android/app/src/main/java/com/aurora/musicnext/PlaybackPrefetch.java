@@ -67,18 +67,18 @@ final class PlaybackPrefetch implements AutoCloseable {
             Network network = connectivity == null ? null : connectivity.getActiveNetwork();
             NetworkCapabilities capabilities = network == null ? null : connectivity.getNetworkCapabilities(network);
             PowerManager power = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-            SecretStore secrets = new SecretStore(context);
+            boolean wifiOnly = (Boolean) NativePreferences.forApplication(context).requireReady().values.get("wifiOnly");
             boolean allowed = networkRegistered && PrefetchPolicy.allowed(options.prefetch(), player.isPlaying(), player.isLoading(),
                 player.getPlaybackState() == Player.STATE_BUFFERING, player.getPlayerError() != null,
                 power != null && power.isPowerSaveMode(), capabilities != null,
-                secrets.wifiOnly(), capabilities != null && capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_METERED), options.repeat().equals("one"));
+                wifiOnly, capabilities != null && capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_METERED), options.repeat().equals("one"));
             int index = player.getNextMediaItemIndex();
             if (allowed && !changingQueue && heldTrack == null && current != null && index >= 0) {
                 MediaItem candidate = player.getMediaItemAt(index);
                 if (!current.equals(candidate.mediaId) && candidate.localConfiguration != null
                     && "https".equalsIgnoreCase(candidate.localConfiguration.uri.getScheme())) {
                     next = candidate;
-                    key = current + "|" + next.mediaId + "|" + next.localConfiguration.customCacheKey + "|" + network.getNetworkHandle() + "|" + secrets.wifiOnly();
+                    key = current + "|" + next.mediaId + "|" + next.localConfiguration.customCacheKey + "|" + network.getNetworkHandle() + "|" + wifiOnly;
                 }
             }
         } catch (RuntimeException unavailable) { /* Cancel optional work on an unknown policy. */ }

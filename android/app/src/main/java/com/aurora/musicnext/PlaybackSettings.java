@@ -1,24 +1,28 @@
 package com.aurora.musicnext;
 
 import android.content.Context;
-import android.content.SharedPreferences;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 /** Small, credential-free native settings; no WebView is needed while playing. */
 final class PlaybackSettings {
-    private final SharedPreferences preferences;
-    PlaybackSettings(Context context) { preferences = context.getSharedPreferences("playback-options", Context.MODE_PRIVATE); }
-    String repeat() { return preferences.getString("repeatMode", "off"); }
-    boolean shuffle() { return preferences.getBoolean("shuffle", false); }
-    float speed() { return preferences.getFloat("speed", 1); }
-    float volume() { return preferences.getFloat("volume", 1); }
-    boolean normalizeVolume() { return preferences.getBoolean("normalizeVolume", false); }
-    boolean prefetch() { return preferences.getBoolean("prefetch", false); }
-    int crossfadeSeconds() { return preferences.getInt("crossfadeSeconds", 0); }
-    boolean remember() { return preferences.getBoolean("rememberPlayback", true); }
-    long revision() { return preferences.getLong("restoreRevision", 0); }
-    PlaybackSettings(Context context, String profile) { preferences = context.getSharedPreferences(profile, Context.MODE_PRIVATE); }
+    static final String[] KEYS = {"repeatMode", "shuffle", "speed", "volume", "normalizeVolume", "prefetch", "crossfadeSeconds", "rememberPlayback"};
+    final NativePreferences repository;
+    PlaybackSettings(Context context) { repository = NativePreferences.forApplication(context); }
+    /** A database name, not a legacy SharedPreferences profile. */
+    PlaybackSettings(Context context, String database) { repository = NativePreferences.forDatabase(context.getApplicationContext(), database); }
+    private Object value(String key) { return repository.requireReady().values.get(key); }
+    String repeat() { return (String) value("repeatMode"); }
+    boolean shuffle() { return (Boolean) value("shuffle"); }
+    float speed() { return ((Number) value("speed")).floatValue(); }
+    float volume() { return ((Number) value("volume")).floatValue(); }
+    boolean normalizeVolume() { return (Boolean) value("normalizeVolume"); }
+    boolean prefetch() { return (Boolean) value("prefetch"); }
+    int crossfadeSeconds() { return ((Number) value("crossfadeSeconds")).intValue(); }
+    boolean remember() { return (Boolean) value("rememberPlayback"); }
+    long revision() { return repository.requireReady().restoreRevision; }
     static String validRepeat(String value) {
         if (!java.util.Arrays.asList("off", "one", "all").contains(value)) throw new IllegalArgumentException("Invalid repeat mode");
         return value;
@@ -34,27 +38,17 @@ final class PlaybackSettings {
         if (!Double.isFinite(value) || value < minimum || value > maximum) throw new IllegalArgumentException("Invalid " + name);
         return (float) value;
     }
-    void save(JSONObject patch) throws JSONException {
-        // Validate the whole patch before committing any part of it.
-        String repeat = validRepeat(patch.has("repeatMode") ? patch.getString("repeatMode") : repeat());
-        boolean shuffle = patch.has("shuffle") ? patch.getBoolean("shuffle") : shuffle();
-        float speed = validSpeed(patch.has("speed") ? patch.getDouble("speed") : speed());
-        float volume = validVolume(patch.has("volume") ? patch.getDouble("volume") : volume());
-        boolean normalize = patch.has("normalizeVolume") ? patch.getBoolean("normalizeVolume") : normalizeVolume();
-        boolean prefetch = patch.has("prefetch") ? patch.getBoolean("prefetch") : prefetch();
-        int crossfade = CrossfadePolicy.seconds(patch.has("crossfadeSeconds") ? patch.getDouble("crossfadeSeconds") : crossfadeSeconds());
-        boolean remember = patch.has("rememberPlayback") ? patch.getBoolean("rememberPlayback") : remember();
-        long revision = revision();
-        if (remember != remember()) { if (revision == Long.MAX_VALUE) throw new IllegalStateException("Too many preference updates"); revision++; }
-        if (patch.has("sleepMinutes")) validSleep(patch.getDouble("sleepMinutes"));
-        preferences.edit().putString("repeatMode", repeat).putBoolean("shuffle", shuffle)
-            .putFloat("speed", speed).putFloat("volume", volume).putBoolean("normalizeVolume", normalize)
-            .putBoolean("prefetch", prefetch)
-            .putInt("crossfadeSeconds", crossfade)
-            .putBoolean("rememberPlayback", remember).putLong("restoreRevision", revision).apply();
+    ListenableFuture<NativePreferenceRecord> save(JSONObject patch) {
+        try { return repository.update(NativePreferences.only(patch, KEYS)); }
+        catch (Exception invalid) { return Futures.immediateFailedFuture(invalid); }
     }
     JSONObject status() throws JSONException {
-        return new JSONObject().put("repeatMode", repeat()).put("shuffle", shuffle()).put("speed", speed()).put("volume", volume())
-            .put("normalizeVolume", normalizeVolume()).put("prefetch", prefetch()).put("crossfadeSeconds", crossfadeSeconds()).put("rememberPlayback", remember());
+        return status(repository.requireReady());
+    }
+    static JSONObject status(NativePreferenceRecord record) throws JSONException {
+        NativePreferenceValues values = record.values;
+        JSONObject result = new JSONObject();
+        for (String key : KEYS) result.put(key, values.get(key));
+        return result;
     }
 }

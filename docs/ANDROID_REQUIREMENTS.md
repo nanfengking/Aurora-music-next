@@ -1,6 +1,6 @@
 # Android feature parity and acceptance
 
-Updated: 2026-10-12. Target devices: Xiaomi 14 Ultra and Xiaomi Pad 8 Pro.
+Updated: 2026-10-26. Current Android: 1.5.0-preview.12 / versionCode 18. Target devices: Xiaomi 14 Ultra and Xiaomi Pad 8 Pro.
 This is an active migration, not a completion or production-quality claim.
 Windows and Android share one repository; the native platform adapters differ.
 All edits remain in the project workspace.
@@ -367,7 +367,7 @@ refusal or offline default skip must be reported as a skip, not a tested success
 
 ## Preview.11: centered transport controls (2026-10-13)
 
-Current build: Android 1.5.0-preview.11, versionCode 17; debug APK 9,020,783 bytes.
+Historical build: Android 1.5.0-preview.11, versionCode 17; debug APK 9,020,783 bytes.
 Deliverable: `release/Aurora-Music-Android-1.5.0-preview.11-debug.apk`.
 SHA-256: `99AD8EA5E51373184122D012F72CC26BC1D086A55520ABA861CD10D4B3A7ED70`.
 The verified original debug certificate matches previews.6–10. This enables
@@ -390,11 +390,10 @@ in this round. No signing key is included in public source.
   uses the same 320-file allowlist; local SDK/JDK, signing keys, account data,
   cache and APKs are excluded. Git ignores also protect generated/private Android
   directories during future commits.
-- The first local build attempt set the debug certificate after Gradle had
-  finalized that field and failed during configuration. The project-local helper
-  was moved to plugin initialization and the subsequent build passed. It is
-  private build tooling, not a distributed source or release-signing change.
-- The previously reported specific M4A issue remains deferred, not fixed here.
+- Configure signing before Gradle finalizes the build types. Signing material
+  stays outside the source archive; release-signing instructions are in the
+  Android signing guide.
+- Some M4A files remain incompatible; no blanket codec-compatibility claim is made.
 - The initial GitHub build failed before compilation because SDK setup requested
   the obsolete `tools` package. Both workflows now explicitly request only
   `platform-tools`; Platform 36 and Build Tools 36 remain in their separate

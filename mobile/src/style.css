@@ -31,6 +31,8 @@ input, select, textarea { color: var(--text); accent-color: var(--accent); }
 h1 { margin: 9px 0 30px; font-size: clamp(30px, 6vw, 42px); letter-spacing: -.045em; line-height: 1.2; overflow-wrap: anywhere; }
 h2, h3, p { overflow-wrap: anywhere; }
 .status-note { color: var(--muted); font-size: 12px; line-height: 1.65; }
+.preference-startup { max-width: 440px; margin-inline: auto; padding: max(48px, env(safe-area-inset-top)) max(24px, env(safe-area-inset-right)) 24px; line-height: 1.65; }
+.preference-startup p { color: var(--muted); margin-block: 32px 20px; }
 .journey-card { background: var(--container); color: var(--text); border-radius: 28px; padding: 26px; display: flex; justify-content: space-between; gap: 20px; }
 .journey-card h2 { margin: 26px 0 10px; font-size: 26px; letter-spacing: -.025em; }
 .journey-card small { color: var(--muted); font-size: 10px; letter-spacing: .08em; }

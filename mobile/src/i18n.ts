@@ -6,6 +6,9 @@ export const languages: { value: Locale; label: string }[] = [
 ]
 // App strings only: song names, lyrics and user-entered data are never translated.
 const messages = {
+  settingsStartup: ['正在读取已保存的设置…', '正在讀取已儲存的設定…', 'Loading saved settings…', 'Chargement des paramètres enregistrés…'],
+  settingsStartupFailed: ['无法读取已保存的设置，未重置任何数据。请重试。', '無法讀取已儲存的設定，未重設任何資料。請重試。', 'Saved settings could not be loaded. No data was reset. Please retry.', 'Impossible de charger les paramètres. Aucune donnée n’a été réinitialisée. Réessayez.'],
+  settingsRetry: ['重试', '重試', 'Retry', 'Réessayer'],
   audioSource: ['音频读取失败。请检查连接后点播放重试；若仍失败，请反馈下方错误码。', '音訊讀取失敗。請檢查連線後按播放重試；若仍失敗，請回報下方錯誤碼。', 'Audio could not be read. Check the connection and press Play to retry; report the code below if it persists.', 'Lecture audio impossible. Vérifiez la connexion puis appuyez sur Lecture ; si nécessaire, signalez le code ci-dessous.'],
   audioAuth: ['服务器拒绝音频下载。请检查 WebDAV 下载权限及账号是否有效，再重新连接。', '伺服器拒絕音訊下載。請檢查 WebDAV 下載權限及帳號是否有效，再重新連線。', 'The server refused the audio download. Check WebDAV download permissions and account validity, then reconnect.', 'Le serveur refuse le téléchargement audio. Vérifiez les droits WebDAV et le compte, puis reconnectez-vous.'],
   audioMissing: ['歌曲不存在或已移动，请重新扫描云端目录。', '歌曲不存在或已移動，請重新掃描雲端目錄。', 'The track is missing or moved. Rescan the cloud folder.', 'Titre introuvable ou déplacé. Analysez à nouveau le dossier cloud.'],

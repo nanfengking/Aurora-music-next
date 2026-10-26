@@ -1,8 +1,8 @@
 /// <reference types="node" />
 
-import { app, BrowserWindow, nativeTheme, protocol, ipcMain } from 'electron'
+import { app, BrowserWindow, nativeTheme, protocol, ipcMain, dialog } from 'electron'
 import { join } from 'path'
-import { closeDatabase, initDatabase } from '../src/main/database'
+import { closeDatabase, initDatabase, DatabaseVersionError } from '../src/main/database'
 import { registerIpcHandlers } from '../src/main/ipc'
 import { registerLocalProtocol } from '../src/main/protocol'
 import { registerWindowControls, rememberWindow, savedWindowBounds } from './playerWindow'
@@ -71,6 +71,25 @@ function createWindow(): BrowserWindow {
 
 const hasSingleInstanceLock = app.requestSingleInstanceLock()
 
+function reportStartupFailure(error: unknown): void {
+  // Startup can fail before the renderer and its language catalogue exist.
+  // Keep this native dialog local and actionable; never expose raw DB errors.
+  const messages = {
+    'zh-CN': ['Aurora 无法启动', '曲库由较新版本创建。请更新 Aurora 后再打开；原资料未被迁移。', '无法打开曲库。未清除你的资料；请保留现有文件，检查存储权限或升级后重试。'],
+    'zh-TW': ['Aurora 無法啟動', '曲庫由較新版本建立。請更新 Aurora 後再開啟；原資料未被遷移。', '無法開啟曲庫。未清除你的資料；請保留現有檔案，檢查儲存權限或升級後重試。'],
+    en: ['Unable to start Aurora', 'This library was created by a newer version. Update Aurora before opening it; your data has not been migrated.', 'The library could not be opened. Your data has not been cleared. Keep the existing files, check storage permissions, or update Aurora and retry.'],
+    fr: ['Démarrage impossible : Aurora', 'Cette bibliothèque provient d’une version plus récente. Mettez Aurora à jour ; vos données n’ont pas été migrées.', 'Impossible d’ouvrir la bibliothèque. Vos données n’ont pas été effacées. Conservez les fichiers, vérifiez les autorisations de stockage ou mettez Aurora à jour.'],
+  }
+  const locale = app.getLocale().toLowerCase()
+  const language = locale.startsWith('zh') ? (/(tw|hk|mo|hant)/.test(locale) ? 'zh-TW' : 'zh-CN')
+    : locale.startsWith('fr') ? 'fr' : 'en'
+  const [title, newer, generic] = messages[language]
+  try { dialog.showErrorBox(title, error instanceof DatabaseVersionError ? newer : generic) }
+  finally {
+    try { closeDatabase() } finally { app.exit(1) }
+  }
+}
+
 if (!hasSingleInstanceLock) {
   app.quit()
 } else {
@@ -104,7 +123,7 @@ if (!hasSingleInstanceLock) {
         createWindow()
       }
     })
-  })
+  }).catch(reportStartupFailure)
 }
 
 app.on('will-quit', closeDatabase)

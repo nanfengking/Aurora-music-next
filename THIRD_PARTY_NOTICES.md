@@ -7,20 +7,26 @@ Original Aurora Music Next code is Copyright © 2026 jinlaoshi, licensed GPL-3.0
 | Component | Version reviewed | Licence |
 | --- | --- | --- |
 | React / React DOM | 18.3.1 | MIT |
-| Zustand | 5.0.14 | MIT |
+| Zustand | 5.0.15 | MIT |
 | Howler | 2.2.4 | MIT |
 | better-sqlite3 | 12.10.0 | MIT (SQLite has its own public-domain notice) |
-| music-metadata | 11.12.3 | MIT |
-| Electron | 31.7.7 | MIT; Chromium and bundled code have additional notices |
-| electron-builder | 24.13.3 | MIT |
-| electron-vite | 2.3.0 | MIT |
-| Vite | 5.4.21 | MIT |
+| music-metadata | 11.16.0 | MIT |
+| Electron | 42.11.13 | MIT; Chromium and bundled code have additional notices |
+| electron-builder | 26.17.0 | MIT |
+| electron-vite | 3.1.0 | MIT |
+| Vite | 6.4.4 | MIT |
 | @vitejs/plugin-react | 4.7.0 | MIT |
 | TypeScript | 5.9.3 | Apache-2.0 |
-| OpenCC JS | 1.4.1 | MIT AND Apache-2.0 |
+| OpenCC JS | 1.4.2 | MIT AND Apache-2.0 |
 | TypeScript declaration packages | See package-lock.json | MIT |
 
 OpenCC JS is used at build time for Traditional Chinese conversion. Retain its MIT notice and the Apache-2.0 notices for its conversion dictionaries when redistributing the tool or dictionaries. This table is an overview, not a complete transitive dependency licence inventory. The source archive does not vendor node_modules. For binaries, retain each included dependency's notices and Electron's LICENSE / LICENSES.chromium.html.
+
+## Android distribution
+
+The Android APK uses Capacitor core/android 8.5.3 (MIT), React/React DOM 18.3.1 and Scheduler 0.23.2 (MIT), AndroidX Media3 1.11.1 and WorkManager 2.11.2 (Apache-2.0), and OkHttp 4.12.0 (Apache-2.0). AndroidX and Kotlin runtime components retain their respective Apache-2.0 terms. The APK does not bundle the Windows FFmpeg executable.
+
+Full MIT and Apache-2.0 texts are in [resources/licenses](resources/licenses). `npm run android:sync` includes these texts, the Aurora GPL and this notice in the APK's `assets/licenses/` directory. Existing AndroidX notices and OkHttp's Public Suffix List notice are retained; the latter identifies its MPL-2.0 terms and source location. Versioned application source, build scripts and dependency lockfiles accompany the release. Dependencies are fetched from their upstream repositories by npm and Gradle.
 
 ## FFmpeg binary release is not cleared
 

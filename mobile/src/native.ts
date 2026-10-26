@@ -1,6 +1,7 @@
 import { registerPlugin } from '@capacitor/core'
 import type { Song, PlayHistory, SmartPlaylistRules } from '../../src/types/music'
 import type { AiProvider, AssetProvider, AssetCandidate, AssetKind } from '../../src/types/providers'
+import type { Locale } from '../../src/i18n'
 
 export interface MobileSong extends Song {
   offline: boolean
@@ -41,8 +42,11 @@ export interface Appearance {
   mode: 'system' | 'light' | 'dark'; accent: string; dynamic: boolean; dynamicAvailable: boolean
   motion: boolean; lowPowerVisuals: boolean; autoLookup: boolean; dark: boolean; systemReducedMotion: boolean
   lyricsSize: number; showBackdrop: boolean
+  language: NativeLanguage; effectiveLanguage: Locale
   powerSave: boolean; batteryOptimized: boolean; backgroundRestricted: boolean; palette: Record<string, string>
 }
+export type NativeLanguage = '' | Locale
+export type AppearancePatch = Partial<Pick<Appearance, 'mode' | 'accent' | 'dynamic' | 'motion' | 'lowPowerVisuals' | 'autoLookup' | 'lyricsSize' | 'showBackdrop'>>
 export interface PlaybackOptions {
   repeatMode: 'off' | 'one' | 'all'; shuffle: boolean; speed: number; volume: number; normalizeVolume: boolean; prefetch: boolean; crossfadeSeconds: number; sleepRemainingSeconds: number; rememberPlayback: boolean
 }
@@ -90,8 +94,8 @@ export interface MobileMusicPlugin {
   settings(): Promise<{ wifiOnly: boolean; storageBytes: number; partialBytes: number; freeBytes: number; streamBytes: number; streamLimitBytes: number; artworkBytes: number }>
   clearStreamCache(): Promise<{ freedBytes: number; retainedBytes: number }>
   appearance(): Promise<Appearance>
-  setLanguage(options: { language: 'zh-CN' | 'zh-TW' | 'en' | 'fr' }): Promise<void>
-  setAppearance(options: Pick<Appearance, 'mode' | 'accent' | 'dynamic' | 'motion' | 'lowPowerVisuals' | 'autoLookup' | 'lyricsSize' | 'showBackdrop'>): Promise<Appearance>
+  setLanguage(options: { language: NativeLanguage }): Promise<void>
+  setAppearance(options: AppearancePatch): Promise<Appearance>
   lookupAssets(options: { songId: string; force?: boolean }): Promise<{ song: MobileSong }>
   assetProviders(): Promise<{ providers: AssetProvider[]; itunesEnabled: boolean }>
   saveAssetProviders(options: { providers: AssetProvider[]; itunesEnabled: boolean }): Promise<{ providers: AssetProvider[]; itunesEnabled: boolean }>

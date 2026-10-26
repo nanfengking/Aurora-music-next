@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { AiPlaylistResult, DeepSeekConfigStatus, Playlist, Song, RecommendationFeed, SmartPlaylistRules } from './types/music';
 import type { WebDavConfig, WebDavFile } from './types/webdav';
 import { audioEngine, type PlayState } from './services/audioEngine';
-import { usePlayerStore } from './stores/playerStore';
+import { usePlayerStore, useSessionStorageState } from './stores/playerStore';
 import { Icon, type IconName } from './components/Icon';
 import { Artwork } from './components/Artwork';
 import { SongTable } from './components/SongTable';
@@ -24,6 +24,7 @@ import './styles/player.css';
 import { CompactPlayer, WindowBar, usePlayerLayout } from './components/PlayerWindow';
 import { usePlayerPreferences } from './stores/playerPreferences';
 import { resolveSmartPlaylists } from './services/smartPlaylists';
+import { usePreferencePersistence, retryDesktopPreferences } from './stores/preferencePersistence';
 type Page = 'home' | 'browse' | 'library' | 'albums' | 'artists' | 'recent' | 'playlists' | 'favorites' | 'settings';
 const EMPTY_CONFIG: WebDavConfig = { url: '', username: '', password: '' };
 const EMPTY_AI: DeepSeekConfigStatus = { configured: false, baseUrl: 'https://api.deepseek.com', model: 'deepseek-chat' };
@@ -68,14 +69,22 @@ function createPlaylist(name: string, songIds: string[] = [], description: strin
     const random = typeof crypto !== 'undefined' && 'randomUUID' in crypto ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
     return { id: `pl-${random}`, name, description, songIds: JSON.stringify(songIds), createdAt: timestamp, updatedAt: timestamp };
 }
+function PreferenceSaveError() {
+    const error = usePreferencePersistence(store => store.error);
+    const sessionError = useSessionStorageState(store => store.error);
+    if (!error && !sessionError) return null;
+    return <div className="toast preference-error" data-testid={error ? 'preference-save-error' : 'session-save-error'} role="alert"><span>{error ? t("设置失败") : t("播放进度未能保存，歌曲播放与其他设置不受影响。")}</span><button className="text-button" onClick={error ? retryDesktopPreferences : () => usePlayerStore.setState({})}>{t("重试")}</button></div>;
+}
 export default function App() {
     const layout = usePlayerLayout();
     const preferences = usePlayerPreferences(store => store.preferences);
+    const persistedVolume = usePlayerStore(store => store.volume);
+    const persistedMode = usePlayerStore(store => store.playMode);
     useEffect(() => {
         document.documentElement.dataset.accent = preferences.accent;
         void window.electronAPI.setAlwaysOnTop(preferences.alwaysOnTop);
         audioEngine.applyPreferences();
-    }, [preferences]);
+    }, [preferences, persistedVolume, persistedMode]);
     useEffect(() => {
         const save = () => audioEngine.saveSession();
         window.addEventListener('beforeunload', save);
@@ -409,7 +418,7 @@ export default function App() {
             case 'settings': return <PreferencesPage config={config} setConfig={setConfig} aiStatus={aiStatus} onAiChanged={setAiStatus} onConnected={(root) => { const cleaned = cleanFiles(root); directoryCache.current.clear(); directoryCache.current.set('', cleaned); setFiles(cleaned); setRemotePath(''); setPathHistory([]); setPage('browse'); }} notify={notify} currentSong={playingSong}/>;
         }
     };
-    if (layout !== 'full') return <div className={`desktop-app layout-${layout}`}><WindowBar layout={layout}/><CompactPlayer layout={layout} song={playingSong} songs={songs} onResourcesChanged={() => void loadLibrary()}/></div>;
+    if (layout !== 'full') return <div className={`desktop-app layout-${layout}`}><WindowBar layout={layout}/><CompactPlayer layout={layout} song={playingSong} songs={songs} onResourcesChanged={() => void loadLibrary()}/><PreferenceSaveError/></div>;
     return (<div className="desktop-app layout-full"><WindowBar layout={layout}/><div className="app-shell">
       <aside className="sidebar">
         <button className="brand" onClick={() => navigate('home')} aria-label={t("Aurora 首页")}><span className="brand-symbol"><Icon name="music" size={22}/></span><b>Aurora<span>Music</span></b></button>
@@ -439,6 +448,7 @@ export default function App() {
         </main>
       </div>
       <PlayerBar song={playingSong} songs={songs} onQueue={() => setQueueOpen(value => !value)} queueOpen={queueOpen} onExpand={() => setFullPlayerOpen(true)} onFavorite={toggleFavorite}/>
+      <PreferenceSaveError/>
       {message && <div className="toast" role="status"><span>{tm(message)}</span><button className="icon-button" aria-label={t("关闭提示")} onClick={() => setMessage(null)}><Icon name="close" size={15}/></button></div>}
       {songToAdd && <Modal title={t("添加到歌单")} onClose={() => setSongToAdd(null)}>
         <div className="adding-track"><Artwork song={songToAdd} size="small"/><div><b>{songToAdd.title}</b><small>{artistLabel(songToAdd.artist)}</small></div></div>

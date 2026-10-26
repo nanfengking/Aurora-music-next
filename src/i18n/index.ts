@@ -9,9 +9,9 @@ export const isLocale = (value: unknown): value is Locale => languages.some(lang
 let currentLocale: Locale = 'zh-CN'
 try { const saved = localStorage.getItem('aurora-language'); if (isLocale(saved)) currentLocale = saved } catch { /* storage unavailable */ }
 export const getLocale = (): Locale => currentLocale
-export function setLocale(locale: Locale): void {
+export function setLocale(locale: Locale, remember = true): void {
   currentLocale = locale
-  try { localStorage.setItem('aurora-language', locale) } catch { /* private/blocked storage */ }
+  if (remember) try { localStorage.setItem('aurora-language', locale) } catch { /* private/blocked storage */ }
 }
 const messages = data as Record<string, Record<string, string>>
 export function t(source: string, values: unknown[] = [], locale = currentLocale): string {

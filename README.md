@@ -23,7 +23,13 @@ Android 手机／平板预览版与 Android Studio 编译指南见 [README.andro
 
 阅读[带图片的使用指南](docs/guides/zh-CN.md)。开发与本机构建见 [CONTRIBUTING](CONTRIBUTING.md)。
 
-这是 **1.5.0 源码预览版**。当前锁定依赖仍有已知安全告警，正式二进制发布前还需升级与回归；现有 FFmpeg 二进制的对应源码分发材料也尚未齐备。详见 [SECURITY](SECURITY.md)、[更新说明](docs/UPDATES.md) 和 [第三方说明](THIRD_PARTY_NOTICES.md)，不要把开发构建宣传为已完成安全审计的正式版。
+## 下载与更新
+
+[下载 1.5.0-preview.12](https://github.com/nanfengking/Aurora-music-next/releases/tag/v1.5.0-preview.12) · [本次更新](docs/releases/1.5.0-preview.12.md)
+
+本次提供 Android APK 和 Windows／Android 完整源码。Android 改进设置保存、语言恢复、冷启动播放和小组件控制。预览包沿用此前的调试签名；安装前请保留现有应用，直接覆盖安装。
+
+Windows 源码已同步更新，安装包待 FFmpeg 对应源码与构建材料补齐后另行提供。安全状态见 [SECURITY](SECURITY.md)，组件许可见 [第三方说明](THIRD_PARTY_NOTICES.md)。
 
 ## 隐私与开源
 

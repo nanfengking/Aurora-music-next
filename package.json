@@ -3,13 +3,16 @@
   "version": "1.5.0",
   "author": "jinlaoshi",
   "license": "GPL-3.0-only",
+  "engines": {
+    "node": "^22.12.0 || >=24.0.0"
+  },
   "description": "A focused WebDAV music player for Windows",
   "main": "./out/main/index.js",
   "scripts": {
     "dev": "electron-vite dev",
     "build": "npm run i18n:build && npm run typecheck && electron-vite build",
     "android:web": "tsc -p mobile/tsconfig.json && vite build --config mobile/vite.config.ts",
-    "android:sync": "npm run android:web && cap sync android",
+    "android:sync": "npm run android:web && cap sync android && node scripts/android-notices.cjs",
     "i18n:build": "node scripts/build-translations.cjs",
     "privacy:check": "node scripts/privacy-check.cjs",
     "source:zip": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/export-source.ps1",
@@ -23,9 +26,14 @@
     "test:assets": "node scripts/asset-match-review.cjs",
     "test:audio-quality": "node scripts/audio-quality-review.cjs",
     "test:features": "node scripts/feature-review.cjs",
+    "test:database-upgrade": "node scripts/database-upgrade-review.cjs",
+    "test:database-safety": "node scripts/database-safety-review.cjs",
+    "test:preferences": "node scripts/preferences-review.cjs && node scripts/preference-coordinator-review.cjs",
+    "test:preference-ui": "node scripts/preference-ui-review.cjs",
     "test:recommendations": "node scripts/recommendation-review.cjs && node scripts/audio-history-review.cjs",
     "test:hybrid": "node scripts/hybrid-playlist-review.cjs",
-    "test:mobile": "npm run android:web && node scripts/mobile-smoke.cjs",
+    "test:mobile": "npm run android:web && node scripts/mobile-smoke.cjs && node scripts/mobile-preference-review.cjs",
+    "test:mobile-preferences": "npm run android:web && node scripts/mobile-preference-review.cjs",
     "test:android-sql": "node --experimental-sqlite scripts/android-sql-review.cjs",
     "test:android-signing": "node scripts/android-signing-review.cjs",
     "typecheck": "tsc -p tsconfig.node.json --noEmit && tsc -p tsconfig.web.json --noEmit",
@@ -41,7 +49,7 @@
     "better-sqlite3": "^12.10.0",
     "electron-updater": "6.8.10",
     "howler": "^2.2.4",
-    "music-metadata": "^11.12.3",
+    "music-metadata": "11.16.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "zustand": "^5.0.14"
@@ -53,14 +61,14 @@
     "@types/node": "^25.9.1",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
-    "@vitejs/plugin-react": "^4.3.1",
-    "electron": "^31.3.1",
-    "electron-builder": "^24.13.3",
-    "electron-vite": "^2.3.0",
+    "@vitejs/plugin-react": "4.7.0",
+    "electron": "42.11.13",
+    "electron-builder": "26.17.0",
+    "electron-vite": "3.1.0",
     "opencc-js": "^1.4.1",
     "playwright": "^1.63.0",
     "typescript": "^5.5.4",
-    "vite": "^5.4.0"
+    "vite": "6.4.4"
   },
   "build": {
     "appId": "com.aurora.webdavplayer.next",
@@ -101,7 +109,7 @@
       "target": [
         "nsis"
       ],
-      "signAndEditExecutable": false,
+      "signExecutable": false,
       "artifactName": "Aurora-Music-Next-${version}-Setup.${ext}"
     },
     "publish": {

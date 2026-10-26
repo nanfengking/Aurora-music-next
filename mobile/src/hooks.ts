@@ -1,7 +1,9 @@
 import { Capacitor } from '@capacitor/core'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { mobileMusic, type Appearance, type LibraryPage, type LibraryQuery, type MobileSong, type PlaybackSnapshot } from './native'
+import { mobileMusic, type Appearance, type AppearancePatch, type NativeLanguage, type LibraryPage, type LibraryQuery, type MobileSong, type PlaybackSnapshot } from './native'
 import type { PlayHistory } from '../../src/types/music'
+import { isLocale, setLocale } from '../../src/i18n'
+import { appearancePatch, checkedAppearance, previewAppearance, readNativeAppearance } from './appearance'
 
 export const native = Capacitor.isNativePlatform()
 export const IDLE: PlaybackSnapshot = { songId: null, playing: false, playWhenReady: false, buffering: false, position: 0, duration: 0, error: null, speed: 1, revision: 0 }
@@ -97,66 +99,100 @@ export function usePlayback(onError: (error: unknown) => void) {
   return { status, song, setSong, refresh, visible }
 }
 
-const DEFAULT_APPEARANCE: Appearance = {
-  mode: 'system', accent: '#b94b5c', dynamic: true, dynamicAvailable: false, motion: true, lowPowerVisuals: true,
-  autoLookup: false, lyricsSize: 18, showBackdrop: true, dark: false, systemReducedMotion: false, powerSave: false, batteryOptimized: false,
-  backgroundRestricted: false, palette: {},
-}
-export function useAppearance(onError: (error: unknown) => void) {
+export function useAppearance(onError: (error: unknown) => void, initial?: Appearance) {
   const [value, setValue] = useState<Appearance>(() => {
-    try {
-      const saved = JSON.parse(localStorage.getItem('aurora-mobile-appearance') || '{}')
-      return { ...DEFAULT_APPEARANCE, ...saved, lyricsSize: [18, 24, 30, 36].includes(saved.lyricsSize) ? saved.lyricsSize : 18,
-        showBackdrop: typeof saved.showBackdrop === 'boolean' ? saved.showBackdrop : true }
-    }
-    catch { return DEFAULT_APPEARANCE }
+    if (!native) return previewAppearance()
+    return checkedAppearance(initial)
   })
   const current = useRef(value)
   const confirmed = useRef(value)
   const revision = useRef(0)
-  const mounted = useRef(true)
+  const mounted = useRef(false)
+  const lifecycle = useRef(0)
   const pending = useRef(Promise.resolve())
-  const commit = useCallback((next: Appearance) => { current.current = next; if (mounted.current) setValue(next) }, [])
-  // Serialize full native snapshots: fast changes must not undo another preference or an older refresh.
-  const enqueue = useCallback((task: () => Promise<void>) => {
-    pending.current = pending.current.then(task).catch(error => { if (mounted.current) onError(error) })
-    return pending.current
-  }, [onError])
+  const live = useCallback((epoch: number) => mounted.current && epoch === lifecycle.current, [])
+  const commit = useCallback((next: Appearance) => {
+    if (!mounted.current) return
+    current.current = next
+    setLocale(next.effectiveLanguage, false)
+    document.documentElement.lang = next.effectiveLanguage
+    setValue(next)
+  }, [])
+  // Each operation waits for the preceding acknowledgement; only changed durable keys cross the bridge.
+  const enqueue = useCallback((task: (epoch: number) => Promise<void>) => {
+    const epoch = lifecycle.current
+    const result = pending.current.then(() => { if (live(epoch)) return task(epoch) })
+    pending.current = result.catch(() => {})
+    return result.catch(error => { if (live(epoch)) throw error })
+  }, [live])
   const refresh = useCallback(() => {
     const request = revision.current
-    return enqueue(async () => {
+    return enqueue(async epoch => {
       if (!native) return
-      confirmed.current = await mobileMusic.appearance()
+      const next = await readNativeAppearance()
+      if (!live(epoch)) return
+      confirmed.current = next
       if (request === revision.current) commit(confirmed.current)
     })
-  }, [enqueue, commit])
-  const save = useCallback((change: Partial<Appearance>) => {
+  }, [enqueue, commit, live])
+  const save = useCallback((change: AppearancePatch) => {
+    let patch: AppearancePatch
+    try { patch = appearancePatch(change) } catch (error) { return Promise.reject(error) }
     const request = ++revision.current
-    commit({ ...current.current, ...change })
-    return enqueue(async () => {
+    // Visual feedback may be optimistic, network consent must wait for the durable acknowledgement.
+    commit({ ...current.current, ...patch, autoLookup: confirmed.current.autoLookup })
+    return enqueue(async epoch => {
       try {
-        const next = { ...confirmed.current, ...change }
-        if (native) confirmed.current = await mobileMusic.setAppearance(next)
-        else { localStorage.setItem('aurora-mobile-appearance', JSON.stringify(next)); confirmed.current = next }
+        const next = native ? checkedAppearance(await mobileMusic.setAppearance(patch)) : { ...confirmed.current, ...patch }
+        if (!live(epoch)) return
+        if (!native) localStorage.setItem('aurora-mobile-appearance', JSON.stringify(next))
+        confirmed.current = next
         if (request === revision.current) commit(confirmed.current)
-      } catch (error) { if (request === revision.current) commit(confirmed.current); throw error }
+      } catch (error) {
+        if (native && live(epoch)) try { const actual = await readNativeAppearance(); if (live(epoch)) confirmed.current = actual } catch { /* keep the last valid acknowledgement */ }
+        if (live(epoch) && request === revision.current) commit(confirmed.current)
+        throw error
+      }
     })
-  }, [enqueue, commit])
+  }, [enqueue, commit, live])
+  const saveLanguage = useCallback((language: NativeLanguage) => {
+    if (language !== '' && !isLocale(language)) return Promise.reject(new Error('Invalid language'))
+    const request = ++revision.current
+    return enqueue(async epoch => {
+      try {
+        let next: Appearance
+        if (native) { await mobileMusic.setLanguage({ language }); next = await readNativeAppearance() }
+        else {
+          if (!isLocale(language)) throw new Error('Invalid preview language')
+          setLocale(language)
+          next = { ...confirmed.current, language, effectiveLanguage: language }
+        }
+        if (!live(epoch)) return
+        confirmed.current = next
+        if (request === revision.current) commit(next)
+      } catch (error) {
+        if (native && live(epoch)) try { const actual = await readNativeAppearance(); if (live(epoch)) confirmed.current = actual } catch { /* no reset or replay on read failure */ }
+        if (live(epoch) && request === revision.current) commit(confirmed.current)
+        throw error
+      }
+    })
+  }, [enqueue, commit, live])
   useEffect(() => {
-    mounted.current = true
-    void refresh()
-    const onVisible = () => { if (document.visibilityState === 'visible') void refresh() }
+    mounted.current = true; lifecycle.current++
+    void refresh().catch(onError)
+    const onVisible = () => { if (document.visibilityState === 'visible') void refresh().catch(onError) }
     const media = matchMedia('(prefers-color-scheme: dark)')
     document.addEventListener('visibilitychange', onVisible); media.addEventListener('change', onVisible)
-    return () => { mounted.current = false; document.removeEventListener('visibilitychange', onVisible); media.removeEventListener('change', onVisible) }
-  }, [refresh])
+    return () => { mounted.current = false; lifecycle.current++; document.removeEventListener('visibilitychange', onVisible); media.removeEventListener('change', onVisible) }
+  }, [refresh, onError])
   useEffect(() => {
     const root = document.documentElement
+    root.lang = value.effectiveLanguage
     root.dataset.mode = value.mode; root.dataset.motion = String(value.motion && !value.systemReducedMotion)
     root.dataset.lowPower = String(value.lowPowerVisuals || value.powerSave)
     root.style.setProperty('--lyrics-size', `${[18, 24, 30, 36].includes(value.lyricsSize) ? value.lyricsSize : 18}px`)
     if (native) { root.dataset.dark = String(value.dark); for (const [key, color] of Object.entries(value.palette)) root.style.setProperty('--' + key, color) }
     else { root.style.setProperty('--custom-accent', value.accent); root.dataset.dark = String(value.mode === 'dark' || value.mode === 'system' && matchMedia('(prefers-color-scheme: dark)').matches) }
   }, [value])
-  return { value, save, refresh }
+  return { value, save, saveLanguage, refresh }
 }

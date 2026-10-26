@@ -19,6 +19,7 @@ import androidx.media3.exoplayer.source.DefaultMediaSourceFactory;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.Futures;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -43,6 +44,8 @@ import static org.junit.Assert.*;
 @OptIn(markerClass = UnstableApi.class)
 public class CrossfadeInstrumentedTest {
     private Harness host;
+    private final Context fixtureContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
+    private final String fixtureDatabase = "crossfade-fixture-" + UUID.randomUUID();
     private final List<MediaItem> items = Arrays.asList(item("a"), item("b"), item("c"));
     private static MediaItem item(String id) { return new MediaItem.Builder().setMediaId(id).setUri("https://audio.example.test/" + id + ".wav").setMimeType(MimeTypes.AUDIO_WAV).build(); }
     private void main(Runnable action) { InstrumentationRegistry.getInstrumentation().runOnMainSync(action); }
@@ -56,16 +59,21 @@ public class CrossfadeInstrumentedTest {
         fail("Native transition fixture timed out");
     }
     @Before public void prepare() throws Exception {
+        NativePreferences.forDatabase(fixtureContext, fixtureDatabase).ready().get(6, TimeUnit.SECONDS);
+        new PlaybackSettings(fixtureContext, fixtureDatabase).save(new org.json.JSONObject().put("crossfadeSeconds", 3).put("volume", 0)).get(6, TimeUnit.SECONDS);
         main(() -> {
             host = new Harness(); host.player.setMediaItems(items); host.player.prepare(); host.player.play();
         });
         await(() -> host.player.isPlaying());
     }
     @After public void close() {
-        if (host != null) main(() -> { host.fade.close(); host.release(host.player); host.context.deleteSharedPreferences(host.profile); });
+        if (host != null) main(() -> { host.fade.close(); host.release(host.player); });
+        fixtureContext.deleteDatabase(fixtureDatabase);
+        for (String name : new String[]{"playback-options", "appearance", "connection"}) fixtureContext.deleteSharedPreferences(name + "-" + fixtureDatabase);
     }
-    @Test public void disabledDoesNotCreateSecondPlayer() {
-        main(() -> { host.setSeconds(0); assertNull(host.fade.manual(items, 1, 0)); assertEquals(1, host.live.size()); assertFalse(host.fade.busy()); });
+    @Test public void disabledDoesNotCreateSecondPlayer() throws Exception {
+        host.setSeconds(0);
+        main(() -> { assertNull(host.fade.manual(items, 1, 0)); assertEquals(1, host.live.size()); assertFalse(host.fade.busy()); });
     }
     @Test public void readyManualHandoffRetainsOnlyOneOutgoingItem() throws Exception {
         AtomicReference<ListenableFuture<?>> completion = new AtomicReference<>();
@@ -107,8 +115,8 @@ public class CrossfadeInstrumentedTest {
         out.put("data".getBytes(StandardCharsets.US_ASCII)).putInt(length); return out.array();
     }
     private final class Harness implements PlaybackCrossfade.Host {
-        final Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        final String profile = "crossfade-fixture-" + UUID.randomUUID();
+        final Context context = fixtureContext;
+        final String profile = fixtureDatabase;
         final PlaybackSettings settings = new PlaybackSettings(context, profile);
         final Map<ExoPlayer, CancellationGroup> live = new IdentityHashMap<>();
         ExoPlayer player, retiring;
@@ -118,12 +126,13 @@ public class CrossfadeInstrumentedTest {
         volatile boolean blockedOpen;
         int maximumLive;
         Harness() {
-            setSeconds(3); player = create();
+            player = create();
             fade = new PlaybackCrossfade(context, new Handler(Looper.getMainLooper()), new AudioAttributes.Builder().setUsage(C.USAGE_MEDIA).build(), this);
-            facade = new CrossfadePlayer(player, fade, ignored -> {}); fade.facade = facade;
+            PlaybackReadiness readiness = new PlaybackReadiness(Futures.immediateVoidFuture(), Runnable::run, () -> {});
+            facade = new CrossfadePlayer(player, fade, ignored -> Futures.immediateVoidFuture(), readiness); fade.facade = facade;
             // OS focus is intentionally not requested in these transport/lifetime fixtures.
         }
-        void setSeconds(int value) { try { settings.save(new org.json.JSONObject().put("crossfadeSeconds", value).put("volume", 0)); } catch (Exception error) { throw new AssertionError(error); } }
+        void setSeconds(int value) throws Exception { settings.save(new org.json.JSONObject().put("crossfadeSeconds", value).put("volume", 0)).get(6, TimeUnit.SECONDS); }
         public ExoPlayer current() { return player; }
         public ExoPlayer create() {
             CancellationGroup cancellations = new CancellationGroup(); boolean hold = holdNext;

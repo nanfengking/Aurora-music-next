@@ -2,9 +2,9 @@
 
 [简体中文](../../README.android.md) · [繁體中文](guide.zh-TW.md) · [English](guide.en.md) · [Français](guide.fr.md)
 
-Version 1.5.0-preview.11, versionCode 17. Cibles : Xiaomi 14 Ultra et Xiaomi Pad 8 Pro. Lecteur plein écran, pochette réduite et zone de paroles agrandie ; détails, recherche et réglages figurent dans Autres actions. Les sélecteurs et interrupteurs suivent le thème de l’application. Les corrections audio/cache/widgets sont conservées. Les tests Android 16 isolés vérifient un service bref en arrière-plan, les commandes des récepteurs de widgets et le décodage, la recherche temporelle et le cache MP3/AAC publics ; pas votre compte WebDAV, la lecture prolongée écran éteint ni Xiaomi. Le problème M4A particulier est reporté à votre demande, pas déclaré résolu. Installez par-dessus l’aperçu précédent et testez. Ce n’est pas une version stable.
+Version 1.5.0-preview.12, versionCode 18. Cibles : Xiaomi 14 Ultra et Xiaomi Pad 8 Pro. Cet aperçu nécessite encore des essais sur appareil pour certains fichiers M4A, serveurs WebDAV et usages prolongés écran éteint. Installez-le par-dessus l’aperçu précédent sans désinstaller. [Notes de version](../releases/1.5.0-preview.12.md).
 
-Cet aperçu centre l’icône lecture/pause dans son bouton circulaire et aligne les trois commandes. La lecture, le décodage et le cache restent inchangés.
+Les préférences sont enregistrées dans l’ordre de validation. La langue et le thème natifs sont restaurés avant l’interface ; les connexions à froid et les widgets sont améliorés. La fermeture de l’interface termine ses appels en attente sans annuler les enregistrements acceptés ni la lecture native en arrière-plan.
 
 <img src="../images/android/phone-listen.png" width="280" alt="Interface téléphone avec données fictives et interface chinoise">
 

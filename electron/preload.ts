@@ -6,6 +6,7 @@ import type { WebDavConfig, WebDavFile, SyncProgress } from '../src/types/webdav
 import type { AiProvider, AssetConfig, AssetKind, AssetCandidate } from '../src/types/providers'
 import type { WindowAction } from '../src/types/player'
 import type { UpdateStatus } from '../src/types/update'
+import type { DesktopPreferences, DesktopPreferenceSnapshot } from '../src/types/preferences'
 
 /**
  * Electron API —— 安全地暴露给渲染进程
@@ -67,6 +68,15 @@ const electronAPI = {
     ipcRenderer.invoke('music:recordPlayAction', record),
 
   // ===== 设置 =====
+  initializePreferences: (legacy: Partial<DesktopPreferences>): Promise<IpcResponse<DesktopPreferenceSnapshot>> =>
+    ipcRenderer.invoke('preferences:initialize', legacy),
+  updatePreferences: (patch: Partial<DesktopPreferences>): Promise<IpcResponse<DesktopPreferenceSnapshot>> =>
+    ipcRenderer.invoke('preferences:update', patch),
+  onPreferencesChanged: (listener: (snapshot: DesktopPreferenceSnapshot) => void): (() => void) => {
+    const handler = (_event: IpcRendererEvent, snapshot: DesktopPreferenceSnapshot) => listener(snapshot)
+    ipcRenderer.on('preferences:changed', handler)
+    return () => ipcRenderer.removeListener('preferences:changed', handler)
+  },
   getSettings: (): Promise<IpcResponse<Record<string, string>>> =>
     ipcRenderer.invoke('music:getSettings'),
   setSettings: (key: string, value: string): Promise<IpcResponse> =>

@@ -15,10 +15,10 @@ import static org.junit.Assert.*;
 /** Isolated fixture DB: these tests must never erase or modify the user's library. */
 @RunWith(AndroidJUnit4.class)
 public class MusicStoreInstrumentedTest {
-    private static final String DATABASE = "aurora-instrumented-fixture.db";
+    private final String DATABASE = "aurora-instrumented-" + java.util.UUID.randomUUID() + ".db";
     private MusicStore store;
     private Context context;
-    @Before public void before() {
+    @Before public void before() throws Exception {
         context = InstrumentationRegistry.getInstrumentation().getTargetContext();
         context.getSharedPreferences("playback-options-" + DATABASE, Context.MODE_PRIVATE).edit().clear().commit();
         context.deleteDatabase(DATABASE); store = new MusicStore(context, DATABASE);
@@ -27,10 +27,11 @@ public class MusicStoreInstrumentedTest {
             for (int i = 0; i < 720; i++) store.upsert("https://example.com/music/" + i + ".m4a", "Artist - Track " + i + ".m4a", 5000, "");
             db.execSQL("UPDATE songs SET duration=180,genre='Pop'"); db.setTransactionSuccessful();
         } finally { db.endTransaction(); }
+        NativePreferences.forDatabase(context.getApplicationContext(), DATABASE).ready().get(6, java.util.concurrent.TimeUnit.SECONDS);
     }
     @After public void after() {
         if (store != null) store.close(); context.deleteDatabase(DATABASE);
-        context.getSharedPreferences("playback-options-" + DATABASE, Context.MODE_PRIVATE).edit().clear().commit();
+        for (String name : new String[]{"playback-options", "appearance", "connection"}) context.deleteSharedPreferences(name + "-" + DATABASE);
     }
     private String id(int i) { return MusicStore.idFor("https://example.com/music/" + i + ".m4a"); }
     @Test public void chineseFilenameFallbackPopulatesTheArtistWithoutSplittingAmbiguousTitles() throws Exception {
@@ -98,32 +99,32 @@ public class MusicStoreInstrumentedTest {
         assertTrue(store.song(song).isNull("replayGainDb")); assertTrue(store.song(song).isNull("replayPeak"));
     }
     @Test public void replayGainPreferenceDefaultsOffAndValidationIsAtomic() throws Exception {
-        String profile = "playback-options-" + DATABASE;
+        String profile = DATABASE;
         PlaybackSettings options = new PlaybackSettings(context, profile);
         assertFalse(options.normalizeVolume()); assertFalse(options.status().getBoolean("normalizeVolume"));
-        options.save(new JSONObject().put("normalizeVolume", true).put("volume", .7));
+        await(options.save(new JSONObject().put("normalizeVolume", true).put("volume", .7)));
         assertTrue(new PlaybackSettings(context, profile).normalizeVolume()); assertEquals(.7f, options.volume(), 0);
         long revision = options.revision();
-        assertThrows(IllegalArgumentException.class, () -> options.save(new JSONObject().put("normalizeVolume", false).put("volume", 2)));
-        assertThrows(org.json.JSONException.class, () -> options.save(new JSONObject().put("normalizeVolume", 42).put("volume", .3)));
+        invalid(options.save(new JSONObject().put("normalizeVolume", false).put("volume", 2)));
+        invalid(options.save(new JSONObject().put("normalizeVolume", 42).put("volume", .3)));
         assertTrue(options.normalizeVolume()); assertEquals(.7f, options.volume(), 0); assertEquals(revision, options.revision());
-        options.save(new JSONObject().put("normalizeVolume", false)); assertFalse(options.normalizeVolume()); assertEquals(.7f, options.volume(), 0);
+        await(options.save(new JSONObject().put("normalizeVolume", false))); assertFalse(options.normalizeVolume()); assertEquals(.7f, options.volume(), 0);
     }
     @Test public void crossfadeDurationDefaultsOffAndValidationIsAtomic() throws Exception {
-        String profile = "playback-options-" + DATABASE;
+        String profile = DATABASE;
         PlaybackSettings options = new PlaybackSettings(context, profile);
         assertEquals(0, options.crossfadeSeconds()); assertEquals(0, options.status().getInt("crossfadeSeconds"));
-        options.save(new JSONObject().put("crossfadeSeconds", 3).put("volume", .6));
+        await(options.save(new JSONObject().put("crossfadeSeconds", 3).put("volume", .6)));
         assertEquals(3, new PlaybackSettings(context, profile).crossfadeSeconds());
-        assertThrows(IllegalArgumentException.class, () -> options.save(new JSONObject().put("crossfadeSeconds", 2.5).put("volume", .2)));
+        invalid(options.save(new JSONObject().put("crossfadeSeconds", 2.5).put("volume", .2)));
         assertEquals(3, options.crossfadeSeconds()); assertEquals(.6f, options.volume(), 0);
-        assertThrows(IllegalArgumentException.class, () -> options.save(new JSONObject().put("crossfadeSeconds", 1).put("volume", 2)));
-        assertEquals(3, options.crossfadeSeconds()); options.save(new JSONObject().put("crossfadeSeconds", 0)); assertEquals(0, options.crossfadeSeconds());
+        invalid(options.save(new JSONObject().put("crossfadeSeconds", 1).put("volume", 2)));
+        assertEquals(3, options.crossfadeSeconds()); await(options.save(new JSONObject().put("crossfadeSeconds", 0))); assertEquals(0, options.crossfadeSeconds());
     }
     @Test public void prefetchDefaultsOffAndSharesTheQueueFileStamp() throws Exception {
-        PlaybackSettings options = new PlaybackSettings(context, "playback-options-" + DATABASE);
-        assertFalse(options.prefetch()); options.save(new JSONObject().put("prefetch", true)); assertTrue(options.prefetch());
-        assertThrows(IllegalArgumentException.class, () -> options.save(new JSONObject().put("prefetch", false).put("volume", 2)));
+        PlaybackSettings options = new PlaybackSettings(context, DATABASE);
+        assertFalse(options.prefetch()); await(options.save(new JSONObject().put("prefetch", true))); assertTrue(options.prefetch());
+        invalid(options.save(new JSONObject().put("prefetch", false).put("volume", 2)));
         assertTrue(options.prefetch()); store.replaceQueue(null, "", false, id(719));
         MusicStore.PrefetchSource source = store.prefetchSource(id(719)); assertNotNull(source); assertEquals(5000, source.size);
         androidx.media3.common.MediaItem item = store.queueWindow(store.queueIndex(id(719)), 1).get(0);
@@ -167,10 +168,10 @@ public class MusicStoreInstrumentedTest {
         store.savePlayback(id(719), 12345); assertEquals("12345", store.savedPlayback()[1]);
     }
     @Test public void forgettingPlaybackPreservesHistoryAndQueueAndRejectsStaleCheckpoints() throws Exception {
-        PlaybackSettings options = new PlaybackSettings(context, "playback-options-" + DATABASE);
+        PlaybackSettings options = new PlaybackSettings(context, DATABASE);
         store.replaceQueue(null, "", false, id(719)); store.event(id(719), "start", 0);
         long old = options.revision(); store.savePlayback(id(719), 12345, old);
-        options.save(new JSONObject().put("rememberPlayback", false));
+        await(options.save(new JSONObject().put("rememberPlayback", false)));
         long disabled = options.revision(); assertTrue(disabled > old);
         store.forgetPlayback(disabled); store.savePlayback(id(719), 54321, old);
         assertNull(store.savedPlayback()); assertEquals(720, store.queueSize());
@@ -178,7 +179,7 @@ public class MusicStoreInstrumentedTest {
             assertTrue(row.moveToFirst()); assertEquals(0, row.getInt(0));
         }
         assertEquals(1, store.song(id(719)).getInt("playCount"));
-        options.save(new JSONObject().put("rememberPlayback", true));
+        await(options.save(new JSONObject().put("rememberPlayback", true)));
         assertNull(store.savedPlayback()); store.savePlayback(id(719), 67890, options.revision());
         store.forgetPlayback(disabled); store.savePlayback(id(719), 54321, old);
         assertEquals("67890", store.savedPlayback()[1]);
@@ -281,7 +282,7 @@ public class MusicStoreInstrumentedTest {
         assertEquals(0, store.matchingSongs(literal));
     }
     @Test public void upgradePreservesOldLibraryAndBackfillsRecentTimeAndQueueOrder() throws Exception {
-        String migration = "aurora-migration-fixture.db";
+        String migration = "aurora-migration-" + java.util.UUID.randomUUID() + ".db";
         context.deleteDatabase(migration);
         context.getSharedPreferences("playback-options-" + migration, Context.MODE_PRIVATE).edit().clear().commit();
         try {
@@ -298,16 +299,22 @@ public class MusicStoreInstrumentedTest {
             try (MusicStore upgraded = new MusicStore(context, migration);
                 android.database.Cursor row = upgraded.getReadableDatabase().rawQuery("SELECT favorite,play_count,last_played_at FROM songs WHERE id='fixture'", null)) {
                 assertTrue(row.moveToFirst()); assertEquals(1, row.getInt(0)); assertEquals(8, row.getInt(1)); assertEquals(12345, row.getLong(2));
-                assertEquals(10, upgraded.getReadableDatabase().getVersion()); assertEquals("", upgraded.downloadToken("fixture"));
+                assertEquals(11, upgraded.getReadableDatabase().getVersion()); assertEquals("", upgraded.downloadToken("fixture"));
                 try (android.database.Cursor gain = upgraded.getReadableDatabase().rawQuery("SELECT replay_gain_db,replay_peak FROM songs WHERE id='fixture'", null)) {
                     assertTrue(gain.moveToFirst()); assertTrue(gain.isNull(0)); assertTrue(gain.isNull(1));
                 }
+                NativePreferences.forDatabase(context, migration).ready().get(6, java.util.concurrent.TimeUnit.SECONDS);
                 assertEquals("4567", upgraded.savedPlayback()[1]);
                 upgraded.orderQueue(true); upgraded.orderQueue(false); assertEquals(1, upgraded.queueIndex("fixture"));
             }
         } finally {
             context.deleteDatabase(migration);
-            context.getSharedPreferences("playback-options-" + migration, Context.MODE_PRIVATE).edit().clear().commit();
+            for (String name : new String[]{"playback-options", "appearance", "connection"}) context.deleteSharedPreferences(name + "-" + migration);
         }
+    }
+    private static void await(com.google.common.util.concurrent.ListenableFuture<?> future) throws Exception { future.get(6, java.util.concurrent.TimeUnit.SECONDS); }
+    private static void invalid(com.google.common.util.concurrent.ListenableFuture<?> future) throws Exception {
+        try { await(future); fail("Expected invalid preference patch"); }
+        catch (java.util.concurrent.ExecutionException expected) { assertTrue(expected.getCause() instanceof IllegalArgumentException); }
     }
 }

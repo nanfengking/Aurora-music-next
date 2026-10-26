@@ -1,6 +1,6 @@
 # Development and contribution
 
-Use Windows x64, Node.js 22 LTS (22.12 or newer in the 22.x line), npm and PowerShell. Other operating systems and architectures are not validated. Review [SECURITY](SECURITY.md) before exposing a development server or distributing a build.
+Use Windows x64, Node.js 24 LTS (recommended; also used in CI), npm and PowerShell. Node 22 requires at least 22.12; the old 22.11 environment is insufficient for the migrated Electron dependency. Other operating systems and architectures are not validated. Review [SECURITY](SECURITY.md) before exposing a development server or distributing a build.
 
 ## Install and build
 
@@ -20,10 +20,10 @@ FFmpeg is intentionally excluded from Git and the source ZIP. The setup script d
 
 ## Regression tests
 
-Install the test driver without changing the lockfile:
+The test driver is already declared in devDependencies. Install the committed lockfile; do not replace it with a separately selected test-driver version:
 
 ```powershell
-npm install --no-save --package-lock=false --ignore-scripts playwright@1.62.1
+npm ci
 npm run test:recommendations
 npm run test:i18n
 npm run test:features

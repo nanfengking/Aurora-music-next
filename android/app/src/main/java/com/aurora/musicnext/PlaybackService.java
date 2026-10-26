@@ -30,6 +30,8 @@ import androidx.media3.session.MediaSession;
 import androidx.media3.session.MediaSessionService;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.MoreExecutors;
 import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.List;
@@ -65,6 +67,10 @@ public final class PlaybackService extends MediaSessionService {
     private PlaybackPrefetch prefetch;
     private PlaybackCrossfade crossfade;
     private CrossfadePlayer sessionPlayer;
+    private PlaybackReadiness readiness;
+    private final java.util.concurrent.Executor main = work -> {
+        if (!handler.post(work)) throw new java.util.concurrent.RejectedExecutionException("Playback looper closed");
+    };
     private Player.Listener playerListener;
     private final java.util.Map<ExoPlayer, CancellationGroup> transfers = new java.util.IdentityHashMap<>();
     private String fadingCompletion;
@@ -78,19 +84,25 @@ public final class PlaybackService extends MediaSessionService {
     private final Runnable checkpoint = () -> { savePosition(); scheduleCheckpoint(); };
     private final Runnable lyricTick = () -> updateWidget(false);
     private final BroadcastReceiver screenReceiver = new BroadcastReceiver() {
-        @Override public void onReceive(Context context, Intent intent) { updateWidget(true); if (crossfade != null) crossfade.update(); }
+        @Override public void onReceive(Context context, Intent intent) { if (readiness != null && readiness.isApplied()) { updateWidget(true); crossfade.update(); } }
     };
 
     static void setObserver(@Nullable Runnable listener) { observer = new WeakReference<>(listener); }
     static void widgetsChanged() {
-        if (active != null) active.handler.post(() -> { if (active != null) active.updateWidget(true); });
+        PlaybackService service = active;
+        if (service != null) service.onOwner(() -> service.updateWidget(true));
     }
     static void assetsChanged(String id) {
-        if (active != null && id.equals(active.currentId)) active.reloadSong(id);
+        PlaybackService service = active;
+        if (service != null) service.onOwner(() -> { if (id.equals(service.currentId)) service.reloadSong(id); });
     }
     static void prefetchSettingsChanged() {
         PlaybackService service = active;
-        if (service != null) service.handler.post(() -> { if (!service.destroyed) { service.prefetch.reset(); service.updatePrefetch(); } });
+        if (service != null) service.onOwner(() -> { service.prefetch.reset(); service.updatePrefetch(); });
+    }
+    private void onOwner(Runnable effect) {
+        Runnable guarded = () -> { if (!destroyed && active == this && readiness.isApplied()) effect.run(); };
+        if (android.os.Looper.myLooper() == handler.getLooper()) guarded.run(); else handler.post(guarded);
     }
     static void holdPrefetch() {
         PlaybackService service = active;
@@ -103,37 +115,66 @@ public final class PlaybackService extends MediaSessionService {
             : Math.max(0, (active.sleepDeadline - SystemClock.elapsedRealtime() + 999) / 1000));
         return value;
     }
-    static JSONObject setOptions(Context context, JSONObject patch) throws org.json.JSONException {
-        PlaybackSettings settings = new PlaybackSettings(context);
-        boolean shuffleChanged = patch.has("shuffle") && patch.getBoolean("shuffle") != settings.shuffle();
-        boolean repeatChanged = patch.has("repeatMode") && !patch.getString("repeatMode").equals(settings.repeat());
-        boolean rememberChanged = patch.has("rememberPlayback") && patch.getBoolean("rememberPlayback") != settings.remember();
-        boolean prefetchChanged = patch.has("prefetch") && patch.getBoolean("prefetch") != settings.prefetch();
-        int sleep = patch.has("sleepMinutes") ? PlaybackSettings.validSleep(patch.getDouble("sleepMinutes")) : -1;
-        if (sleep > 0 && (active == null || active.player.getCurrentMediaItem() == null))
-            throw new IllegalStateException("Start playback before setting a sleep timer");
-        settings.save(patch);
-        if (active != null) {
-            PlaybackService service = active;
-            if (rememberChanged) {
-                if (settings.remember()) service.savePosition();
-                else { long revision = settings.revision(); service.io.execute(() -> service.store.forgetPlayback(revision)); }
-                service.scheduleCheckpoint();
+    static ListenableFuture<JSONObject> setOptions(Context context, JSONObject patch) {
+        try {
+            if (patch == null) throw new IllegalArgumentException("Invalid playback options");
+            JSONObject durable = new JSONObject(patch.toString());
+            int minutes = -1;
+            if (durable.has("sleepMinutes")) {
+                Object value = durable.get("sleepMinutes");
+                if (!(value instanceof Number)) throw new IllegalArgumentException("Invalid sleep minutes");
+                minutes = PlaybackSettings.validSleep(((Number) value).doubleValue()); durable.remove("sleepMinutes");
             }
-            service.player.setPlaybackSpeed(settings.speed()); service.applyVolume();
-            service.crossfade.configure();
-            if (shuffleChanged || repeatChanged) service.crossfade.interrupt(true, service.crossfade.readyIntent());
-            if (prefetchChanged) service.prefetch.reset();
-            if (sleep >= 0) {
-                service.handler.removeCallbacks(service.sleepTick);
-                service.sleepDeadline = sleep == 0 ? 0 : SystemClock.elapsedRealtime() + sleep * 60000L;
-                if (sleep > 0) service.handler.postDelayed(service.sleepTick, sleep * 60000L);
-            }
-            if (shuffleChanged || repeatChanged) service.refreshQueue(shuffleChanged);
-            else service.publish();
-            service.updatePrefetch();
+            durable = NativePreferences.only(durable, PlaybackSettings.KEYS);
+            final int sleep = minutes;
+            final PlaybackService timerOwner = active;
+            java.util.concurrent.Executor main = ContextCompat.getMainExecutor(context);
+            ListenableFuture<NativePreferenceRecord> saved = NativePreferences.forApplication(context).update(durable, main, new NativePreferences.Effects() {
+                @Override public void validate(NativePreferenceRecord before) {
+                    if (sleep >= 0 && timerOwner != active || sleep > 0 && (timerOwner == null || timerOwner.destroyed || timerOwner.player.getCurrentMediaItem() == null))
+                        throw new IllegalStateException("Start playback before setting a sleep timer");
+                }
+                @Override public ListenableFuture<?> apply(NativePreferenceRecord before, NativePreferenceRecord after) {
+                    // Durable settings belong to whichever service is live after commit, including
+                    // one started while this operation was queued. A timer belongs to its old instance.
+                    PlaybackService current = active;
+                    boolean timerChanged = sleep >= 0 && timerOwner != current;
+                    ListenableFuture<?> effects = current != null && !current.destroyed
+                        ? current.applyOptions(before, after, timerChanged ? -1 : sleep) : Futures.immediateVoidFuture();
+                    if (!timerChanged) return effects;
+                    return Futures.transform(effects, ignored -> {
+                        throw new IllegalStateException("Playback service changed after settings were saved");
+                    }, main);
+                }
+            });
+            return Futures.transform(saved, record -> {
+                try {
+                    JSONObject result = PlaybackSettings.status(record);
+                    result.put("sleepRemainingSeconds", active == null || active.sleepDeadline == 0 ? 0
+                        : Math.max(0, (active.sleepDeadline - SystemClock.elapsedRealtime() + 999) / 1000));
+                    return result;
+                } catch (org.json.JSONException invalid) { throw new IllegalStateException("Cannot display saved playback settings", invalid); }
+            }, main);
+        } catch (Exception invalid) { return Futures.immediateFailedFuture(invalid); }
+    }
+    private ListenableFuture<?> applyOptions(NativePreferenceRecord before, NativePreferenceRecord after, int sleep) {
+        boolean shuffle = !before.values.get("shuffle").equals(after.values.get("shuffle"));
+        boolean repeat = !before.values.get("repeatMode").equals(after.values.get("repeatMode"));
+        boolean remember = before.restoreRevision != after.restoreRevision;
+        ListenableFuture<?> checkpoint = remember && options.remember() ? savePositionOperation() : Futures.immediateVoidFuture();
+        if (remember) scheduleCheckpoint();
+        player.setPlaybackSpeed(options.speed()); applyVolume(); crossfade.configure();
+        if (shuffle || repeat) crossfade.interrupt(true, crossfade.readyIntent());
+        if (!before.values.get("prefetch").equals(after.values.get("prefetch"))) prefetch.reset();
+        if (sleep >= 0) {
+            handler.removeCallbacks(sleepTick); sleepDeadline = sleep == 0 ? 0 : SystemClock.elapsedRealtime() + sleep * 60000L;
+            if (sleep > 0) handler.postDelayed(sleepTick, sleep * 60000L);
         }
-        return options(context);
+        ListenableFuture<?> queue = shuffle || repeat ? refreshQueue(shuffle) : Futures.immediateVoidFuture();
+        return readiness.scoped(Futures.whenAllSucceed(checkpoint, queue).call(() -> {
+            if (destroyed || active != this) throw new IllegalStateException("Playback service ended after settings were saved");
+            updatePrefetch(); publish(); return null;
+        }, main));
     }
     private void checkSleep() {
         if (destroyed || sleepDeadline == 0) return;
@@ -162,17 +203,16 @@ public final class PlaybackService extends MediaSessionService {
 
     @Override public void onCreate() {
         super.onCreate();
-        active = this;
         store = new MusicStore(this);
         options = new PlaybackSettings(this);
-        player = createPlayer(options.crossfadeSeconds() == 0);
+        player = createPlayer(false, true);
         prefetch = new PlaybackPrefetch(this, handler, this::updatePrefetch);
         crossfade = new PlaybackCrossfade(this, handler, AUDIO_ATTRIBUTES, new PlaybackCrossfade.Host() {
             public ExoPlayer current() { return player; }
             public ExoPlayer create() { return createPlayer(false); }
             public void release(ExoPlayer old) { releasePlayer(old); }
             public PlaybackSettings settings() { return options; }
-            public boolean blocked() { return destroyed || updatingQueue || reorderingQueue; }
+            public boolean blocked() { return destroyed || readiness == null || !readiness.isApplied() || updatingQueue || reorderingQueue; }
             public ReplayGain tags() { return replayGain.tags(); }
             public float volume() { return replayGain.volume(options.volume(), options.normalizeVolume()); }
             public void handoff(ExoPlayer next, boolean automatic) { handoffPlayer(next, automatic); }
@@ -180,13 +220,14 @@ public final class PlaybackService extends MediaSessionService {
                 player.setPlayWhenReady(false); player.setMediaItems(items, index, position); player.prepare();
                 if (ready) crossfade.playIntent(true);
             }
-            public void changed() { updatePrefetch(); if (!destroyed) { publish(); updateWidget(false); scheduleCheckpoint(); } }
+            public void changed() { if (!destroyed && readiness != null && readiness.isApplied()) { updatePrefetch(); publish(); updateWidget(false); scheduleCheckpoint(); } }
             public void outgoingFinished(ExoPlayer old) { finishOutgoingHistory(old); }
         });
+        readiness = new PlaybackReadiness(NativePreferences.forApplication(this).ready(), main, this::applyReadyPreferences);
         sessionPlayer = new CrossfadePlayer(player, crossfade, volume -> {
-            try { setOptions(PlaybackService.this, new JSONObject().put("volume", volume)); }
-            catch (org.json.JSONException invalid) { throw new IllegalArgumentException("Invalid volume"); }
-        });
+            try { return setOptions(PlaybackService.this, new JSONObject().put("volume", volume)); }
+            catch (org.json.JSONException invalid) { return Futures.immediateFailedFuture(invalid); }
+        }, readiness);
         crossfade.facade = sessionPlayer;
         playerListener = new Player.Listener() {
             @Override public void onMediaItemTransition(@Nullable MediaItem item, int reason) { itemChanged(item, reason); }
@@ -229,36 +270,48 @@ public final class PlaybackService extends MediaSessionService {
                 fallbackOffline(); scheduleCheckpoint(); updateWidget(false); publish();
             }
         };
-        player.addListener(playerListener);
-        crossfade.configure();
         PendingIntent open = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class)
             .putExtra("openPlayer", true), PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
         session = new MediaSession.Builder(this, sessionPlayer).setSessionActivity(open)
             .setCallback(new MediaSession.Callback() {
+                @Override public ListenableFuture<MediaSession.ConnectionResult> onConnectAsync(MediaSession session, MediaSession.ControllerInfo controller) {
+                    return readiness.connection(new MediaSession.ConnectionResult.AcceptedResultBuilder(session, controller).build());
+                }
                 @Override public ListenableFuture<MediaSession.MediaItemsWithStartPosition> onPlaybackResumption(
                     MediaSession session, MediaSession.ControllerInfo controller, boolean isForPlayback) {
-                    SettableFuture<MediaSession.MediaItemsWithStartPosition> future = SettableFuture.create();
-                    long revision = options.revision();
-                    io.execute(() -> {
-                        try {
-                            MediaSession.MediaItemsWithStartPosition saved = savedQueue();
-                            handler.post(() -> {
-                                if (destroyed || !options.remember() || revision != options.revision())
-                                    future.setException(new IllegalStateException("Resume preference changed"));
-                                else future.set(saved);
-                            });
-                        }
-                        catch (Exception error) { future.setException(error); }
-                    });
-                    return future;
+                    return readiness.scoped(Futures.transformAsync(readiness.whenApplied(), ignored -> {
+                        long revision = options.revision(); int generation = queueGeneration;
+                        return Futures.transform(backgroundWork(PlaybackService.this::savedQueue), saved -> {
+                            if (destroyed || !options.remember() || revision != options.revision() || generation != queueGeneration)
+                                throw new IllegalStateException("Resume preference changed");
+                            return saved;
+                        }, main);
+                    }, main));
                 }
             }).build();
         IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_ON);
         filter.addAction(Intent.ACTION_SCREEN_OFF); filter.addAction(PowerManager.ACTION_POWER_SAVE_MODE_CHANGED);
         ContextCompat.registerReceiver(this, screenReceiver, filter, ContextCompat.RECEIVER_NOT_EXPORTED);
-        restoreQueue();
+        readiness.whenApplied().addListener(() -> {
+            try {
+                Futures.getDone(readiness.whenApplied());
+                if (!destroyed && readiness.isApplied()) { sessionPlayer.focusChanged(); restoreQueue(); publish(); }
+            } catch (Exception failed) { if (!destroyed) stopSelf(); }
+        }, main);
+    }
+    private void applyReadyPreferences() {
+        if (destroyed) throw new IllegalStateException("Playback service destroyed");
+        player.setAudioAttributes(AUDIO_ATTRIBUTES, options.crossfadeSeconds() == 0);
+        player.setPlaybackSpeed(options.speed()); player.setVolume(options.volume());
+        player.setRepeatMode(options.repeat().equals("one") ? Player.REPEAT_MODE_ONE : Player.REPEAT_MODE_OFF);
+        crossfade.configure(); player.addListener(playerListener);
+        // Last owner-thread action: all player settings/listeners are installed before publication.
+        active = this;
     }
     private ExoPlayer createPlayer(boolean focus) {
+        return createPlayer(focus, false);
+    }
+    private ExoPlayer createPlayer(boolean focus, boolean inert) {
         CancellationGroup cancellations = new CancellationGroup();
         ExoPlayer created = new ExoPlayer.Builder(this)
             .setMediaSourceFactory(new DefaultMediaSourceFactory(StreamCache.factory(this, cancellations)))
@@ -270,8 +323,11 @@ public final class PlaybackService extends MediaSessionService {
         // A music container may also carry video; never allocate a video decoder for it.
         created.setTrackSelectionParameters(created.getTrackSelectionParameters().buildUpon().setTrackTypeDisabled(C.TRACK_TYPE_VIDEO, true).build());
         created.setHandleAudioBecomingNoisy(true); created.setWakeMode(C.WAKE_MODE_NETWORK);
-        created.setPlaybackSpeed(options.speed()); created.setVolume(options.volume());
-        created.setRepeatMode(options.repeat().equals("one") ? Player.REPEAT_MODE_ONE : Player.REPEAT_MODE_OFF);
+        if (inert) created.setVolume(0);
+        else {
+            created.setPlaybackSpeed(options.speed()); created.setVolume(options.volume());
+            created.setRepeatMode(options.repeat().equals("one") ? Player.REPEAT_MODE_ONE : Player.REPEAT_MODE_OFF);
+        }
         transfers.put(created, cancellations);
         return created;
     }
@@ -352,10 +408,21 @@ public final class PlaybackService extends MediaSessionService {
     }
     private void publish() { Runnable listener = observer.get(); if (!destroyed && listener != null) listener.run(); }
     private void savePosition() {
-        if (player == null || currentId == null || updatingQueue || destroyed) return;
+        savePositionOperation();
+    }
+    private ListenableFuture<?> savePositionOperation() {
+        if (player == null || currentId == null || updatingQueue || destroyed || readiness == null || !readiness.isApplied()) return Futures.immediateVoidFuture();
         String id = currentId; long position = Math.max(0, player.getCurrentPosition());
         lastKnownPosition = position;
-        if (options.remember()) { long revision = options.revision(); io.execute(() -> store.savePlayback(id, position, revision)); }
+        if (!options.remember()) return Futures.immediateVoidFuture();
+        long revision = options.revision();
+        return backgroundWork(() -> { store.savePlayback(id, position, revision); return null; });
+    }
+    private <T> ListenableFuture<T> backgroundWork(java.util.concurrent.Callable<T> work) {
+        SettableFuture<T> result = SettableFuture.create();
+        try { io.execute(() -> { try { result.set(work.call()); } catch (Throwable failure) { result.setException(failure); } }); }
+        catch (java.util.concurrent.RejectedExecutionException closed) { result.setException(closed); }
+        return readiness.scoped(result);
     }
     private MediaSession.MediaItemsWithStartPosition savedQueue() throws Exception {
         String[] saved = store.savedPlayback();
@@ -441,34 +508,42 @@ public final class PlaybackService extends MediaSessionService {
         if (target > 0) player.addMediaItems(0, items.subList(0, target));
         if (target + 1 < items.size()) player.addMediaItems(items.subList(target + 1, items.size()));
     }
-    private void refreshQueue(boolean shuffleChanged) {
-        if (destroyed || currentId == null) return;
+    private ListenableFuture<?> refreshQueue(boolean shuffleChanged) {
+        SettableFuture<Void> result = SettableFuture.create();
+        refreshQueue(shuffleChanged, result); return readiness.scoped(result);
+    }
+    private void refreshQueue(boolean shuffleChanged, SettableFuture<Void> result) {
+        if (result.isDone()) return;
+        if (destroyed) { result.setException(new IllegalStateException("Playback service destroyed")); return; }
+        if (currentId == null) { result.set(null); return; }
         reorderingQueue = true;
         int order = ++orderGeneration, generation = ++queueGeneration;
         String id = currentId;
-        io.execute(() -> {
+        try { io.execute(() -> {
             try {
                 if (shuffleChanged) store.orderQueue(options.shuffle(), id);
                 long count = store.queueSize(), index = store.queueIndex(id);
                 boolean smallLoop = options.repeat().equals("all") && count <= 40;
                 List<MediaItem> items = store.queueWindow(smallLoop ? 1 : Math.max(1, index - 10), 40);
-                handler.post(() -> {
-                    if (destroyed || order != orderGeneration) return;
+                main.execute(() -> {
+                    if (destroyed || order != orderGeneration) { result.setException(new IllegalStateException("Playback queue changed")); return; }
                     reorderingQueue = false;
-                    if (generation != queueGeneration || !id.equals(currentId)) { refreshQueue(false); return; }
+                    if (generation != queueGeneration || !id.equals(currentId)) { refreshQueue(false, result); return; }
                     updatingQueue = true;
                     try {
                         player.setRepeatMode(options.repeat().equals("one") ? Player.REPEAT_MODE_ONE
                             : smallLoop ? Player.REPEAT_MODE_ALL : Player.REPEAT_MODE_OFF);
                         installWindow(items);
+                    } catch (Exception failed) { result.setException(failed); return;
                     } finally { updatingQueue = false; updatePrefetch(); crossfade.update(); }
-                    extendQueue(); publish();
+                    extendQueue(); publish(); result.set(null);
                 });
             } catch (Exception error) {
                 Log.w("AuroraPlayback", "Queue order could not be updated", error);
                 handler.post(() -> { if (order == orderGeneration) reorderingQueue = false; });
+                result.setException(error);
             }
-        });
+        }); } catch (java.util.concurrent.RejectedExecutionException closed) { reorderingQueue = false; result.setException(closed); }
     }
     private void persistMetadata() {
         if (destroyed || currentId == null || player == null) return;
@@ -539,7 +614,7 @@ public final class PlaybackService extends MediaSessionService {
     }
     private void updateWidget(boolean force) {
         handler.removeCallbacks(lyricTick);
-        if (destroyed || player == null) return;
+        if (destroyed || player == null || readiness == null || !readiness.isApplied()) return;
         PowerManager power = (PowerManager) getSystemService(POWER_SERVICE);
         boolean interactive = power != null && power.isInteractive();
         long position = Math.max(0, player.getCurrentPosition());
@@ -562,16 +637,20 @@ public final class PlaybackService extends MediaSessionService {
     @Override public void onTaskRemoved(Intent intent) { if (!isPlaybackOngoing()) stopSelf(); }
     @Override public void onDestroy() {
         savePosition(); destroyed = true;
+        boolean wasReady = active == this;
+        if (readiness != null) readiness.close(new IllegalStateException("Playback service destroyed"));
         if (prefetch != null) prefetch.close();
         if (crossfade != null) crossfade.close();
         handler.removeCallbacksAndMessages(null);
         try { unregisterReceiver(screenReceiver); } catch (IllegalArgumentException ignored) {}
         if (session != null) session.release();
         if (player != null) releasePlayer(player);
-        io.execute(() -> store.close()); io.shutdown();
-        WidgetSnapshot old = WidgetSnapshot.load(this);
-        new WidgetSnapshot(old.songId, old.title, old.artist, old.cover, old.lyric, old.nextLyric, false).save(this);
-        MusicWidgetProvider.refresh(this);
+        if (store != null) io.execute(() -> store.close()); io.shutdown();
+        if (wasReady) {
+            WidgetSnapshot old = WidgetSnapshot.load(this);
+            new WidgetSnapshot(old.songId, old.title, old.artist, old.cover, old.lyric, old.nextLyric, false).save(this);
+            MusicWidgetProvider.refresh(this);
+        }
         if (active == this) active = null;
         super.onDestroy();
     }

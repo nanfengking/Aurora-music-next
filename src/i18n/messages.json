@@ -1,4 +1,14 @@
 {
+  "重试": {
+    "zh-TW": "重試",
+    "en": "Retry",
+    "fr": "Réessayer"
+  },
+  "播放进度未能保存，歌曲播放与其他设置不受影响。": {
+    "zh-TW": "播放進度未能儲存，歌曲播放與其他設定不受影響。",
+    "en": "Playback position could not be saved. Music and other settings are unaffected.",
+    "fr": "Impossible d’enregistrer la position de lecture. La musique et les autres réglages ne sont pas affectés."
+  },
   "专辑": {
     "zh-TW": "專輯",
     "en": "Albums",

@@ -4,7 +4,9 @@ const path = require('path')
 const fs = require('fs')
 const http = require('http')
 
-function nativeFixture() {
+function nativeFixture(config = {}) {
+  if (config.browserLanguage) localStorage.setItem('aurora-language', config.browserLanguage)
+  if (config.browserAppearance) localStorage.setItem('aurora-mobile-appearance', JSON.stringify(config.browserAppearance))
   const songs = Array.from({ length: 360 }, (_, i) => ({
     id: 'song-' + String(i).padStart(3, '0'), title: 'Song ' + String(i).padStart(3, '0'),
     artist: 'Artist ' + (i % 8), album: 'Album ' + (i % 20), year: 2024, genre: i % 2 ? 'Pop' : 'Rock',
@@ -19,7 +21,8 @@ function nativeFixture() {
   const calls = []
   let callbackId = 0
   let status = { songId: 'song-255', playing: false, playWhenReady: false, buffering: false, position: 18, duration: 240, error: null, speed: 1, revision: 1 }
-  let appearance = { mode: 'system', accent: '#b94b5c', dynamic: true, dynamicAvailable: true, motion: true, lowPowerVisuals: true, autoLookup: false, lyricsSize: 18, showBackdrop: true, dark: false, systemReducedMotion: false, powerSave: false, batteryOptimized: true, backgroundRestricted: false }
+  let appearance = { mode: 'system', accent: '#b94b5c', dynamic: true, dynamicAvailable: true, motion: true, lowPowerVisuals: true, autoLookup: false, lyricsSize: 18, showBackdrop: true, dark: false, systemReducedMotion: false, powerSave: false, batteryOptimized: true, backgroundRestricted: false,
+    language: 'zh-CN', effectiveLanguage: 'zh-CN', ...config.appearance }
   let wifiOnly = true
   let playbackOptions = { repeatMode: 'off', shuffle: false, rememberPlayback: true, speed: 1, volume: 1, normalizeVolume: false, prefetch: false, crossfadeSeconds: 0, sleepRemainingSeconds: 0 }
   let streamBytes = 8 * 1024 * 1024
@@ -134,10 +137,24 @@ function nativeFixture() {
       if (method === 'download') { const task = tasks.find(task => task.songId === options.songId); if (task) { task.state = 'pending'; task.error = '' } return {} }
       if (method === 'cancelDownload') { const index = tasks.findIndex(task => task.songId === options.songId), task = tasks.splice(index, 1)[0]; return { freedBytes: task?.receivedBytes || 0 } }
       if (method === 'setWifiOnly') { wifiOnly = options.enabled; return {} }
-      if (method === 'appearance') return palette()
+      if (method === 'appearance') {
+        const snapshot = palette()
+        if (window.__fixture.holdReads) await new Promise(resolve => window.__fixture.readWaiters.push(resolve))
+        if (window.__fixture.readFailures > 0) { window.__fixture.readFailures--; throw new Error('Fixture preference read failed') }
+        return snapshot
+      }
       if (method === 'setAppearance') {
+        if (window.__fixture.holdSaves) await new Promise(resolve => window.__fixture.saveWaiters.push(resolve))
         if (window.__fixture.appearanceDelay) await new Promise(resolve => setTimeout(resolve, window.__fixture.appearanceDelay))
+        if (window.__fixture.failAppearance) throw new Error('Fixture preference save failed')
         appearance = { ...appearance, ...options }; return palette()
+      }
+      if (method === 'setLanguage') {
+        if (window.__fixture.holdSaves) await new Promise(resolve => window.__fixture.saveWaiters.push(resolve))
+        if (window.__fixture.failLanguage === options.language) throw new Error('Fixture language save failed')
+        if (!['', 'zh-CN', 'zh-TW', 'en', 'fr'].includes(options.language)) throw new Error('Invalid fixture language')
+        appearance = { ...appearance, language: options.language, effectiveLanguage: options.language || config.systemLanguage || 'en' }
+        return {}
       }
       if (method === 'launchState') return { openPlayer: false }
       if (method === 'play') {
@@ -163,7 +180,12 @@ function nativeFixture() {
       return {}
     },
   }
-  window.__fixture = { songs, calls, emit, queue: [], setPowerSave(value) { appearance = { ...appearance, powerSave: value } }, setPlaybackError(error, errorCode = null) {
+  window.__fixture = { songs, calls, emit, queue: [], holdReads: Boolean(config.holdReads), readFailures: config.readFailures || 0,
+    holdSaves: false, readWaiters: [], saveWaiters: [], getAppearance: palette,
+    changeAppearance(change) { appearance = { ...appearance, ...change } },
+    releaseReads() { this.holdReads = false; this.readWaiters.splice(0).forEach(resolve => resolve()) },
+    releaseSaves() { this.holdSaves = false; this.saveWaiters.splice(0).forEach(resolve => resolve()) },
+    setPowerSave(value) { appearance = { ...appearance, powerSave: value } }, setPlaybackError(error, errorCode = null) {
     status = { ...status, error, errorCode, playing: !error && status.playWhenReady, buffering: false }
     emit('playbackChanged', { ...status })
   } }
@@ -187,7 +209,8 @@ async function main() {
   const browser = await chromium.launch({ executablePath: process.env.AURORA_CHROME || 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe', headless: true })
   const output = path.join(__dirname, '..', 'test-results')
   fs.mkdirSync(output, { recursive: true })
-  const guideImages = path.join(__dirname, '..', 'docs', 'images', 'android')
+  const guideImages = process.env.AURORA_UPDATE_GUIDE_IMAGES === '1'
+    ? path.join(__dirname, '..', 'docs', 'images', 'android') : path.join(output, 'android-guide')
   fs.mkdirSync(guideImages, { recursive: true })
   try {
     const page = await browser.newPage({ viewport: { width: 393, height: 852 }, isMobile: true, hasTouch: true })
@@ -204,6 +227,8 @@ async function main() {
       const sheet = page.locator('.choice-sheet')
       await sheet.getByRole('option').and(sheet.locator('[data-value=' + JSON.stringify(String(value)) + ']')).click()
       await sheet.waitFor({ state: 'hidden' })
+      if (await control.getAttribute('data-setting') === 'language')
+        await page.waitForFunction(language => document.documentElement.lang === language, value)
     }
     const playerAction = async (scope, name) => {
       await scope.locator('.more-actions').click()
@@ -487,8 +512,8 @@ async function main() {
     await page.getByLabel('封面氛围背景', { exact: true }).uncheck()
     await page.waitForFunction(() => document.documentElement.style.getPropertyValue('--lyrics-size') === '36px' && document.documentElement.dataset.motion === 'false')
     await page.waitForFunction(() => {
-      const saved = window.__fixture.calls.filter(call => call.method === 'setAppearance').at(-1)?.options
-      return saved?.lyricsSize === 36 && saved.motion === false && saved.mode === 'dark' && saved.showBackdrop === false
+      const saved = window.__fixture.getAppearance()
+      return saved.lyricsSize === 36 && saved.motion === false && saved.mode === 'dark' && saved.showBackdrop === false
     })
     assert.equal(await page.evaluate(() => document.documentElement.dataset.dark), 'true', 'Quick appearance changes must retain the theme')
     await page.evaluate(() => { window.__fixture.appearanceDelay = 0 })
@@ -736,4 +761,5 @@ async function main() {
     console.log('Mobile UI passed: responsive layouts, full library/queues/collections/playlists, lyrics/36px font, playback/restore/device dialog, opt-in ReplayGain/prefetch/crossfade and secondary-only tags in 4 languages, themes/backdrop/power priority, cache/download safety and hidden polling, AI/resource priorities/key clearing, opt-in iTunes, secondary asset search/preview/confirmation/reset/stale cancellation, full-library local/hybrid playlists. Native calls are mocked; not a hardware playback test.')
   } finally { await browser.close(); await new Promise(resolve => server.close(resolve)) }
 }
-main().catch(error => { console.error(error); process.exitCode = 1 })
+module.exports = { nativeFixture }
+if (require.main === module) main().catch(error => { console.error(error); process.exitCode = 1 })

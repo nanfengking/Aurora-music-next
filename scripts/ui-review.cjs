@@ -2,6 +2,7 @@ const { _electron: electron } = require('playwright')
 const { resolve } = require('node:path')
 const { mkdirSync, mkdtempSync, rmSync } = require('node:fs')
 const assert = require('node:assert/strict')
+const { resizeReviewWindow } = require('./review-window.cjs')
 const root = resolve(__dirname, '..')
 const screenshots = resolve(root, 'test-results', 'screenshots')
 mkdirSync(screenshots, { recursive: true })
@@ -28,7 +29,7 @@ async function run() {
     await page.getByRole('heading', { name: '为你精选', exact: true }).waitFor()
 
     async function size(width, height) {
-      await application.evaluate(({ BrowserWindow }, dimensions) => BrowserWindow.getAllWindows()[0].setContentSize(...dimensions), [width, height])
+      await resizeReviewWindow(application, page, width, height)
       await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))))
       const actual = await page.evaluate(() => [innerWidth, innerHeight])
       console.log(JSON.stringify({ requested: [width, height], actual }))

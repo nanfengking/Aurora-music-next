@@ -354,3 +354,4 @@ input[type="range"]:hover { background: linear-gradient(to right, var(--accent) 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
 }
+.preference-error { top: 44px; bottom: auto; z-index: 1000; max-width: calc(100vw - 24px); }

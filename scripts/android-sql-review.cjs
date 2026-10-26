@@ -5,19 +5,20 @@ const { readFileSync } = require('node:fs')
 const { join } = require('node:path')
 const assert = require('node:assert/strict')
 const source = readFileSync(join(__dirname, '../android/app/src/main/java/com/aurora/musicnext/MusicStore.java'), 'utf8')
+const preferenceSource = readFileSync(join(__dirname, '../android/app/src/main/java/com/aurora/musicnext/NativePreferenceStorage.java'), 'utf8')
 const db = new DatabaseSync(':memory:')
-const method = (signature) => {
-  const start = source.indexOf(signature)
+const method = (signature, text = source) => {
+  const start = text.indexOf(signature)
   assert.ok(start >= 0, signature)
-  return source.slice(start, source.indexOf('\n    }', start))
+  return text.slice(start, text.indexOf('\n    }', start))
 }
 const literal = (raw) => JSON.parse('"' + raw + '"')
 const sql = (body, prefix) => {
   const result = [...body.matchAll(/"((?:[^"\\]|\\.)*)"/g)].map(match => literal(match[1])).find(value => value.startsWith(prefix))
   assert.ok(result, prefix); return result
 }
-const executeSchema = (signature) => {
-  for (const match of method(signature).matchAll(/db\.execSQL\("((?:[^"\\]|\\.)*)"\)/g)) db.exec(literal(match[1]))
+const executeSchema = (signature, text = source) => {
+  for (const match of method(signature, text).matchAll(/db\.execSQL\("((?:[^"\\]|\\.)*)"\)/g)) db.exec(literal(match[1]))
 }
 try {
   executeSchema('public void onCreate(SQLiteDatabase db)')
@@ -25,6 +26,9 @@ try {
   db.prepare("INSERT INTO songs(id,title,format,url,size,created_at,favorite,play_count) VALUES(?,?,?,?,?,'fixture',1,8)").run('fixture', 'Fixture song', 'm4a', 'https://example.com/music.m4a', 5000)
   db.exec("INSERT INTO history(song_id,action,timestamp) VALUES('fixture','start',12345); INSERT INTO playback_queue VALUES(1,'fixture'); INSERT INTO playback_state VALUES(1,'fixture',4567)")
   for (const name of ['Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten']) executeSchema('private static void upgradeTo' + name + '(SQLiteDatabase db)')
+  executeSchema('static void createTable(SQLiteDatabase db)', preferenceSource)
+  const pendingPreferences = db.prepare('SELECT initialized,version,revision,restore_revision,payload FROM native_preferences WHERE singleton=1').get()
+  assert.deepEqual({ ...pendingPreferences }, { initialized: 0, version: 1, revision: 0, restore_revision: 0, payload: null })
   const saved = db.prepare("SELECT favorite,play_count,last_played_at,download_token FROM songs WHERE id='fixture'").get()
   assert.equal(saved.favorite, 1); assert.equal(saved.play_count, 8); assert.equal(saved.last_played_at, 12345); assert.equal(saved.download_token, '')
   assert.equal(db.prepare('SELECT original_position FROM playback_queue').get().original_position, 1)
@@ -71,5 +75,5 @@ try {
   db.exec(sql(method('void invalidateAssets()'), 'UPDATE songs SET assets_checked_at='))
   assert.equal(db.prepare('SELECT assets_checked_at FROM songs').get().assets_checked_at, 0)
   assert.equal(db.prepare('SELECT background_path FROM songs').get().background_path, 'chosen-background')
-  console.log('ANDROID_SQL_PASS: extracted schema v1–10, nullable ReplayGain, manual-resource guards, recovery revisions with queue/history retention, reservations, pauses, retry budget and stale/completed generation guards. Host SQLite only; Android instrumentation still required.')
+  console.log('ANDROID_SQL_PASS: extracted schema v1–11, pending preference singleton, nullable ReplayGain, manual-resource guards, recovery revisions with queue/history retention, reservations, pauses, retry budget and stale/completed generation guards. Host SQLite only; Android instrumentation still required.')
 } finally { db.close() }

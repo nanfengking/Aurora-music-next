@@ -61,6 +61,7 @@ Thumbs.db
 desktop.ini
 
 # Test artifacts
+.superpowers/
 coverage/
 test-results/
 playwright-report/

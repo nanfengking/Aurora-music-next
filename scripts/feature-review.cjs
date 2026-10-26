@@ -8,6 +8,18 @@ const root = resolve(__dirname, '..')
 const screenshots = join(root, 'test-results', 'screenshots')
 fs.mkdirSync(screenshots, { recursive: true })
 
+// Keep the inspector reply alive on the main event loop, as in review-window.
+// No retry: the fixture change must finish and acknowledge the requested mode.
+async function setHybridMode(application, mode) {
+  const actual = await application.evaluate((_electron, mode) => new Promise((resolve, reject) => {
+    setImmediate(() => {
+      try { globalThis.hybridMode = mode; resolve(globalThis.hybridMode) }
+      catch (error) { reject(error) }
+    })
+  }), mode)
+  assert.equal(actual, mode)
+}
+
 async function run() {
   const profile=fs.mkdtempSync(join(root,'.ui-review-features-'))
   const sampleDir=join(profile,'samples');fs.mkdirSync(sampleDir)
@@ -151,14 +163,14 @@ async function run() {
     assert.equal(await app.evaluate(()=>globalThis.featureCalls.length),callCount)
     const after=await page.evaluate(()=>window.electronAPI.getPlaylists());assert.equal(after.data.length,before.data.length)
     for(const mode of ['unavailable','bad-selection','bad-plan']) {
-      await app.evaluate((_electron,mode)=>{globalThis.hybridMode=mode; return true},mode)
+      await setHybridMode(app, mode)
       const fallback=await page.evaluate(()=>window.electronAPI.generateAiPlaylist('40分钟爵士'))
       assert.equal(fallback.success,true);assert.equal(fallback.data.diagnostics.durationSeconds,2400)
       assert.ok(fallback.data.songIds.every(id=>id.startsWith('rare-')))
       assert.ok(fallback.data.diagnostics.warnings.length>0, JSON.stringify({mode,result:fallback.data}))
       if(mode==='unavailable')assert.equal(fallback.data.source,'local')
     }
-    await app.evaluate(()=>{globalThis.hybridMode='normal'; return true})
+    await setHybridMode(app, 'normal')
     calls=await app.evaluate(()=>globalThis.featureCalls)
     for(const call of calls.filter(call=>call.body)) {
       assert.ok(!call.body.includes('remotePath'));assert.ok(!call.body.includes('filePath'));assert.ok(!call.body.includes('play_history'));assert.ok(!call.body.includes('fake-test-key'))

@@ -22,17 +22,13 @@ import androidx.media3.common.Format;
 
 @androidx.annotation.OptIn(markerClass = androidx.media3.common.util.UnstableApi.class)
 final class MusicStore extends SQLiteOpenHelper {
-    // Background database writes only: preference changes on the UI thread never wait for disk I/O.
-    private static final Object RESUME_WRITES = new Object();
     private final File offlineDirectory;
-    private final PlaybackSettings playbackPreferences;
     MusicStore(Context context) {
         this(context, "aurora-mobile.db");
     }
     MusicStore(Context context, String databaseName) {
-        super(context, databaseName, null, 10);
+        super(context, databaseName, null, 11);
         offlineDirectory = new File(context.getFilesDir(), "offline");
-        playbackPreferences = databaseName.equals("aurora-mobile.db") ? new PlaybackSettings(context) : new PlaybackSettings(context, "playback-options-" + databaseName);
     }
 
     @Override public void onCreate(SQLiteDatabase db) {
@@ -49,6 +45,7 @@ final class MusicStore extends SQLiteOpenHelper {
         upgradeToEight(db);
         upgradeToNine(db);
         upgradeToTen(db);
+        upgradeToEleven(db);
     }
     @Override public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         if (oldVersion < 2) upgradeToTwo(db);
@@ -60,6 +57,10 @@ final class MusicStore extends SQLiteOpenHelper {
         if (oldVersion < 8) upgradeToEight(db);
         if (oldVersion < 9) upgradeToNine(db);
         if (oldVersion < 10) upgradeToTen(db);
+        if (oldVersion < 11) upgradeToEleven(db);
+    }
+    private static void upgradeToEleven(SQLiteDatabase db) {
+        NativePreferenceStorage.createTable(db);
     }
     private static void upgradeToTen(SQLiteDatabase db) {
         db.execSQL("ALTER TABLE songs ADD COLUMN replay_gain_db REAL");
@@ -295,10 +296,10 @@ final class MusicStore extends SQLiteOpenHelper {
             replaceQueue(ids, new LibrarySelection(query, offlineOnly, null, null, false), start);
         }
         void replaceQueue(JSONArray ids, LibrarySelection selection, String start) throws JSONException {
-            long revision = playbackPreferences.revision();
             SQLiteDatabase db = getWritableDatabase();
             db.beginTransaction();
             try {
+                NativePreferenceRecord preferences = NativePreferenceStorage.read(db);
                 db.delete("playback_queue", null, null);
                 if (ids == null) {
                     db.execSQL("INSERT INTO playback_queue(song_id) SELECT id FROM songs WHERE " + selection.where
@@ -311,10 +312,9 @@ final class MusicStore extends SQLiteOpenHelper {
                 }
                 if (queueIndex(start) < 0) throw new IllegalArgumentException("起始歌曲不可播放");
                 db.execSQL("UPDATE playback_queue SET original_position=position");
+                writePlayback(db, start, 0, preferences, preferences.restoreRevision);
                 db.setTransactionSuccessful();
             } finally { db.endTransaction(); }
-            // Keep the lock order consistent: never wait for resume writes inside a DB transaction.
-            savePlayback(start, 0, revision);
         }
     /** Reorder in SQLite, not a full-library Java/JavaScript array. Restore the original playlist order when disabled. */
     void orderQueue(boolean shuffle) { orderQueue(shuffle, null); }
@@ -407,29 +407,43 @@ final class MusicStore extends SQLiteOpenHelper {
         }
     }
         void savePlayback(String id, long position) {
-            savePlayback(id, position, playbackPreferences.revision());
+            savePlaybackInTransaction(id, position, null);
         }
         void savePlayback(String id, long position, long revision) {
-            synchronized (RESUME_WRITES) {
-                if (!playbackPreferences.remember() || revision != playbackPreferences.revision()) return;
-                getWritableDatabase().execSQL("INSERT OR REPLACE INTO playback_state(id,song_id,position_ms,restore_revision) VALUES(1,?,?,?)", new Object[]{id, Math.max(0, position), revision});
-                // Preferences can change while SQLite is writing; remove only this obsolete checkpoint.
-                if (!playbackPreferences.remember() || revision != playbackPreferences.revision())
-                    getWritableDatabase().delete("playback_state", "restore_revision=?", new String[]{Long.toString(revision)});
-            }
+            savePlaybackInTransaction(id, position, revision);
+        }
+        private void savePlaybackInTransaction(String id, long position, Long revision) {
+            SQLiteDatabase db = getWritableDatabase(); db.beginTransaction();
+            try {
+                NativePreferenceRecord preferences = NativePreferenceStorage.read(db);
+                writePlayback(db, id, position, preferences, revision == null ? preferences.restoreRevision : revision);
+                db.setTransactionSuccessful();
+            } finally { db.endTransaction(); }
+        }
+        private static void writePlayback(SQLiteDatabase db, String id, long position, NativePreferenceRecord preferences, long revision) {
+            if ((Boolean) preferences.values.get("rememberPlayback") && revision == preferences.restoreRevision)
+                db.execSQL("INSERT OR REPLACE INTO playback_state(id,song_id,position_ms,restore_revision) VALUES(1,?,?,?)", new Object[]{id, Math.max(0, position), revision});
         }
         void forgetPlayback(long disabledRevision) {
             // A late clear must not erase a newer enabled session's recovery point.
-            synchronized (RESUME_WRITES) {
-                getWritableDatabase().delete("playback_state", "restore_revision<?", new String[]{Long.toString(disabledRevision)});
-            }
+            SQLiteDatabase db = getWritableDatabase(); db.beginTransaction();
+            try {
+                NativePreferenceRecord preferences = NativePreferenceStorage.read(db);
+                db.delete("playback_state", "restore_revision<?", new String[]{Long.toString(Math.min(disabledRevision, preferences.restoreRevision))});
+                db.setTransactionSuccessful();
+            } finally { db.endTransaction(); }
         }
         String[] savedPlayback() {
-            if (!playbackPreferences.remember()) return null;
-            long revision = playbackPreferences.revision();
-            try (Cursor cursor = getReadableDatabase().rawQuery("SELECT song_id,position_ms FROM playback_state WHERE id=1 AND restore_revision=?", new String[]{Long.toString(revision)})) {
-                return cursor.moveToFirst() && playbackPreferences.remember() && revision == playbackPreferences.revision() ? new String[]{cursor.getString(0), cursor.getString(1)} : null;
-            }
+            SQLiteDatabase db = getReadableDatabase(); db.beginTransaction();
+            try {
+                NativePreferenceRecord preferences = NativePreferenceStorage.read(db);
+                String[] result = null;
+                if ((Boolean) preferences.values.get("rememberPlayback"))
+                    try (Cursor cursor = db.rawQuery("SELECT song_id,position_ms FROM playback_state WHERE id=1 AND restore_revision=?", new String[]{Long.toString(preferences.restoreRevision)})) {
+                        if (cursor.moveToFirst()) result = new String[]{cursor.getString(0), cursor.getString(1)};
+                    }
+                db.setTransactionSuccessful(); return result;
+            } finally { db.endTransaction(); }
         }
         void downloadState(String id, String state, String error) {
             ContentValues values = new ContentValues();

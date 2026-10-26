@@ -21,6 +21,8 @@ import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 import com.getcapacitor.annotation.CapacitorPlugin;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.MoreExecutors;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import java.io.File;
@@ -34,6 +36,7 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Executor;
 import androidx.work.Constraints;
 import androidx.work.BackoffPolicy;
 import androidx.work.Data;
@@ -55,6 +58,12 @@ public final class AuroraMusicPlugin extends Plugin {
     private AiClient ai;
     private MusicStore store;
     private SecretStore secrets;
+    private NativePreferences preferences;
+    private final java.util.Set<com.google.common.util.concurrent.SettableFuture<?>> preferenceWaits = new java.util.HashSet<>();
+    private Context application;
+    private Executor main;
+    private volatile int lifecycle;
+    private volatile long assetGeneration;
     private WebDavClient webdav;
     private DownloadManager downloads;
     private ListenableFuture<MediaController> controllerFuture;
@@ -68,6 +77,8 @@ public final class AuroraMusicPlugin extends Plugin {
     };
 
     @Override public void load() {
+        application = getContext().getApplicationContext(); main = ContextCompat.getMainExecutor(application);
+        preferences = NativePreferences.forApplication(application); preferences.ready();
         store = new MusicStore(getContext()); secrets = new SecretStore(getContext());
         webdav = new WebDavClient(getContext());
         ai = new AiClient(getContext());
@@ -78,7 +89,7 @@ public final class AuroraMusicPlugin extends Plugin {
         LibraryEvents.listen(libraryObserver);
     }
     @Override protected void handleOnPause() {
-        foreground = false;
+        foreground = false; lifecycle++; assetGeneration++;
         if (ai != null) ai.cancel();
         if (assets != null) { assets.cancel(); assetIo.execute(assets::clearPreviews); }
         JSObject state = new JSObject(); state.put("active", false); notifyListeners("appStateChanged", state);
@@ -97,21 +108,34 @@ public final class AuroraMusicPlugin extends Plugin {
         super.handleOnNewIntent(intent);
     }
     private void applySystemTheme() {
-        getActivity().runOnUiThread(() -> {
+        int epoch = lifecycle;
+        ListenableFuture<NativePreferenceRecord> ready = preferenceWait(preferences.ready());
+        ready.addListener(() -> {
+            try { Futures.getDone(ready); if (epoch == lifecycle) applySystemThemeNow(); }
+            catch (Exception ignored) { /* Startup reports readiness failure; do not paint defaults. */ }
+        }, main);
+    }
+    private void applySystemThemeNow() {
+        if (!destroyed && foreground && getActivity() != null && getBridge() != null && getBridge().getWebView() != null) {
             AppearanceSettings theme = new AppearanceSettings(getContext());
             getActivity().getWindow().getDecorView().setBackgroundColor(theme.color("background"));
             getBridge().getWebView().setBackgroundColor(theme.color("background"));
             androidx.core.view.WindowInsetsControllerCompat bars = new androidx.core.view.WindowInsetsControllerCompat(
                 getActivity().getWindow(), getActivity().getWindow().getDecorView());
             bars.setAppearanceLightStatusBars(!theme.dark()); bars.setAppearanceLightNavigationBars(!theme.dark());
-        });
+        }
     }
     @Override protected void handleOnDestroy() {
-        foreground = false; destroyed = true; PlaybackService.setObserver(null); LibraryEvents.listen(null);
+        foreground = false; destroyed = true; lifecycle++; assetGeneration++;
+        List<com.google.common.util.concurrent.SettableFuture<?>> waiting;
+        synchronized (preferenceWaits) { waiting = new ArrayList<>(preferenceWaits); preferenceWaits.clear(); }
+        for (com.google.common.util.concurrent.SettableFuture<?> wait : waiting)
+            wait.setException(new IllegalStateException("PLUGIN_CLOSED"));
+        PlaybackService.setObserver(null); LibraryEvents.listen(null);
         if (ai != null) ai.cancel(); aiIo.shutdown();
         if (assets != null) assets.cancel();
         ContextCompat.getMainExecutor(getContext()).execute(() -> {
-            if (controllerFuture != null) MediaController.releaseFuture(controllerFuture);
+            if (controllerFuture != null) { MediaController.releaseFuture(controllerFuture); controllerFuture = null; }
         });
         io.shutdown();
         // The database outlives both ordinary I/O and the final cancelled resource operation.
@@ -124,17 +148,72 @@ public final class AuroraMusicPlugin extends Plugin {
         assetIo.shutdown(); super.handleOnDestroy();
     }
     private interface Work { JSObject run() throws Exception; }
+    private interface ReadyWork { void run() throws Exception; }
     private void background(PluginCall call, Work work) {
-        io.execute(() -> {
-            try { call.resolve(work.run()); }
-            catch (Exception error) { call.reject(error.getMessage() == null ? error.toString() : error.getMessage()); }
-        });
+        if (destroyed) { call.reject("PLUGIN_CLOSED"); return; }
+        try {
+            io.execute(() -> {
+                try { if (destroyed) throw new IllegalStateException("PLUGIN_CLOSED"); call.resolve(work.run()); }
+                catch (Exception error) { call.reject(error.getMessage() == null ? error.toString() : error.getMessage()); }
+            });
+        } catch (java.util.concurrent.RejectedExecutionException closed) { call.reject("PLUGIN_CLOSED"); }
+    }
+    private void whenReady(PluginCall call, Executor executor, ReadyWork work) {
+        if (destroyed) { call.reject("PLUGIN_CLOSED"); return; }
+        ListenableFuture<NativePreferenceRecord> ready = preferenceWait(preferences.ready());
+        ready.addListener(() -> {
+            try {
+                Futures.getDone(ready);
+                executor.execute(() -> {
+                    try { if (destroyed) { call.reject("PLUGIN_CLOSED"); return; } work.run(); }
+                    catch (Exception error) { preferenceFailed(call, error); }
+                });
+            } catch (Exception error) { preferenceFailed(call, error); }
+        }, MoreExecutors.directExecutor());
+    }
+    private void preferenceBackground(PluginCall call, Work work) {
+        whenReady(call, io, () -> call.resolve(work.run()));
+    }
+    private void preferenceResult(PluginCall call, ListenableFuture<?> future, Work result) {
+        ListenableFuture<?> wait = preferenceWait(future);
+        wait.addListener(() -> {
+            try {
+                Futures.getDone(wait);
+                if (destroyed) { call.reject("PLUGIN_CLOSED"); return; }
+                call.resolve(result.run());
+            } catch (Exception error) { preferenceFailed(call, error); }
+        }, main);
+    }
+    /** Only the plugin's wait ends on destroy; accepted writes and shared hydration continue. */
+    private <T> ListenableFuture<T> preferenceWait(ListenableFuture<T> source) {
+        com.google.common.util.concurrent.SettableFuture<T> result = com.google.common.util.concurrent.SettableFuture.create();
+        synchronized (preferenceWaits) {
+            if (destroyed) result.setException(new IllegalStateException("PLUGIN_CLOSED"));
+            else preferenceWaits.add(result);
+        }
+        result.addListener(() -> { synchronized (preferenceWaits) { preferenceWaits.remove(result); } }, MoreExecutors.directExecutor());
+        // A process-owned stalled read must not retain a destroyed plugin or its calls.
+        java.lang.ref.WeakReference<com.google.common.util.concurrent.SettableFuture<T>> weak = new java.lang.ref.WeakReference<>(result);
+        source.addListener(() -> {
+            com.google.common.util.concurrent.SettableFuture<T> pending = weak.get();
+            if (pending == null || pending.isDone()) return;
+            try { pending.set(Futures.getDone(source)); }
+            catch (Exception failure) { pending.setException(failure); }
+        }, MoreExecutors.directExecutor());
+        return result;
+    }
+    private void preferenceFailed(PluginCall call, Throwable failure) {
+        if (destroyed) { call.reject("PLUGIN_CLOSED"); return; }
+        while (failure instanceof java.util.concurrent.ExecutionException && failure.getCause() != null) failure = failure.getCause();
+        call.reject(failure instanceof NativePreferences.CommittedEffectException
+            ? "PREFERENCES_SAVED_REFRESH_FAILED" : "PREFERENCES_FAILED");
     }
     private void resourceWork(PluginCall call, Work work) {
         if (destroyed || !foreground || !assetBusy.compareAndSet(false, true)) { call.reject("ASSET_BUSY"); return; }
+        int epoch = lifecycle; long generation = assetGeneration;
         assetIo.execute(() -> {
             try {
-                if (destroyed || !foreground) throw new java.io.IOException("Resource operation cancelled");
+                if (destroyed || !foreground || epoch != lifecycle || generation != assetGeneration) throw new java.io.IOException("Resource operation cancelled");
                 JSObject result = work.run(); assetBusy.set(false); call.resolve(result);
             } catch (Exception error) {
                 assetBusy.set(false);
@@ -150,7 +229,7 @@ public final class AuroraMusicPlugin extends Plugin {
         });
     }
     private JSObject assetChanged(String id, JSONObject song) {
-        getActivity().runOnUiThread(() -> PlaybackService.assetsChanged(id)); changed();
+        main.execute(() -> { if (!destroyed) PlaybackService.assetsChanged(id); }); changed();
         JSObject result = new JSObject(); result.put("song", song); return result;
     }
     private void changed() {
@@ -316,35 +395,47 @@ public final class AuroraMusicPlugin extends Plugin {
         });
     }
     @PluginMethod public void settings(PluginCall call) {
-        background(call, () -> {
+        preferenceBackground(call, () -> {
             JSObject result = JSObject.fromJSONObject(StreamCache.inspect(getContext())); result.put("wifiOnly", secrets.wifiOnly()); result.put("storageBytes", store.offlineBytes());
             result.put("artworkBytes", ArtworkStore.bytes(getContext()));
             result.put("partialBytes", store.partialBytes()); result.put("freeBytes", getContext().getFilesDir().getUsableSpace()); return result;
         });
     }
     @PluginMethod public void setWifiOnly(PluginCall call) {
-        secrets.wifiOnly(Boolean.TRUE.equals(call.getBoolean("enabled"))); call.resolve();
-        PlaybackService.prefetchSettingsChanged();
+        if (destroyed) { call.reject("PLUGIN_CLOSED"); return; }
+        try {
+            Object enabled = call.getData().get("enabled");
+            if (!(enabled instanceof Boolean)) throw new IllegalArgumentException("Invalid wifiOnly");
+            preferenceResult(call, preferences.update(new JSONObject().put("wifiOnly", enabled), main, (before, after) -> {
+                PlaybackService.prefetchSettingsChanged(); return Futures.immediateVoidFuture();
+            }), JSObject::new);
+        } catch (Exception invalid) { preferenceFailed(call, invalid); }
     }
     @PluginMethod public void clearStreamCache(PluginCall call) {
         PlaybackService.holdPrefetch();
         background(call, () -> JSObject.fromJSONObject(StreamCache.clear(getContext())));
     }
     @PluginMethod public void appearance(PluginCall call) {
-        try { call.resolve(JSObject.fromJSONObject(new AppearanceSettings(getContext()).status())); }
-        catch (Exception error) { call.reject(error.toString()); }
+        whenReady(call, main, () -> call.resolve(JSObject.fromJSONObject(new AppearanceSettings(application).status())));
     }
     @PluginMethod public void setAppearance(PluginCall call) {
+        if (destroyed) { call.reject("PLUGIN_CLOSED"); return; }
         try {
-            new AppearanceSettings(getContext()).save(call.getData());
-            applySystemTheme(); MusicWidgetProvider.refresh(getContext()); PlaybackService.widgetsChanged(); appearance(call);
-        } catch (Exception error) { call.reject(error.toString()); }
+            JSONObject patch = NativePreferences.only(call.getData(), AppearanceSettings.KEYS);
+            int epoch = lifecycle;
+            preferenceResult(call, preferences.update(patch, main, (before, after) -> {
+                if (epoch == lifecycle) applySystemThemeNow();
+                PlaybackService.widgetsChanged(); return MusicWidgetProvider.refresh(application);
+            }), () -> JSObject.fromJSONObject(new AppearanceSettings(application).status()));
+        } catch (Exception error) { preferenceFailed(call, error); }
     }
     @PluginMethod public void setLanguage(PluginCall call) {
+        if (destroyed) { call.reject("PLUGIN_CLOSED"); return; }
         try {
-            new AppearanceSettings(getContext()).language(call.getString("language", ""));
-            MusicWidgetProvider.refresh(getContext()); call.resolve();
-        } catch (Exception error) { call.reject(error.toString()); }
+            Object language = call.getData().get("language");
+            preferenceResult(call, preferences.update(new JSONObject().put("language", language), main,
+                (before, after) -> MusicWidgetProvider.refresh(application)), JSObject::new);
+        } catch (Exception error) { preferenceFailed(call, error); }
     }
     @PluginMethod public void openSystemSettings(PluginCall call) {
         getActivity().runOnUiThread(() -> {
@@ -377,14 +468,22 @@ public final class AuroraMusicPlugin extends Plugin {
             String id = call.getString("songId", "");
             if (store.song(id) == null) throw new IllegalArgumentException("Song not found");
             store.lyrics(id, call.getString("text", ""));
-            getActivity().runOnUiThread(() -> PlaybackService.assetsChanged(id));
+            main.execute(() -> { if (!destroyed) PlaybackService.assetsChanged(id); });
             changed(); return new JSObject();
         });
     }
     @PluginMethod public void lookupAssets(PluginCall call) {
-        resourceWork(call, () -> {
+        int epoch = lifecycle; long generation = assetGeneration;
+        whenReady(call, main, () -> {
+            if (!foreground || epoch != lifecycle || generation != assetGeneration) { call.reject("ASSET_CANCELLED"); return; }
+            resourceWork(call, () -> {
             String id = call.getString("songId", "");
-            return assetChanged(id, assets.lookup(store, id, Boolean.TRUE.equals(call.getBoolean("force"))));
+            boolean force = Boolean.TRUE.equals(call.getBoolean("force"));
+            if (!force && !new AppearanceSettings(application).autoLookup()) {
+                JSObject result = new JSObject(); result.put("song", store.song(id)); return result;
+            }
+            return assetChanged(id, assets.lookup(store, id, force));
+            });
         });
     }
     @PluginMethod public void assetProviders(PluginCall call) {
@@ -420,12 +519,12 @@ public final class AuroraMusicPlugin extends Plugin {
         resourceWork(call, () -> { String id = call.getString("songId", ""); return assetChanged(id, assets.reset(store, id, call.getString("kind", ""))); });
     }
     @PluginMethod public void cancelAssets(PluginCall call) {
-        assets.cancel();
+        assetGeneration++; assets.cancel();
         if (destroyed) { call.resolve(); return; }
         assetIo.execute(() -> { assets.clearPreviews(); call.resolve(); });
     }
     @PluginMethod public void download(PluginCall call) {
-        background(call, () -> { enqueue(call.getString("songId", "")); changed(); return new JSObject(); });
+        preferenceBackground(call, () -> { enqueue(call.getString("songId", "")); changed(); return new JSObject(); });
     }
     @PluginMethod public void downloadTasks(PluginCall call) {
         background(call, () -> JSObject.fromJSONObject(store.downloadTasks(Math.max(0, call.getInt("offset", 0)), Math.max(1, Math.min(60, call.getInt("limit", 60))))));
@@ -466,7 +565,7 @@ public final class AuroraMusicPlugin extends Plugin {
         });
     }
     @PluginMethod public void downloadMany(PluginCall call) {
-        background(call, () -> {
+        preferenceBackground(call, () -> {
             JSArray ids = call.getArray("songIds");
             if (ids == null || ids.length() > 200) throw new IllegalArgumentException("一次最多下载 200 首");
             for (int i = 0; i < ids.length(); i++) enqueue(ids.getString(i));
@@ -511,23 +610,36 @@ public final class AuroraMusicPlugin extends Plugin {
 
     private interface Control { void apply(MediaController controller) throws Exception; }
     private void withController(PluginCall call, Control action) {
-        ContextCompat.getMainExecutor(getContext()).execute(() -> {
+        withController(call, action, lifecycle);
+    }
+    private void withController(PluginCall call, Control action, int epoch) {
+        whenReady(call, main, () -> {
             try {
+                if (!foreground || epoch != lifecycle) { call.reject("CONTROL_CANCELLED"); return; }
                 if (controllerFuture == null) {
-                    SessionToken token = new SessionToken(getContext(), new ComponentName(getContext(), PlaybackService.class));
-                    controllerFuture = new MediaController.Builder(getContext(), token).buildAsync();
+                    SessionToken token = new SessionToken(application, new ComponentName(application, PlaybackService.class));
+                    controllerFuture = new MediaController.Builder(application, token).buildAsync();
                 }
                 ListenableFuture<MediaController> future = controllerFuture;
                 future.addListener(() -> {
-                    try { action.apply(future.get()); }
-                    catch (Exception error) { call.reject(error.getMessage() == null ? error.toString() : error.getMessage()); }
-                }, ContextCompat.getMainExecutor(getContext()));
+                    if (destroyed || !foreground || epoch != lifecycle || controllerFuture != future) { call.reject("CONTROL_CANCELLED"); return; }
+                    final MediaController controller;
+                    try { controller = Futures.getDone(future); }
+                    catch (Exception error) {
+                        if (controllerFuture == future) { controllerFuture = null; MediaController.releaseFuture(future); }
+                        call.reject("CONTROL_UNAVAILABLE"); return;
+                    }
+                    try { action.apply(controller); }
+                    catch (Exception error) { call.reject("CONTROL_FAILED"); }
+                }, main);
             } catch (Exception error) { call.reject(error.toString()); }
         });
     }
     @PluginMethod public void play(PluginCall call) {
-        io.execute(() -> {
+        int epoch = lifecycle;
+        whenReady(call, io, () -> {
             try {
+                if (!foreground || epoch != lifecycle) { call.reject("CONTROL_CANCELLED"); return; }
                 JSArray ids = call.getArray("songIds");
                 String start = call.getString("startId", "");
                 boolean offlineOnly = Boolean.TRUE.equals(call.getBoolean("offlineOnly"));
@@ -548,7 +660,7 @@ public final class AuroraMusicPlugin extends Plugin {
                 for (int i = 0; i < queue.size(); i++) if (queue.get(i).mediaId.equals(start)) startIndex = i;
                 if (startIndex < 0) throw new IllegalArgumentException("起始歌曲不可播放");
                 final int index = startIndex;
-                withController(call, controller -> { controller.setMediaItems(queue, index, 0); controller.prepare(); controller.play(); call.resolve(); });
+                withController(call, controller -> { controller.setMediaItems(queue, index, 0); controller.prepare(); controller.play(); call.resolve(); }, epoch);
             } catch (Exception error) { call.reject(error.getMessage() == null ? error.toString() : error.getMessage()); }
         });
     }
@@ -565,24 +677,15 @@ public final class AuroraMusicPlugin extends Plugin {
     @PluginMethod public void previous(PluginCall call) { withController(call, player -> { player.seekToPreviousMediaItem(); call.resolve(); }); }
     @PluginMethod public void seek(PluginCall call) { withController(call, player -> { player.seekTo((long) (1000 * Math.max(0, call.getDouble("position", 0.0)))); call.resolve(); }); }
     @PluginMethod public void playbackOptions(PluginCall call) {
-        getActivity().runOnUiThread(() -> {
-            try { call.resolve(JSObject.fromJSONObject(PlaybackService.options(getContext()))); }
-            catch (Exception error) { call.reject(error.getMessage()); }
-        });
+        whenReady(call, main, () -> call.resolve(JSObject.fromJSONObject(PlaybackService.options(application))));
     }
     @PluginMethod public void audioOutputs(PluginCall call) {
         background(call, () -> JSObject.fromJSONObject(AudioOutputInfo.status(getContext())));
     }
     @PluginMethod public void setPlaybackOptions(PluginCall call) {
-        getActivity().runOnUiThread(() -> {
-            try {
-                JSObject result = JSObject.fromJSONObject(PlaybackService.setOptions(getContext(), call.getData()));
-                if (Boolean.FALSE.equals(call.getBoolean("rememberPlayback"))) {
-                    long revision = new PlaybackSettings(getContext()).revision();
-                    background(call, () -> { store.forgetPlayback(revision); return result; });
-                } else call.resolve(result);
-            }
-            catch (Exception error) { call.reject(error.getMessage()); }
+        whenReady(call, main, () -> {
+            ListenableFuture<JSONObject> operation = PlaybackService.setOptions(application, call.getData());
+            preferenceResult(call, operation, () -> JSObject.fromJSONObject(Futures.getDone(operation)));
         });
     }
     @PluginMethod public void playback(PluginCall call) {
@@ -590,7 +693,7 @@ public final class AuroraMusicPlugin extends Plugin {
             try {
                 JSObject result = JSObject.fromJSONObject(PlaybackService.snapshot());
                 if (!result.isNull("songId")) { call.resolve(result); return; }
-                background(call, () -> {
+                preferenceBackground(call, () -> {
                     String[] saved = store.savedPlayback();
                     if (saved != null) {
                         result.put("songId", saved[0]); result.put("position", Long.parseLong(saved[1]) / 1000.0);

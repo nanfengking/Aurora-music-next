@@ -2,14 +2,14 @@
 
 ## Release gate
 
-This is a development/source preview, not a security-audited production binary. On 2026-09-28, installing the updater dependency reported **23 findings: 6 moderate, 16 high and 1 critical**. Audit counts can change with registry advisory updates. These include development/build transitive dependencies; they are not proof that every advisory is exploitable in the packaged player. No dependency-major upgrade or automatic forced audit fix was applied during this work.
+The current release is a preview. It is not a security-audited production release. The runtime/build update moves Windows to Electron 42.11.13, Vite 6.4.4, electron-vite 3.1.0 and electron-builder 26.17.0. The dependency audit recorded on 2026-10-14 fell from 30 findings (11 moderate, 18 high, 1 critical) to 11 moderate, with no high or critical findings in that snapshot. Advisory databases change; those counts are dated evidence, not a vulnerability-free guarantee. Current changes are listed in the [release notes](docs/releases/1.5.0-preview.12.md).
 
-Important flagged components include Electron 31.7.7, Vite 5.4.21 and transitive tar in the build toolchain. Examples:
+The baseline used Electron 31.7.7, Vite 5.4.21 and vulnerable build-chain tar copies. The candidate uses Electron 42.11.13, Vite 6.4.4, electron-vite 3.1.0 and electron-builder 26.17.0. Remaining advisory families involve uuid and sprintf-js in platform-generation/downloader/build tools; dependency classification and inspected call sites narrow exposure but do not erase findings. Examples of baseline advisories:
 - [Electron context-isolation advisory](https://github.com/electron/electron/security/advisories/GHSA-h7rp-cf8h-j98x).
 - [Electron custom-protocol advisory](https://github.com/advisories/GHSA-v3j7-r9gq-3gjw).
 - [Vite Windows development-server advisory](https://github.com/advisories/GHSA-v6wh-96g9-6wx3).
 
-Before a public binary release: select supported patched versions, rebuild SQLite for the new Electron ABI, rerun all tests, review npm audit again, and test installation/upgrade on a clean Windows account. Do not expose the development server to untrusted networks or remove navigation restrictions.
+Before a public binary release: revalidate current version support/advisories, keep the ABI-matched SQLite build, review remaining toolchain exposure, rerun the complete regression and test installation/upgrade on a clean Windows account. Do not expose the development server to untrusted networks or remove navigation restrictions. Local native/ASAR/fixture migration tests are not proof of retained-data installer upgrades or physical-device acceptance.
 
 The app currently disables nodeIntegration, enables contextIsolation, denies new windows/navigation and bounds several remote responses. Those controls do not replace runtime updates or a full IPC/network security audit. Runtime risks including malformed media, untrusted remote content and resource-download handling require further review.
 
@@ -26,4 +26,4 @@ Do not include credentials, private WebDAV URLs, original media, databases or pe
 - Enable secret scanning/dependency alerts where available after repository creation.
 - Do not announce “no vulnerabilities” based only on a clean heuristic privacy scan.
 
-中文说明：本次已经清理公开材料中的个人信息并测试功能，但没有把依赖告警冒充为已修复。正式发布安装器前仍需完成依赖升级、回归、签名/安装测试与第三方源码分发准备。源码可以用于协作审阅；不要把它标注为已完成安全审计。
+中文说明：当前为预览版。Android 沿用既有预览签名，正式签名迁移、真机长时运行与安装升级仍需验证。Windows 安装包待 FFmpeg 对应源码和构建材料补齐后提供。请勿在公开问题中附上账号、密钥、私有地址、数据库或听歌记录。

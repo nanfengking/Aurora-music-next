@@ -1,4 +1,6 @@
 {
+  "重试": ["Retry", "Réessayer"],
+  "播放进度未能保存，歌曲播放与其他设置不受影响。": ["Playback position could not be saved. Music and other settings are unaffected.", "Impossible d’enregistrer la position de lecture. La musique et les autres réglages ne sont pas affectés."],
   "专辑": [
     "Albums",
     "Albums"

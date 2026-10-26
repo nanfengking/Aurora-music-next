@@ -25,15 +25,20 @@ final class SecretStore {
     }
     private static final String ALIAS = "aurora_webdav_v1";
     private final SharedPreferences preferences;
+    private final NativePreferences nativePreferences;
 
     SecretStore(Context context) {
         preferences = context.getSharedPreferences("connection", Context.MODE_PRIVATE);
+        nativePreferences = NativePreferences.forApplication(context);
     }
 
     String url() { return preferences.getString("url", ""); }
     String username() { return preferences.getString("username", ""); }
-    boolean wifiOnly() { return preferences.getBoolean("wifiOnly", true); }
-    void wifiOnly(boolean enabled) { preferences.edit().putBoolean("wifiOnly", enabled).apply(); }
+    boolean wifiOnly() { return (Boolean) nativePreferences.requireReady().values.get("wifiOnly"); }
+    com.google.common.util.concurrent.ListenableFuture<NativePreferenceRecord> wifiOnly(boolean enabled) {
+        try { return nativePreferences.update(new org.json.JSONObject().put("wifiOnly", enabled)); }
+        catch (org.json.JSONException invalid) { return com.google.common.util.concurrent.Futures.immediateFailedFuture(invalid); }
+    }
 
     void save(String url, String username, String password) throws Exception {
         synchronized (LOCK) {

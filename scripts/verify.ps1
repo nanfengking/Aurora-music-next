@@ -62,6 +62,16 @@ foreach ($relativePath in $buildOutputs) {
 
 if ($RequireInstaller) {
   $manifest = Get-Content -LiteralPath (Join-Path $workspace 'package.json') -Raw | ConvertFrom-Json
+  $applicationExe = Join-Path $workspace "release/win-unpacked/$($manifest.build.productName).exe"
+  if (-not (Test-Path -LiteralPath $applicationExe -PathType Leaf)) {
+    throw 'Unpacked application executable is missing. Verify the local packaging output before distribution.'
+  }
+  $applicationMetadata = (Get-Item -LiteralPath $applicationExe).VersionInfo
+  $versionCore = ($manifest.version -split '[-+]')[0]
+  if ($applicationMetadata.ProductName -ne $manifest.build.productName -or
+      $applicationMetadata.ProductVersion -notmatch ('^' + [regex]::Escape($versionCore) + '([.+-]|$)')) {
+    throw 'Application executable metadata does not match this product/version; do not distribute an unedited Electron binary.'
+  }
   $installer = Join-Path $workspace "release/Aurora-Music-Next-$($manifest.version)-Setup.exe"
   if (-not (Test-Path -LiteralPath $installer -PathType Leaf)) {
     throw 'Windows installer is missing. Run npm run pack:win first.'

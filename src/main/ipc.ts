@@ -1,4 +1,4 @@
-import { ipcMain } from 'electron'
+import { ipcMain, BrowserWindow } from 'electron'
 import type Database from 'better-sqlite3'
 import { existsSync } from 'fs'
 import { getProviders, saveProviders } from './aiProviders'
@@ -21,6 +21,7 @@ import type {
   PlayHistory,
 } from '../types/music'
 import type { WebDavConfig, WebDavFile } from './webdav'
+import { DesktopPreferenceRepository, DESKTOP_PREFERENCES_KEY } from './preferences'
 
 let db: Database.Database
 let cacheMgr: CacheManager
@@ -90,6 +91,22 @@ export function registerIpcHandlers(database: Database.Database): void {
   db = database
   cacheMgr = new CacheManager()
   registerAssetHandlers(db)
+  const preferences = new DesktopPreferenceRepository(db)
+  ipcMain.handle('preferences:initialize', (_event, legacy: unknown) => {
+    try { return { success: true, data: preferences.initialize(legacy) } }
+    catch { return { success: false, error: '设置失败' } }
+  })
+  ipcMain.handle('preferences:update', (_event, patch: unknown) => {
+    try {
+      const snapshot = preferences.update(patch)
+      // Commit first; renderer notification is not a second durable write.
+      for (const window of BrowserWindow.getAllWindows()) {
+        try { if (!window.webContents.isDestroyed()) window.webContents.send('preferences:changed', snapshot) }
+        catch { /* A closing view cannot turn a committed transaction into a failed save. */ }
+      }
+      return { success: true, data: snapshot }
+    } catch { return { success: false, error: '设置失败' } }
+  })
   ipcMain.handle('ai:getProviders', () => ({ success: true, data: getProviders(db) }))
   ipcMain.handle('ai:saveProviders', (_event, providers: AiProvider[]) => {
     try { return { success: true, data: saveProviders(db, providers) } }
@@ -285,7 +302,7 @@ export function registerIpcHandlers(database: Database.Database): void {
 
   ipcMain.handle('music:setSettings', async (_event, key: string, value: string): Promise<IpcResponse> => {
     try {
-      if (['webdav_password', 'deepseek_api_key', 'ai_providers', 'asset_config'].includes(key)) {
+      if (['webdav_password', 'deepseek_api_key', 'ai_providers', 'asset_config', DESKTOP_PREFERENCES_KEY].includes(key)) {
         return { success: false, error: '敏感设置必须通过专用接口保存' }
       }
       db.prepare('INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)').run(key, value)
