@@ -2,7 +2,7 @@
 
 [简体中文](README.md) · [繁體中文](README.zh-TW.md) · [English](README.en.md) · [Français](README.fr.md)
 
-一个面向 Windows 的 WebDAV 音乐播放器。明亮与深色主题、本地聆听偏好、可选 AI 歌单；音乐与收藏仍由你掌握。
+一个面向 Windows/安卓 的 WebDAV 音乐播放器。明亮与深色主题、本地聆听偏好、可选 AI 歌单；音乐与收藏仍由你掌握。
 
 Android 手机／平板预览版与 Android Studio 编译指南见 [README.android.md](README.android.md)。已支持原生后台播放、离线、主题、小组件及混合 AI 歌单。
 
